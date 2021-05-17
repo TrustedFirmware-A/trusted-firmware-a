@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2024, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2017-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -47,5 +47,12 @@ static inline void print_pmic_info_and_debug(void)
  * Returns 0 on success, and negative values on errors
  */
 int pmic_voltages_init(void);
+
+/*
+ * pmic_switch_off - switch off the platform with PMIC
+ *
+ * Panics on errors
+ */
+void pmic_switch_off(void);
 
 #endif /* STM32MP_PMIC_H */
