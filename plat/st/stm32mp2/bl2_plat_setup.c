@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2023-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -252,6 +252,12 @@ static void prepare_encryption(void)
 	if (stm32mp2_risaf_write_encryption_key(RISAF4_INST, mkey) != 0) {
 		panic();
 	}
+
+#if STM32MP21
+	if (stm32mp2_risaf_write_mce_key(RISAF4_INST, mkey) != 0) {
+		panic();
+	}
+#endif /* STM32MP21 */
 }
 
 /*******************************************************************************
