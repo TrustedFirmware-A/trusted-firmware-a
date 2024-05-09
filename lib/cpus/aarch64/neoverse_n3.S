@@ -32,6 +32,11 @@ check_erratum_ls neoverse_n3, ERRATUM(3699563), CPU_REV(0, 0)
 cpu_reset_func_start neoverse_n3
 	/* Disable speculative loads */
 	msr	SSBS, xzr
+
+#if NEOVERSE_Nx_EXTERNAL_LLC
+	/* Some systems may have External LLC, core needs to be made aware */
+	sysreg_bit_set NEOVERSE_N3_CPUECTLR_EL1, NEOVERSE_N3_CPUECTLR_EL1_EXTLLC_BIT
+#endif
 cpu_reset_func_end neoverse_n3
 
 	/* ----------------------------------------------------
