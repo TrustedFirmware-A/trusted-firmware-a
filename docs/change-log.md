@@ -3,6 +3,12 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.10.5](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.4..refs/tags/lts-v2.10.5) (2024-06-06)
+
+### Resolved Issues
+
+- **readme:** dummy commit for sandbox release ([2045dbf](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2045dbf1e569497c949a640d701d634b4bb21142))
+
 ## [lts-2.10.4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.3..refs/tags/lts-v2.10.4) (2024-04-26)
 
 ### Documentation
