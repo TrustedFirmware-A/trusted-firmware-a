@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -589,41 +589,49 @@
 
 	ete0 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU0>;
 	};
 
 	ete1 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU1>;
 	};
 
 	ete2 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU2>;
 	};
 
 	ete3 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU3>;
 	};
 
 	ete4 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU4>;
 	};
 
 	ete5 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU5>;
 	};
 
 	ete6 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU6>;
 	};
 
 	ete7 {
 		compatible = "arm,embedded-trace-extension";
+		arm,coresight-loses-context-with-cpu;
 		cpu = <&CPU7>;
 	};
 
