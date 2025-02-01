@@ -14,7 +14,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
-    "@commitlint/cz-commitlint": "^19.0.0",
+    "@commitlint/cz-commitlint": "^19.6.1",
     "commitizen": "^4.3.0",
     "conventional-changelog-tf-a": "file:tools/conventional-changelog-tf-a",
     "husky": "^9.0.11",
