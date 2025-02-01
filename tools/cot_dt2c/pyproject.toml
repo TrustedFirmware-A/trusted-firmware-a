@@ -27,7 +27,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-click = "^8.1.7"
+click = "^8.1.8"
 plotly = "^5.23.0"
 pydevicetree = "0.0.13"
 igraph = "^0.11.6"
