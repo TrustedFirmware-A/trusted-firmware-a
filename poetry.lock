@@ -687,13 +687,13 @@ pyparsing = "*"
 
 [[package]]
 name = "pyelftools"
-version = "0.29"
+version = "0.31"
 description = "Library for analyzing ELF files and DWARF debugging information"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pyelftools-0.29-py2.py3-none-any.whl", hash = "sha256:519f38cf412f073b2d7393aa4682b0190fa901f7c3fa0bff2b82d537690c7fc1"},
-    {file = "pyelftools-0.29.tar.gz", hash = "sha256:ec761596aafa16e282a31de188737e5485552469ac63b60cfcccf22263fd24ff"},
+    {file = "pyelftools-0.31-py3-none-any.whl", hash = "sha256:f52de7b3c7e8c64c8abc04a79a1cf37ac5fb0b8a49809827130b858944840607"},
+    {file = "pyelftools-0.31.tar.gz", hash = "sha256:c774416b10310156879443b81187d182d8d9ee499660380e645918b50bc88f99"},
 ]
 
 [[package]]
@@ -1312,4 +1312,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "6a6d2fe9390a4d7d1ecf808d5f303f2dc1eeb44736827b706a858046f3eea1db"
+content-hash = "b0bc601593871ac6bea9dbc543ae491c21661ea2dbf8e14963929a1e9485a8b6"
