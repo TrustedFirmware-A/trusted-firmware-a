@@ -252,6 +252,14 @@ static int k3_validate_power_state(unsigned int power_state, psci_power_state_t 
 static void k3_pwr_domain_suspend_to_mode(const psci_power_state_t *target_state, uint8_t mode)
 {
 	unsigned int core, proc_id;
+	uint64_t fw_caps = 0;
+	int ret = 0;
+
+	ret = ti_sci_query_fw_caps(&fw_caps);
+	if (ret) {
+		ERROR("Sending query firmware caps failed (%d)\n", ret);
+		return;
+	}
 
 	core = plat_my_core_pos();
 	proc_id = PLAT_PROC_START_ID + core;
@@ -259,6 +267,14 @@ static void k3_pwr_domain_suspend_to_mode(const psci_power_state_t *target_state
 	/* Prevent interrupts from spuriously waking up this cpu */
 	k3_gic_cpuif_disable();
 	k3_gic_save_context();
+
+	if (fw_caps & MSG_FLAG_CAPS_LPM_ENCRYPT_IMAGE) {
+		ret = ti_sci_encrypt_tfa((uint64_t)__TEXT_START__, BL31_SIZE);
+		if (ret) {
+			ERROR("Sending encrypt tfa failed (%d)\n", ret);
+			return;
+		}
+	}
 
 	k3_pwr_domain_off(target_state);
 

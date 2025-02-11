@@ -33,6 +33,7 @@
 /* Low Power Mode Requests */
 #define TI_SCI_MSG_ENTER_SLEEP		0x0301
 #define TI_SCI_MSG_LPM_GET_NEXT_SYS_MODE 0x030d
+#define TISCI_MSG_LPM_ENCRYPT_TFA	0x030F
 
 /* Clock requests */
 #define TI_SCI_MSG_SET_CLOCK_STATE	0x0100
@@ -161,6 +162,7 @@ struct ti_sci_msg_resp_query_fw_caps {
 #define MSG_FLAG_CAPS_LPM_STANDBY	TI_SCI_MSG_FLAG(3)
 #define MSG_FLAG_CAPS_LPM_PARTIAL_IO	TI_SCI_MSG_FLAG(4)
 #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
+#define MSG_FLAG_CAPS_LPM_ENCRYPT_IMAGE	TI_SCI_MSG_FLAG(11)
 	uint64_t fw_caps;
 } __packed;
 
@@ -823,6 +825,34 @@ struct ti_sci_msg_resp_lpm_get_next_sys_mode {
 struct tisci_msg_boot_notification_msg {
 	struct ti_sci_msg_hdr hdr;
 	uint32_t extboot_status;
+} __packed;
+
+/*
+ * struct ti_sci_msg_req_encrypt_tfa - Request for TISCI_MSG_LPM_ENCRYPT_TFA.
+ *
+ * @hdr: Standard TISCI message header.
+ * @src_tfa_addr: Address where the TFA lies unencrypted
+ * @src_tfa_len: Size of the TFA unencrypted
+ *
+ * This message is to be sent when the system is going in suspend, just before
+ * TI_SCI_MSG_ENTER_SLEEP.
+ * The TIFS will then encrypt the TFA and store it in RAM, along with a private
+ * header.
+ * Upon resume, the SPL will ask TIFS to decrypt it back.
+ */
+struct ti_sci_msg_req_encrypt_tfa {
+	struct ti_sci_msg_hdr hdr;
+	uint64_t src_tfa_addr;
+	uint32_t src_tfa_len;
+} __packed;
+
+/*
+ * struct ti_sci_msg_req_encrypt_tfa - Response for TISCI_MSG_LPM_ENCRYPT_TFA.
+ *
+ * @hdr: Standard TISCI message header.
+ */
+struct ti_sci_msg_resp_encrypt_tfa {
+	struct ti_sci_msg_hdr hdr;
 } __packed;
 
 #endif /* TI_SCI_PROTOCOL_H */

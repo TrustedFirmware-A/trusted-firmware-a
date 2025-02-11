@@ -1838,3 +1838,39 @@ int ti_sci_boot_notification(void)
 
 	return 0;
 }
+
+/*
+ * ti_sci_encrypt_tfa - Ask TIFS to encrypt TFA at a specific address
+ *
+ * @src_tfa_addr: Address where the TFA lies unencrypted
+ * @src_tfa_len: Size of the TFA unencrypted
+ *
+ * Return: 0 if all goes well, else appropriate error message
+ */
+int ti_sci_encrypt_tfa(uint64_t src_tfa_addr, size_t src_tfa_len)
+{
+	struct ti_sci_msg_req_encrypt_tfa req;
+	struct ti_sci_msg_resp_encrypt_tfa resp;
+	struct ti_sci_xfer xfer;
+	int ret;
+
+	ret = ti_sci_setup_one_xfer(TISCI_MSG_LPM_ENCRYPT_TFA, 0,
+				    &req, sizeof(req),
+				    &resp, sizeof(resp),
+				    &xfer);
+	if (ret) {
+		ERROR("Message alloc failed (%d)\n", ret);
+		return ret;
+	}
+
+	req.src_tfa_addr = src_tfa_addr;
+	req.src_tfa_len = src_tfa_len;
+
+	ret = ti_sci_do_xfer(&xfer);
+	if (ret) {
+		ERROR("Transfer send failed (%d)\n", ret);
+		return ret;
+	}
+
+	return 0;
+}
