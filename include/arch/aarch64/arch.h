@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2020-2022, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -739,7 +739,8 @@
 #define SCR_TID5_BIT		(UL(1) << 23)
 #define SCR_TID3_BIT		(UL(1) << 22)
 #define SCR_FIEN_BIT		(UL(1) << 21)
-#define SCR_EEL2_BIT		(UL(1) << 18)
+#define SCR_EEL2_SHIFT          U(18)
+#define SCR_EEL2_BIT		(UL(1) << SCR_EEL2_SHIFT)
 #define SCR_API_BIT		(UL(1) << 17)
 #define SCR_APK_BIT		(UL(1) << 16)
 #define SCR_TERR_BIT		(UL(1) << 15)
