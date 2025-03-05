@@ -42,6 +42,10 @@ vulnerability workarounds should be applied at runtime.
    This build option should be set to 1 if the target platform contains at
    least 1 CPU that requires this mitigation. Defaults to 1.
 
+-  ``WORKAROUND_CVE_2025_0647``: Enables mitigation for `CVE-2025-0647`.
+   This build option should be set to 1 if the target platform contains at
+   least 1 CPU that requires this mitigation. Defaults to 1.
+
 .. _arm_cpu_macros_errata_workarounds:
 
 CPU Errata Workarounds
