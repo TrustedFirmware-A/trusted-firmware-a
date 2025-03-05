@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -27,6 +27,10 @@ endif
 
 ifeq (${ENABLE_PMF},1)
 BL1_SOURCES		+=	lib/pmf/pmf_main.c
+endif
+
+ifeq (${WORKAROUND_CVE_2025_0647},1)
+BL1_SOURCES		+=	lib/cpus/aarch64/wa_cve_2025_0647_cpprctx.S
 endif
 
 BL1_DEFAULT_LINKER_SCRIPT_SOURCE := bl1/bl1.ld.S
