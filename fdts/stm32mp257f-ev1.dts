@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 /*
- * Copyright (C) 2023-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (C) 2023-2026, STMicroelectronics - All Rights Reserved
  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
  */
 
@@ -130,7 +130,6 @@
 				regulator-name = "vpp_ddr";
 				regulator-min-microvolt = <2500000>;
 				regulator-max-microvolt = <2500000>;
-				regulator-enable-ramp-delay = <1000>;
 			};
 			vdd_sdcard: ldo7 {
 				regulator-name = "vdd_sdcard";
