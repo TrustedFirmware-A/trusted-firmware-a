@@ -23,6 +23,10 @@
 	url = https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell.git
 	# the repository autogenerates mv_ddr_build_message.c which is untracked
 	ignore = untracked
+[submodule "qcbor"]
+	path = contrib/qcbor
+	url = https://github.com/laurencelundblade/QCBOR.git
+	shallow = true
 [submodule "zlib"]
 	path = contrib/zlib
 	url = https://github.com/madler/zlib.git
