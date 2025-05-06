@@ -10,3 +10,7 @@
 	path = contrib/libtpm
 	url = https://review.trustedfirmware.org/shared/libTPM
 	shallow = true
+[submodule "mbed-tls"]
+	path = contrib/mbed-tls
+	url = https://github.com/Mbed-TLS/mbedtls.git
+	shallow = true
