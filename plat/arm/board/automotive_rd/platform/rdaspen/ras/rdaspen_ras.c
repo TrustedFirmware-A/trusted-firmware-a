@@ -14,6 +14,17 @@
 
 #define CORE_RAM_ERR_RECORD		U(1)
 
+void plat_handle_uncontainable_ea(void)
+{
+	uint64_t esr = read_esr_el3();
+
+	INFO("RAS: Uncontainable RAS Error Handler (EL3)\n");
+	VERBOSE("RAS: ESR_EL3 = 0x%lx (EC = 0x%lx, FSC = 0x%lx)\n",
+		esr, (esr >> 26) & 0x3F, esr & 0x3F);
+	/* There is no mitigation to UC errors and platform must panic */
+	panic();
+}
+
 /* Initialise CPU RAS features for FHI configuration */
 static void rdaspen_setup_cpu_ras_config(void)
 {
@@ -24,7 +35,10 @@ static void rdaspen_setup_cpu_ras_config(void)
 	write_errselr_el1(CORE_RAM_ERR_RECORD);
 	reg_erxctlr_el1 = read_erxctlr_el1();
 
-	reg_erxctlr_el1 |= ERX_CTRL_FI_ENABLE | ERX_CTRL_CFI_ENABLE | ERX_CTRL_ED_ENABLE;
+	/* Enable FI, CFI, UI for all configuration */
+	reg_erxctlr_el1 |= ERX_CTRL_UI_ENABLE | ERX_CTRL_FI_ENABLE | ERX_CTRL_CFI_ENABLE |
+			   ERX_CTRL_ED_ENABLE;
+
 	write_erxctlr_el1(reg_erxctlr_el1);
 	VERBOSE("RAS: Platform RAS Init on CPU %u : ERXCTLR_EL1=0x%lx successful\n",
 		core_pos, reg_erxctlr_el1);
@@ -67,10 +81,30 @@ static int rdaspen_ras_cpu_intr_handler(
 	if (data == NULL)
 		return -1;
 
-	VERBOSE("CPU RAS: Interrupt Received ID: 0x%x\n", data->interrupt);
+	WARN("CPU RAS: Interrupt Received ID: 0x%x\n", data->interrupt);
 
+	/* Warning: Incase Error Record is already cleared this prevents queued interrupts */
+	if ((read_erxstatus_el1() & (ERX_STATUS_V)) == 0) {
+		WARN("CPU RAS: Spurious RAS interrupt observed %x\n", data->interrupt);
+		plat_ic_end_of_interrupt(data->interrupt);
+		return -1;
+	}
+
+	WARN("CPU RAS: Error Status value : 0x%lx\n", read_erxstatus_el1());
+
+	/* Clear the Inband Error. Inband Errors are CE and DE */
 	errx_status = read_erxstatus_el1();
 	write_erxstatus_el1(errx_status);
+	clear_cpu_erx_misc0_register();
+
+#if FAULT_INJECTION_SUPPORT
+	/* Pseudo generation registers are cleared to avoid interrupt flood from NS */
+	clear_cpu_pfg_ctrl_register();
+	/* Injected Errors cannot be stopped until these registers are cleared */
+	clear_cpu_pfg_cdn_register();
+#endif /* FAULT_INJECTION_SUPPORT */
+
+	WARN("CPU RAS: Error Status Clear Value  : 0x%lx\n", read_erxstatus_el1());
 
 	plat_ic_end_of_interrupt(data->interrupt);
 	return 0;
