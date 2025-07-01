@@ -33,7 +33,7 @@ static bool has_wakeup_irq;
 static bool gpio_wakeup;
 bool keep_wakeupmix_on;
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 static uint32_t xspi_mto[2];
 
 static void xspi_save(void)
@@ -213,12 +213,17 @@ void imx9_sys_sleep_prepare(uint32_t core_id)
 		wdog_save(&wdogs[i]);
 	}
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 	xspi_save();
 #endif
 	imx_set_sys_wakeup(core_id, true);
 
 	keep_wakeupmix_on = gpio_wakeup || has_wakeup_irq;
+
+#if IMX_CRRM
+	/* Keep XSPI always on to avoid setting lost */
+	keep_wakeupmix_on = true;
+#endif
 }
 
 void imx9_sys_sleep_unprepare(uint32_t core_id)
@@ -226,7 +231,7 @@ void imx9_sys_sleep_unprepare(uint32_t core_id)
 	/* Restore the gic context */
 	plat_gic_restore(core_id, &imx_gicv3_ctx);
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 	xspi_restore();
 #endif
 	/* Restore contex of gpios in wakeupmix */
