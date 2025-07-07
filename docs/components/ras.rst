@@ -335,7 +335,10 @@ The RAS support in |TF-A| introduces a default implementation of
 is set to ``1``, it'll first call ``ras_ea_handler()`` function, which is the
 top-level RAS exception handler. ``ras_ea_handler`` is responsible for iterating
 to through platform-supplied error records, probe them, and when an error is
-identified, look up and invoke the corresponding error handler.
+identified, look up and invoke the corresponding error handler. When
+``ENABLE_FEAT_RAS`` is set to ``2`` the handler will also be built but it will
+not be called if ``FEAT_RAS`` is not present in hardware. The checks to do so
+will incur a performance penalty.
 
 Note that, if the platform chooses to override the ``plat_ea_handler`` function
 and intend to use the RAS framework, it must explicitly call
@@ -367,7 +370,7 @@ for non-interrupt exceptions, they're explicit using :ref:`EHF APIs
 
 --------------
 
-*Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.*
+*Copyright (c) 2018-2026, Arm Limited and Contributors. All rights reserved.*
 
 .. _RAS Supplement: https://developer.arm.com/documentation/ddi0587/latest
 .. _RAS Test group: https://git.trustedfirmware.org/ci/tf-a-ci-scripts.git/tree/group/tf-l3-boot-tests-ras?h=refs/heads/master

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -49,6 +49,7 @@ ENABLE_FEAT_HCX			:= 2
 ENABLE_FEAT_RNG			:= 2
 ENABLE_FEAT_TWED		:= 2
 ENABLE_FEAT_GCS			:= 2
+ENABLE_FEAT_RAS			:= 2
 
 ifeq (${ARCH}, aarch64)
 

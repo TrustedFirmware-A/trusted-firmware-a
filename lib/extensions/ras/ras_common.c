@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2018-2026, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2020, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -120,7 +120,7 @@ static void assert_interrupts_sorted(void)
  * Given an RAS interrupt number, locate the registered handler and call it. If
  * no handler was found for the interrupt number, this function panics.
  */
-static int ras_interrupt_handler(uint32_t intr_raw, uint32_t flags,
+static int __unused ras_interrupt_handler(uint32_t intr_raw, uint32_t flags,
 		void *handle, void *cookie)
 {
 	struct ras_interrupt *ras_inrs = ras_interrupt_mappings.intrs;
@@ -179,6 +179,8 @@ void __init ras_init(void)
 	assert_interrupts_sorted();
 #endif
 
+#if EL3_EXCEPTION_HANDLING
 	/* Register RAS priority handler */
 	ehf_register_priority_handler(PLAT_RAS_PRI, ras_interrupt_handler);
+#endif
 }

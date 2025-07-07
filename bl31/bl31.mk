@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -175,9 +175,11 @@ BL31_SOURCES		+=	drivers/arm/dsu/dsu.c
 endif
 
 # RAS sources
-ifeq (${ENABLE_FEAT_RAS}-${HANDLE_EA_EL3_FIRST_NS},1-1)
+ifneq (${ENABLE_FEAT_RAS},0)
+ifeq (${HANDLE_EA_EL3_FIRST_NS},1)
 BL31_SOURCES		+=	lib/extensions/ras/std_err_record.c		\
 				lib/extensions/ras/ras_common.c
+endif
 endif
 
 ifeq ($(FEATURE_DETECTION),1)

@@ -964,12 +964,13 @@ Common build options
    interacts with IMPDEF_SYSREG_TRAP and software emulation. This option
    defaults to 0.
 
--  ``ENABLE_FEAT_RAS``: Boolean flag to enable Armv8.2 RAS features. RAS features
-   are an optional extension for pre-Armv8.2 CPUs, but are mandatory for Armv8.2
-   or later CPUs. This flag can take the values 0 or 1. The default value is 0.
-   NOTE: This flag enables use of IESB capability to reduce entry latency into
-   EL3 even when RAS error handling is not performed on the platform. Hence this
-   flag is recommended to be turned on Armv8.2 and later CPUs.
+-  ``ENABLE_FEAT_RAS``: Numeric flag to enable Armv8.2 RAS features. RAS
+   features are an optional extension for pre-Armv8.2 CPUs, but are mandatory
+   for Armv8.2 or later CPUs. NOTE: This flag enables use of IESB capability to
+   reduce entry latency into EL3 even when RAS error handling is not performed
+   on the platform. Hence this flag is recommended to be turned on Armv8.2 and
+   later CPUs. This flag can take the values 0 to 2, to align with the
+   ``ENABLE_FEAT`` mechanism. The default is 0.
 
 -  ``RESET_TO_BL31``: Enable BL31 entrypoint as the CPU reset vector instead
    of the BL1 entrypoint. It can take the value 0 (CPU reset to BL1

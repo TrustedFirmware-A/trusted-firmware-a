@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -585,7 +585,6 @@ $(eval $(call assert_booleans,\
 	ENABLE_SME_FOR_SWD \
 	ENABLE_SVE_FOR_SWD \
 	ENABLE_FEAT_GCIE \
-	ENABLE_FEAT_RAS	\
 	FFH_SUPPORT	\
 	ERROR_DEPRECATED \
 	FAULT_INJECTION_SUPPORT \
@@ -717,6 +716,7 @@ $(eval $(call assert_numerics,\
 	ENABLE_FEAT_VHE \
 	ENABLE_FEAT_MPAM \
 	ENABLE_FEAT_MPAM_PE_BW_CTRL \
+	ENABLE_FEAT_RAS	\
 	ENABLE_RME \
 	ENABLE_SPE_FOR_NS \
 	ENABLE_SYS_REG_TRACE_FOR_NS \
