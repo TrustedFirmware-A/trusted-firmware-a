@@ -132,11 +132,6 @@ void bl31_platform_setup(void)
 	/* get soc info */
 	ele_get_soc_info();
 
-#if HAS_XSPI_SUPPORT
-	/* i.MX94 specific */
-	ele_release_gmid();
-#endif
-
 	plat_imx9_scmi_setup();
 }
 
