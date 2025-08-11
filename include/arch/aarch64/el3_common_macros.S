@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -58,12 +58,7 @@ feat_sctlr2_not_supported\@:
 
 #ifdef IMAGE_BL31
 	/* ---------------------------------------------------------------------
-	 * Initialise the per-cpu framework to utilize tpidr_el3.
-	 *
-	 * This is done early to enable crash reporting to have access to crash
-	 * stack. Since crash reporting depends on cpu_data to report the
-	 * unhandled exception, not doing so can lead to recursive exceptions
-	 * due to a NULL TPIDR_EL3.
+	 * Initialise the per-cpu cache pointer to the CPU.
 	 * ---------------------------------------------------------------------
 	 */
 	per_cpu_init

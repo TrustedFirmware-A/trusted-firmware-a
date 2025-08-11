@@ -10,8 +10,6 @@
 #include <arch.h>
 #include <asm_macros.S>
 #include <context.h>
-#include <lib/el3_runtime/cpu_data.h>
-#include <lib/per_cpu/per_cpu_macros.S>
 #include <lib/utils_def.h>
 
 	.globl	report_unhandled_exception
@@ -19,6 +17,14 @@
 	.globl	report_el3_panic
 
 #if CRASH_REPORTING
+/* need enough space in crash buffer to save 8 registers */
+#define CRASH_BUF_SIZE		(8 * CPU_WORD_SIZE)
+#define CRASH_BUF_SPACE		(CRASH_BUF_SIZE * PLATFORM_CORE_COUNT)
+
+.section .data.crash_buf
+crash_buf:
+	.align	3 /* log2 of CPU_WORD_SIZE */
+	.space  CRASH_BUF_SPACE
 
 	/* ------------------------------------------------------
 	 * The below section deals with dumping the system state
@@ -86,7 +92,7 @@ size_controlled_print:
 test_size_list:
 	/* Calculate x5 always as it will be clobbered by asm_print_hex */
 	mrs	x5, tpidr_el3
-	add	x5, x5, #CPU_DATA_CRASH_BUF_BYTES
+	add	x5, x5, #CRASH_BUF_SIZE
 	/* Test whether we have reached end of crash buf */
 	cmp	x7, x5
 	b.eq	exit_size_print
@@ -168,25 +174,64 @@ func str_in_crash_buf_print_128
 	b	size_controlled_print_128
 endfunc str_in_crash_buf_print_128
 
-	/* ------------------------------------------------------
-	 * This macro calculates the offset to crash buf from
-	 * cpu_data and stores it in tpidr_el3. It also saves x0
-	 * and x1 in the crash buf by using sp as a temporary
-	 * register.
-	 * ------------------------------------------------------
+	/* ---------------------------------------------------------------------
+	 * This macro calculates the offset to crash buf and stores it in
+	 * tpidr_el3. It also saves x0 to x6 and x30 in the crash buf by using
+	 * system registers as temporary registers. These are selected to be
+	 * present in a minimal ARMv8.0 implementation and not overwrite context
+	 * we want to report.
+	 * ---------------------------------------------------------------------
 	 */
-	.macro prepare_crash_buf_save_x0_x1
-	/* we can corrupt this reg to free up x0 */
-	mov	sp, x0
-	/* tpidr_el3 contains the address to cpu_data structure */
-	per_cpu_cur percpu_data, x0, x2
-	/* Calculate the Crash buffer offset in cpu_data */
-	add	x0, x0, #CPU_DATA_CRASH_BUF
+	.macro prepare_crash_buf_and_save_regs
+	msr	tpidr_el3,	x0
+
+	/* PMUv3 is presumed to be always present. Disable counting so
+	 * pmccntr_el0 can be used */
+	mrs	x0, pmcr_el0
+	bic	x0, x0, #PMCR_EL0_E_BIT
+	msr	pmcr_el0, x0
+
+	msr	far_el1,	x1
+	msr	elr_el1,	x2
+	msr	tpidr_el1,	x3
+	msr	mair_el1,	x4
+	msr	sp_el1,		x5
+	msr	vbar_el1,	x6
+	msr	tpidr_el0,	x7
+	msr	tpidrro_el0,	x8
+	msr	pmccntr_el0,	x30
+
+	/* calculate crash_buf[core_pos] */
+	bl	plat_my_core_pos
+	mov_imm	x1, CRASH_BUF_SIZE
+	mul	x0, x0, x1
+	adr_l	x1, crash_buf
+	add	x0, x0, x1
+
+	/* put x0 in the crash buffer */
+	mrs	x1, tpidr_el3
+	str	x1, [x0]
+
 	/* Store crash buffer address in tpidr_el3 */
 	msr	tpidr_el3, x0
+
+	/* put x1 - x7 in the crash buffer */
+	mrs	x1, far_el1
+	mrs	x2, elr_el1
+	mrs	x3, tpidr_el1
+	mrs	x4, mair_el1
+	mrs	x5, sp_el1
+	mrs	x6, vbar_el1
+	mrs	x30, pmccntr_el0
+
 	str	x1, [x0, #REGSZ]
-	mov	x1, sp
-	str	x1, [x0]
+	stp	x2, x3, [x0, #REGSZ * 2]
+	stp	x4, x5, [x0, #REGSZ * 4]
+	stp	x6, x30, [x0, #REGSZ * 6]
+
+	/* put these back as there's no space in the buffer */
+	mrs	x7, tpidr_el0
+	mrs	x8, tpidrro_el0
 	.endm
 
 	/* -----------------------------------------------------
@@ -200,7 +245,7 @@ endfunc str_in_crash_buf_print_128
 func report_unhandled_exception
 	/* Switch to SP_ELx */
 	msr     spsel, #MODE_SP_ELX
-	prepare_crash_buf_save_x0_x1
+	prepare_crash_buf_and_save_regs
 	adr	x0, excpt_msg
 	mov	sp, x0
 	/* This call will not return */
@@ -216,7 +261,7 @@ endfunc report_unhandled_exception
 	 * -----------------------------------------------------
 	 */
 func report_unhandled_interrupt
-	prepare_crash_buf_save_x0_x1
+	prepare_crash_buf_and_save_regs
 	adr	x0, intr_excpt_msg
 	mov	sp, x0
 	/* This call will not return */
@@ -233,7 +278,7 @@ endfunc report_unhandled_interrupt
 	 */
 func report_el3_panic
 	msr	spsel, #MODE_SP_ELX
-	prepare_crash_buf_save_x0_x1
+	prepare_crash_buf_and_save_regs
 	adr	x0, panic_msg
 	mov	sp, x0
 	/* Fall through to 'do_crash_reporting' */
@@ -260,12 +305,6 @@ func report_el3_panic
 	 * ------------------------------------------------------------
 	 */
 do_crash_reporting:
-	/* Retrieve the crash buf from tpidr_el3 */
-	mrs	x0, tpidr_el3
-	/* Store x2 - x6, x30 in the crash buffer */
-	stp	x2, x3, [x0, #REGSZ * 2]
-	stp	x4, x5, [x0, #REGSZ * 4]
-	stp	x6, x30, [x0, #REGSZ * 6]
 	/* Initialize the crash console */
 	bl	plat_crash_console_init
 	/* Verify the console is initialized */
