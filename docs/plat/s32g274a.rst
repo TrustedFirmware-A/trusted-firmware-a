@@ -19,13 +19,11 @@ Boot Flow
 
 ::
 
-   BootROM -> BL2 (SRAM) -> BL31 (SRAM) -> BL33 (DDR - TODO)
+   BootROM -> BL2 (SRAM) -> BL31 (DDR) -> BL33 (DDR)
 
 .. warning::
    This boot flow is a preliminary version that will serve as a foundation for
-   upcoming S32G2 contributions. The execution will hang after the BL31 stage
-   due to U-Boot being deployed in SRAM instead of DDR. This issue will be
-   resolved with the addition of the DDR driver.
+   upcoming S32G2 contributions.
 
 Code Locations
 --------------
@@ -43,17 +41,25 @@ How to build
 ------------
 
 The port currently available on the S32G274ARDB2 platform is in its initial
-stage. This means that important drivers like DDR and storage are not yet
-available. Consequently, the boot process depends on BootROM to load all TF-A
-stages in SRAM. To create a bootable image, the script below should be used.
+stage. The boot process takes advantage of both SRAM and DDR memory. BootROM
+loads BL2 into SRAM, and BL2 is responsible for initializing DDR and loading
+subsequent stages (such as BL31 and BL33) into their designated memory regions.
+To create a bootable image, the script below should be used.
 This script makes use of the ``mkimage`` tool, which is part of the U-Boot drop
 for S32G274A SoCs.
+
+.. warning::
+   The ``DDR_FW_BIN_PATH`` parameter must point to the location of the folder
+   containing the DDR firmware binary specific to the S32G274ARDB2 platform.
+   This binary is essential for proper DDR initialization. It is included in the
+   Linux BSP releases for the S32G274A-RDB board and can be obtained from https://www.nxp.com/.
 
 .. code:: bash
 
         #!/bin/bash -xe
         TF_A="${TF_A:-`pwd`}"
         UBOOT="${UBOOT:-${TF_A}/../u-boot}"
+        DDR_FW="${DDR_FW:-${TF-A}/../ddr-firmware}"
         DEBUG="${DEBUG:-1}"
 
         FIP_BASE="0x34100000"
@@ -70,11 +76,11 @@ for S32G274A SoCs.
 
         # Generate bl2, bl31 and fip image
         make -C "${TF_A}" -j9 'PLAT=s32g274ardb2' \
-                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" clean
+                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" clean DDR_FW_BIN_PATH="${DDR_FW}/ddr_fw_ecc_off.bin"
         make -C "${TF_A}" -j9 'PLAT=s32g274ardb2' \
-                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" bl2
+                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" bl2 DDR_FW_BIN_PATH="${DDR_FW}/ddr_fw_ecc_off.bin"
         make -C "${TF_A}" -j9 'PLAT=s32g274ardb2' \
-                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" fip
+                BL33="${UBOOT}/u-boot-nodtb.bin" DEBUG="${DEBUG}" fip DDR_FW_BIN_PATH="${DDR_FW}/ddr_fw_ecc_off.bin"
 
         # Extract BL2 entry
         BL2_START="0x$(poetry run memory -p s32g274ardb2 -b debug footprint | \
