@@ -64,6 +64,20 @@ static int s32g_mmap_siul2(void)
 				       MT_DEVICE | MT_RW | MT_SECURE);
 }
 
+int plat_ddr_mmap_setup(void)
+{
+	int ret;
+
+	ret = mmap_add_dynamic_region(DDR_PHY_BASE_ADDR, DDR_PHY_BASE_ADDR,
+				      DDR_PHY_SIZE, MT_DEVICE | MT_RW);
+	if (ret != 0) {
+		return ret;
+	}
+
+	return mmap_add_dynamic_region(GPR_BASE_PAGE_ADDR, GPR_BASE_PAGE_ADDR,
+				      GPR_SIZE, MT_DEVICE | MT_RW);
+}
+
 static void linflex_config_pinctrl(void)
 {
 	/* set PC09 - MSCR[41] - for UART0 TXD */

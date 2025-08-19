@@ -20,6 +20,7 @@
 #define TRAINING_FAILED     0x00000003U
 #define BITFIELD_EXCEEDED   0x00000004U
 #define DEASSERT_FAILED	    0x00000005U
+#define MAPPING_FAILED		0x00000006U
 
 /* DDRC related */
 #define DDRC_BASE                        0x403C0000U
