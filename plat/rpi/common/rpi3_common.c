@@ -36,7 +36,10 @@
 
 #define MAP_NS_DRAM0	MAP_REGION_FLAT(NS_DRAM0_BASE, NS_DRAM0_SIZE,	\
 					MT_MEMORY | MT_RW | MT_NS)
-
+#ifdef FW_HANDOFF_BASE
+#define MAP_FW_HANDOFF MAP_REGION_FLAT(FW_HANDOFF_BASE, FW_HANDOFF_SIZE, \
+				       MT_MEMORY | MT_RW | EL3_PAS)
+#endif
 #define MAP_FIP		MAP_REGION_FLAT(PLAT_RPI3_FIP_BASE,		\
 					PLAT_RPI3_FIP_MAX_SIZE,		\
 					MT_MEMORY | MT_RO | MT_NS)
@@ -57,6 +60,7 @@
 #ifdef IMAGE_BL1
 static const mmap_region_t plat_rpi3_mmap[] = {
 #ifdef MAP_SHARED_RAM
+	/* Mapping used by both legacy convention and firmware handoff*/
 	MAP_SHARED_RAM,
 #endif
 	MAP_DEVICE0,
@@ -75,12 +79,16 @@ static const mmap_region_t plat_rpi3_mmap[] = {
 #endif
 	MAP_DEVICE0,
 	MAP_FIP,
-#if MEASURED_BOOT
+#if MEASURED_BOOT && !TRANSFER_LIST
+	/* Legacy measured boot path: need BL1 RW mapping to access event log */
 	RPI3_MAP_BL1_RW,
 #endif
 	MAP_NS_DRAM0,
 #ifdef BL32_BASE
 	MAP_BL32_MEM,
+#endif
+#ifdef MAP_FW_HANDOFF
+	MAP_FW_HANDOFF,
 #endif
 	{0}
 };
@@ -97,6 +105,9 @@ static const mmap_region_t plat_rpi3_mmap[] = {
 #endif
 #ifdef BL32_BASE
 	MAP_BL32_MEM,
+#endif
+#ifdef MAP_FW_HANDOFF
+	MAP_FW_HANDOFF,
 #endif
 	{0}
 };

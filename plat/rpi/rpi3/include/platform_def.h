@@ -68,8 +68,8 @@
 #define SEC_ROM_SIZE			ULL(0x00010000)
 
 /* FIP placed after ROM to append it to BL1 with very little padding. */
-#define PLAT_RPI3_FIP_BASE		ULL(0x00020000)
-#define PLAT_RPI3_FIP_MAX_SIZE		ULL(0x00010000)
+#define PLAT_RPI3_FIP_BASE		ULL(0x00010000)
+#define PLAT_RPI3_FIP_MAX_SIZE		ULL(0x00020000)
 
 /* Reserve 2M of secure SRAM and DRAM, starting at 2M */
 #define SEC_SRAM_BASE			ULL(0x00200000)
@@ -98,14 +98,17 @@
 /* End of reserved memory */
 
 #define NS_DRAM0_BASE			ULL(0x11000000)
-#define NS_DRAM0_SIZE			ULL(0x01000000)
+#define NS_DRAM0_SIZE			ULL(0x02000000)
 #endif /* RPI3_USE_UEFI_MAP */
 
+#if TRANSFER_LIST
+#define FW_NS_HANDOFF_BASE		NS_DRAM0_BASE
+#endif
 /*
  * BL33 entrypoint.
  */
-#define PLAT_RPI3_NS_IMAGE_OFFSET	NS_DRAM0_BASE
-#define PLAT_RPI3_NS_IMAGE_MAX_SIZE	NS_DRAM0_SIZE
+#define PLAT_RPI3_NS_IMAGE_OFFSET	NS_DRAM0_BASE + FW_HANDOFF_SIZE
+#define PLAT_RPI3_NS_IMAGE_MAX_SIZE	NS_DRAM0_SIZE - FW_HANDOFF_SIZE
 
 /*
  * I/O registers.
@@ -175,9 +178,11 @@
  * In order to access the TCG Event Log in BL2, we need to expose the BL1_RW region
  * where the log resides.
  */
-#define RPI3_MAP_BL1_RW		MAP_REGION_FLAT(BL1_RW_BASE,		\
-					BL1_RW_LIMIT - BL1_RW_BASE,	\
-					MT_MEMORY | MT_RW | MT_SECURE)
+#if !TRANSFER_LIST
+#define RPI3_MAP_BL1_RW                                          \
+	MAP_REGION_FLAT(BL1_RW_BASE, BL1_RW_LIMIT - BL1_RW_BASE, \
+			MT_MEMORY | MT_RW | MT_SECURE)
+#endif /* !TRANSFER_LIST */
 
 /*
  * BL2 specific defines.
@@ -199,9 +204,20 @@
 #define PLAT_MAX_BL31_SIZE		ULL(0x20000)
 
 #define BL31_BASE			(BL31_LIMIT - PLAT_MAX_BL31_SIZE)
+#if TRANSFER_LIST
+#define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE - FW_HANDOFF_SIZE)
+#else
 #define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE)
+#endif
 #define BL31_PROGBITS_LIMIT		BL1_RW_BASE
 
+#if TRANSFER_LIST
+#define FW_HANDOFF_BASE			BL31_LIMIT
+#define FW_HANDOFF_LIMIT		(FW_HANDOFF_BASE + FW_HANDOFF_SIZE)
+#define FW_HANDOFF_SIZE			UL(0x1000)
+#else
+#define FW_HANDOFF_SIZE			0
+#endif
 /*
  * BL32 specific defines.
  *

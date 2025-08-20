@@ -13,8 +13,11 @@
 #include <common/bl_common.h>
 #include <lib/xlat_tables/xlat_mmu_helpers.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
-#include <plat/common/platform.h>
+#if TRANSFER_LIST
+#include <transfer_list.h>
+#endif
 
+#include <plat/common/platform.h>
 #include <rpi_shared.h>
 
 /*
@@ -23,6 +26,7 @@
  */
 static entry_point_info_t bl32_image_ep_info;
 static entry_point_info_t bl33_image_ep_info;
+static struct transfer_list_header __maybe_unused *bl31_tl;
 
 /*******************************************************************************
  * Return a pointer to the 'entry_point_info' structure of the next image for
@@ -71,6 +75,8 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 
 {
+	uint64_t __maybe_unused hval;
+
 	/* Initialize the console to provide early debug support */
 	rpi3_console_init();
 
@@ -78,7 +84,9 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	 * In debug builds, a special value is passed in 'arg1' to verify
 	 * platform parameters from BL2 to BL31. Not used in release builds.
 	 */
+#if !TRANSFER_LIST
 	assert(arg1 == RPI3_BL31_PLAT_PARAM_VAL);
+#endif
 
 	/* Check that params passed from BL2 are not NULL. */
 	bl_params_t *params_from_bl2 = (bl_params_t *) arg0;
@@ -108,6 +116,17 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	if (bl33_image_ep_info.pc == 0) {
 		panic();
 	}
+#if TRANSFER_LIST
+	if (transfer_list_check_header((void *)arg3) == TL_OPS_NON) {
+		return;
+	}
+	if (arg1 !=
+	    TRANSFER_LIST_HANDOFF_X1_VALUE(REGISTER_CONVENTION_VERSION)) {
+		return;
+	}
+#endif
+
+	bl31_tl = (void *)arg3; /* saved TL address from BL2 */
 
 #if RPI3_DIRECT_LINUX_BOOT
 # if RPI3_BL33_IN_AARCH32
