@@ -7,38 +7,38 @@
 #include <arch.h>
 #include <asm_macros.S>
 #include <common/bl_common.h>
-#include <cortex_gelas.h>
+#include <c1_pro.h>
 #include <cpu_macros.S>
 #include <plat_macros.S>
 
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
-#error "Gelas must be compiled with HW_ASSISTED_COHERENCY enabled"
+#error "Arm C1-Pro must be compiled with HW_ASSISTED_COHERENCY enabled"
 #endif
 
 /* 64-bit only core */
 #if CTX_INCLUDE_AARCH32_REGS == 1
-#error "Gelas supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
+#error "Arm C1-Pro supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-cpu_reset_prologue cortex_gelas
+cpu_reset_prologue c1_pro
 
-cpu_reset_func_start cortex_gelas
+cpu_reset_func_start c1_pro
 	/* ----------------------------------------------------
 	 * Disable speculative loads
 	 * ----------------------------------------------------
 	 */
 	msr	SSBS, xzr
 	/* model bug: not cleared on reset */
-	sysreg_bit_clear 	CORTEX_GELAS_CPUPWRCTLR_EL1, \
-		CORTEX_GELAS_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
-cpu_reset_func_end cortex_gelas
+	sysreg_bit_clear 	C1_PRO_CPUPWRCTLR_EL1, \
+		C1_PRO_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
+cpu_reset_func_end c1_pro
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
 	 * ----------------------------------------------------
 	 */
-func cortex_gelas_core_pwr_dwn
+func c1_pro_core_pwr_dwn
 #if ENABLE_SME_FOR_NS
         /* ---------------------------------------------------
          * Disable SME if enabled and supported
@@ -49,8 +49,8 @@ func cortex_gelas_core_pwr_dwn
 		#ID_AA64PFR1_EL1_SME_WIDTH
         cmp     x0, #SME_NOT_IMPLEMENTED
 	b.eq	1f
-	msr	CORTEX_GELAS_SVCRSM, xzr
-	msr	CORTEX_GELAS_SVCRZA, xzr
+	msr	C1_PRO_SVCRSM, xzr
+	msr	C1_PRO_SVCRZA, xzr
 1:
 #endif
 	/* ---------------------------------------------------
@@ -58,14 +58,14 @@ func cortex_gelas_core_pwr_dwn
 	 * It will be set on powerdown and cleared on wakeup
 	 * ---------------------------------------------------
 	 */
-	sysreg_bit_toggle CORTEX_GELAS_CPUPWRCTLR_EL1, \
-		CORTEX_GELAS_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
+	sysreg_bit_toggle C1_PRO_CPUPWRCTLR_EL1, \
+		C1_PRO_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
 	isb
 	ret
-endfunc cortex_gelas_core_pwr_dwn
+endfunc c1_pro_core_pwr_dwn
 
 	/* ---------------------------------------------
-	 * This function provides Gelas specific
+	 * This function provides Arm C1-Pro specific
 	 * register information for crash reporting.
 	 * It needs to return with x6 pointing to
 	 * a list of register names in ascii and
@@ -73,16 +73,16 @@ endfunc cortex_gelas_core_pwr_dwn
 	 * reported.
 	 * ---------------------------------------------
 	 */
-.section .rodata.cortex_gelas_regs, "aS"
-cortex_gelas_regs: /* The ASCII list of register names to be reported */
+.section .rodata.c1_pro_regs, "aS"
+c1_pro_regs: /* The ASCII list of register names to be reported */
 	.asciz	"imp_cpuectlr_el1", ""
 
-func cortex_gelas_cpu_reg_dump
-	adr	x6, cortex_gelas_regs
-	mrs	x8, CORTEX_GELAS_IMP_CPUECTLR_EL1
+func c1_pro_cpu_reg_dump
+	adr	x6, c1_pro_regs
+	mrs	x8, C1_PRO_IMP_CPUECTLR_EL1
 	ret
-endfunc cortex_gelas_cpu_reg_dump
+endfunc c1_pro_cpu_reg_dump
 
-declare_cpu_ops cortex_gelas, CORTEX_GELAS_MIDR, \
-	cortex_gelas_reset_func, \
-	cortex_gelas_core_pwr_dwn
+declare_cpu_ops c1_pro, C1_PRO_MIDR, \
+	c1_pro_reset_func, \
+	c1_pro_core_pwr_dwn
