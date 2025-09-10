@@ -35,5 +35,5 @@ void sgrf_init(void)
 	mmio_write_32(SGRF_BASE + SGRF_FIREWALL_SLV_CON(7), 0xffff0000);
 	mmio_write_32(SGRF_BASE + SGRF_FIREWALL_SLV_CON(8), 0xffff0000);
 
-	mmio_write_32(DDRSGRF_BASE + FIREWALL_DDR_FW_DDR_CON_REG, 0xffff0000);
+	mmio_write_32(FIREWALL_DDR_BASE + FIREWALL_DDR_CON, 0xffff0000);
 }

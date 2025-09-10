@@ -9,7 +9,7 @@
 
 #define SGRF_FIREWALL_SLV_CON(i)	(0x240 + i * 4)
 
-#define FIREWALL_DDR_FW_DDR_CON_REG	0x80
+#define FIREWALL_DDR_CON		0x80
 
 void secure_timer_init(void);
 void sgrf_init(void);
