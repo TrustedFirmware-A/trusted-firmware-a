@@ -110,6 +110,9 @@ cpu_reset_func_start c1_nano
 	 * ----------------------------------------------------
 	 */
 	msr	SSBS, xzr
+	/* model bug: not cleared on reset */
+	sysreg_bit_clear 	C1_NANO_IMP_CPUPWRCTLR_EL1, \
+		C1_NANO_IMP_CPUPWRCTLR_EL1_CORE_PWRDN_EN_BIT
 	enable_mpmm
 cpu_reset_func_end c1_nano
 
@@ -118,7 +121,7 @@ func c1_nano_core_pwr_dwn
 	 * Enable CPU power down bit in power control register
 	 * ---------------------------------------------------
 	 */
-	sysreg_bit_set C1_NANO_IMP_CPUPWRCTLR_EL1, \
+	sysreg_bit_toggle C1_NANO_IMP_CPUPWRCTLR_EL1, \
 		C1_NANO_IMP_CPUPWRCTLR_EL1_CORE_PWRDN_EN_BIT
 	isb
 	ret
