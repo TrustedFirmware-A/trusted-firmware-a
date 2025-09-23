@@ -3700,8 +3700,8 @@ to :ref:`Measured Boot Design` for more details.
 *Copyright (c) 2013-2024, Arm Limited and Contributors. All rights reserved.*
 
 .. _PSCI: https://developer.arm.com/documentation/den0022/latest/
-.. _Arm Generic Interrupt Controller version 2.0 (GICv2): http://infocenter.arm.com/help/topic/com.arm.doc.ihi0048b/index.html
-.. _3.0 (GICv3): http://infocenter.arm.com/help/topic/com.arm.doc.ihi0069b/index.html
+.. _Arm Generic Interrupt Controller version 2.0 (GICv2): https://developer.arm.com/documentation/ihi0048/b/
+.. _3.0 (GICv3): https://developer.arm.com/documentation/ihi0069
 .. _FreeBSD: https://www.freebsd.org
 .. _SCC: http://www.simple-cc.org/
-.. _DRTM: https://developer.arm.com/documentation/den0113/a
+.. _DRTM: https://developer.arm.com/documentation/den0113
