@@ -628,7 +628,6 @@ Arm Rich IoT Platform ports
 :|M|: Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
 :|G|: `hugues-kambampiana-arm`_
 :|F|: plat/arm/board/corstone700
-:|F|: plat/arm/board/a5ds
 :|F|: plat/arm/board/corstone1000
 
 Arm Reference Design platform ports
