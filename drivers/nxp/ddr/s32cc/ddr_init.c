@@ -3,16 +3,61 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+#include <assert.h>
 
 #include <ddr_init.h>
 
 static uint32_t load_phy_image(uint32_t start_addr, size_t size,
 			       const uint16_t image[]);
 
+/* Load DDR configuration from given address and populate ddrss struct */
+static struct ddrss_config load_ddr_config(uintptr_t load_from)
+{
+	struct ddrss_config config;
+	struct ddr_fw_layout ddr_layout;
+	uintptr_t current_addr = load_from;
+
+	ddr_layout = *(struct ddr_fw_layout *)load_from;
+	current_addr += sizeof(struct ddr_fw_layout);
+
+	config.memory_type = ddr_layout.memory_type;
+	config.frequency = ddr_layout.frequency;
+	config.ddrc_size = ddr_layout.ddrc_size;
+	config.dq_swap_size = ddr_layout.dq_swap_size;
+	config.phy_size = ddr_layout.phy_size;
+	config.pie_size = ddr_layout.pie_size;
+	config.imem_1d_size = ddr_layout.imem_1d_size;
+	config.dmem_1d_size = ddr_layout.dmem_1d_size;
+	config.imem_2d_size = ddr_layout.imem_2d_size;
+	config.dmem_2d_size = ddr_layout.dmem_2d_size;
+
+	config.ddrc = (struct regconf *)(current_addr + ddr_layout.ddrc_offset);
+	config.dq_swap = (struct dqconf *)(current_addr + ddr_layout.dq_swap_offset);
+	config.phy = (struct regconf_16 *)(current_addr + ddr_layout.phy_offset);
+	config.pie = (struct regconf_16 *)(current_addr + ddr_layout.pie_offset);
+	config.imem_1d = (uint16_t *)(current_addr + ddr_layout.imem_1d_offset);
+	config.dmem_1d = (uint16_t *)(current_addr + ddr_layout.dmem_1d_offset);
+	config.imem_2d = (uint16_t *)(current_addr + ddr_layout.imem_2d_offset);
+	config.dmem_2d = (uint16_t *)(current_addr + ddr_layout.dmem_2d_offset);
+
+	return config;
+}
+
 /* Initialize ddr controller with given settings. */
 static uint32_t ddrc_init_cfg(const struct ddrss_config *config)
 {
 	return load_register_cfg(config->ddrc_size, config->ddrc);
+}
+
+/* Main method needed to initialize ddr subsystem. */
+uint32_t ddr_init(uintptr_t load_from)
+{
+	struct ddrss_config ddr_config;
+
+	assert(load_from != 0UL);
+
+	ddr_config = load_ddr_config(load_from + sizeof(struct ddr_fw_header));
+	return ddr_init_cfg(&ddr_config);
 }
 
 /* Execute 2D training stage if images are available */
