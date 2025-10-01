@@ -10,3 +10,4 @@ PLAT_INCLUDES += \
 
 DDR_DRV_SRCS += \
 	${PLAT_DRIVERS_PATH}/ddr/s32cc/ddr_utils.c \
+	${PLAT_DRIVERS_PATH}/ddr/s32cc/ddr_init.c \
