@@ -45,6 +45,10 @@ CPU_FLAG_LIST += WORKAROUND_CVE_2024_7881
 # By default internal
 CPU_FLAG_LIST += NEOVERSE_Nx_EXTERNAL_LLC
 
+# Flag to enable or disable hardware prefetcher for Neoverse N2 CPU
+# By default enabled
+CPU_FLAG_LIST += NEOVERSE_N2_PREFETCHER_DISABLE
+
 # CPU Errata Build flags.
 # These should be enabled by the platform if the erratum workaround needs to be
 # applied.
