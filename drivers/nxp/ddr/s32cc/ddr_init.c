@@ -158,6 +158,9 @@ uint32_t ddr_init_cfg(const struct ddrss_config *config)
 		return ret;
 	}
 
+	/* Execute post training setup */
+	ret = post_train_setup((uint8_t)(ADJUST_DDRC_MASK));
+
 	return ret;
 }
 

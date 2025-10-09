@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2025 NXP
+ * Copyright 2020-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,11 +10,13 @@
 #include <ddr_utils.h>
 #include <mmio_poll.h>
 
+static uint32_t enable_axi_ports(void);
 static uint32_t get_mail(uint32_t *mail);
 static uint32_t ack_mail(void);
 static uint8_t get_max_cdd(const uint32_t cdd_addr[], size_t size);
 static uint16_t get_max_delay(const uint32_t delay_addr[], size_t size);
 static uint8_t get_avg_vref(const uint32_t vref_addr[], size_t size);
+static uint32_t adjust_ddrc_config(void);
 static bool is_lpddr4(void);
 
 static struct space_timing_params tr_res = {
@@ -104,6 +106,181 @@ uint32_t set_axi_parity(void)
 	}
 
 	return NO_ERR;
+}
+
+/* Enables AXI port n. Programming Mode: Dynamic */
+static uint32_t enable_axi_ports(void)
+{
+	/* Port 0 Control Register */
+	mmio_write_32(DDRC_UMCTL2_MP_BASE + OFFSET_DDRC_PCTRL_0, ENABLE_AXI_PORT);
+	/* Port 1 Control Register */
+	mmio_write_32(DDRC_UMCTL2_MP_BASE + OFFSET_DDRC_PCTRL_1, ENABLE_AXI_PORT);
+	/* Port 2 Control Register */
+	mmio_write_32(DDRC_UMCTL2_MP_BASE + OFFSET_DDRC_PCTRL_2, ENABLE_AXI_PORT);
+
+	return NO_ERR;
+}
+
+/*
+ * Post PHY training setup - complementary settings that need to be
+ * performed after running the firmware.
+ * @param options - various flags controlling post training actions
+ */
+uint32_t post_train_setup(uint8_t options)
+{
+	uint32_t calbusy_reg, swstat_reg, swctl_reg, phymstr_reg;
+	uint32_t umctl2_reg, dfistat_reg;
+	uint32_t ret = NO_ERR, timeout = DEFAULT_TIMEOUT_US;
+	int err;
+
+	/*
+	 * CalBusy.0 = 1, indicates the calibrator is actively calibrating.
+	 * Wait Calibrating done.
+	 */
+	err = mmio_read_32_poll_timeout(DDR_PHYA_MASTER0_CALBUSY, calbusy_reg,
+				  (calbusy_reg & MASTER0_CAL_ACTIVE) == MASTER0_CAL_DONE,
+				  timeout);
+	if (err != 0) {
+		ERROR("PHY Master0 calibrator did not complete\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Set SWCTL.sw_done to 0 */
+	mmio_write_32(DDRC_BASE + OFFSET_DDRC_SWCTL, SWCTL_SWDONE_ENABLE);
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_SWSTAT, swctl_reg,
+				  (swctl_reg & SWSTAT_SWDONE_ACK_MASK) == SWSTAT_SW_NOT_DONE,
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed to clear register DDRC SWCTL.sw_done\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Disable PHY Master. */
+	mmio_clrbits_32(DDRC_BASE + OFFSET_DFIPHYMSTR, DFIPHYMSTR_ENABLE);
+
+	/* Wait for PHY Master to be disabled. */
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DFIPHYMSTR, phymstr_reg,
+				  (phymstr_reg & DFIPHYMSTR_ENABLE) == DFIPHYMSTR_DISABLED,
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed tO disable PHY Master\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Wait for PHY Master request to be finished. */
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_STAT, phymstr_reg,
+				  (((phymstr_reg & SELFREF_TYPE_MASK) >> SELFREF_TYPE_POS)
+				  != PHY_MASTER_REQUEST),
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed to finish PHY Master request\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Set DFIMISC.dfi_init_start to 1*/
+	mmio_setbits_32(DDRC_BASE + OFFSET_DDRC_DFIMISC, DFIMISC_DFI_INIT_START_MASK);
+
+	/* Set SWCTL.sw_done to 1 */
+	mmio_write_32(DDRC_BASE + OFFSET_DDRC_SWCTL, SWCTL_SWDONE_DONE);
+
+	/* Wait SWSTAT.sw_done_ack to 1*/
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_SWSTAT, swstat_reg,
+				  (swstat_reg & SWSTAT_SWDONE_ACK_MASK) != SWSTAT_SW_NOT_DONE,
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed to wait for SWSTAT.sw_done\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Wait DFISTAT.dfi_init_complete to 1 */
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_DFISTAT, dfistat_reg,
+				  (dfistat_reg & DFISTAT_DFI_INIT_DONE) != DFISTAT_DFI_INIT_INCOMPLETE,
+				  timeout);
+	if (err != 0) {
+		ERROR("DDRC DFI initialization not complete\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Set SWCTL.sw_done to 0 */
+	mmio_write_32(DDRC_BASE + OFFSET_DDRC_SWCTL, SWCTL_SWDONE_ENABLE);
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_SWSTAT, swctl_reg,
+				  (swctl_reg & SWSTAT_SWDONE_ACK_MASK) == SWSTAT_SW_NOT_DONE,
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed to clear register DDRC SWCTL.sw_done\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Set dfi_init_start to 0 */
+	mmio_clrbits_32(DDRC_BASE + OFFSET_DDRC_DFIMISC, DFIMISC_DFI_INIT_START_MASK);
+
+	/* Enable PHY Master. */
+	mmio_setbits_32(DDRC_BASE + OFFSET_DFIPHYMSTR, DFIPHYMSTR_ENABLE);
+
+	/* Wait for PHY Master to be enabled. */
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DFIPHYMSTR, phymstr_reg,
+				  (phymstr_reg & DFIPHYMSTR_ENABLE) == DFIPHYMSTR_ENABLE,
+				  timeout);
+	if (err != 0) {
+		ERROR("Failed to enable PHY Master\n");
+		return TIMEOUT_ERR;
+	}
+
+	if ((options & ADJUST_DDRC_MASK) != ADJUST_DDRC_DISABLED) {
+		/* Overwrite DDRC register based on post training_results */
+		ret = adjust_ddrc_config();
+		if (ret != NO_ERR) {
+			return ret;
+		}
+	}
+
+	/* Set dfi_complete_en to 1 */
+	mmio_setbits_32(DDRC_BASE + OFFSET_DDRC_DFIMISC, DFIMISC_DFI_INIT_COMPLETE_EN_MASK);
+
+	/* Set PWRCTL.selfref_sw to 0 */
+	mmio_clrbits_32(DDRC_BASE + OFFSET_DDRC_PWRCTL, PWRCTL_SELFREF_SW_MASK);
+
+	/* Set SWCTL.sw_done to 1 */
+	mmio_write_32(DDRC_BASE + OFFSET_DDRC_SWCTL, SWCTL_SWDONE_DONE);
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_SWSTAT, swctl_reg,
+				  (swctl_reg & SWSTAT_SWDONE_ACK_MASK)
+				  != SWSTAT_SW_NOT_DONE, timeout);
+	if (err != 0) {
+		ERROR("Failed to set SWCTL.sw_done to 1\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Wait for DWC_ddr_umctl2 to move to normal operating mode */
+	err = mmio_read_32_poll_timeout(DDRC_BASE + OFFSET_DDRC_STAT, umctl2_reg,
+				  (umctl2_reg & STAT_OPERATING_MODE_MASK)
+				  != STAT_OPERATING_MODE_INIT, timeout);
+	if (err != 0) {
+		ERROR("DWC_ddr_umctl2 did not reach normal operating mode\n");
+		return TIMEOUT_ERR;
+	}
+
+	/* Enable auto-refresh: RFSHCTL3.dis_auto_refresh = 0 */
+	mmio_clrbits_32(DDRC_BASE + OFFSET_DDRC_RFSHCTL3, RFSHCTL3_DIS_AUTO_REFRESH_MASK);
+
+	/* Enable power down: PWRCTL.powerdown_en = 1 */
+	mmio_setbits_32(DDRC_BASE + OFFSET_DDRC_PWRCTL, PWRCTL_POWER_DOWN_ENABLE_MASK);
+
+	/* Enable self-refresh: PWRCTL.selfref_en = 1 */
+	mmio_setbits_32(DDRC_BASE + OFFSET_DDRC_PWRCTL, PWRCTL_SELF_REFRESH_ENABLE_MASK);
+
+	/*
+	 * Enable assertion of dfi_dram_clk_disable:
+	 * PWRTL.en_dfi_dram_clk_disable = 1
+	 */
+	mmio_setbits_32(DDRC_BASE + OFFSET_DDRC_PWRCTL, PWRCTL_EN_DFI_DRAM_CLOCK_DIS_MASK);
+
+	/*
+	 * Each platform has a different number of AXI ports so this
+	 * method should be implemented in hardware specific source
+	 */
+	ret = enable_axi_ports();
+
+	return ret;
 }
 
 /* Wait until firmware finishes execution and return training result */
@@ -355,6 +532,93 @@ void compute_tphy_wrdata_delay(void)
 				   wrdata_use_dfi_phy_clk + tx_dqsdly;
 	tr_res.tphy_wrdata_delay = (tr_res.tphy_wrdata_delay / 2U) +
 				   (tr_res.tphy_wrdata_delay % 2U);
+}
+
+/* Re-program some of the DDRC registers based on post-training results. */
+static uint32_t adjust_ddrc_config(void)
+{
+	uint8_t wr_gap_ddr3 = 3, min_lp4 = 7, min_ddr3 = 0xe, max = 0xf;
+	uint8_t rd_gap, wr_gap, rd_gap_new, wr_gap_new, delta, min;
+	uint8_t rd_gap_lp4 = 4, rd_gap_ddr3 = 2, wr_gap_lp4 = 5;
+	uint32_t dramtmg2_reg, rankctl_reg, mstr_reg;
+	uint32_t ret = NO_ERR;
+
+	/* DRAMTMG2.rd2wr & DRAMTMG2.wr2rd */
+	dramtmg2_reg = mmio_read_32(DDRC_BASE + OFFSET_DDRC_DRAMTMG2);
+	delta = (uint8_t)((tr_res.cdd.rw + (tr_res.cdd.rw % 2U)) / 2U);
+	if (!update_bf(&dramtmg2_reg, DRAMTMG2_RD_WR_POS, DRAMTMG2_RD_WR_MASK,
+		       (int32_t)delta)) {
+		return BITFIELD_EXCEEDED;
+	}
+	delta = (uint8_t)((tr_res.cdd.ww + (tr_res.cdd.ww % 2U)) / 2U);
+	if (!update_bf(&dramtmg2_reg, DRAMTMG2_WR_RD_POS, DRAMTMG2_WR_RD_MASK,
+		       (int32_t)delta)) {
+		return BITFIELD_EXCEEDED;
+	}
+	mmio_write_32(DDRC_BASE + OFFSET_DDRC_DRAMTMG2, dramtmg2_reg);
+
+	/* For LPDDR4 overwrite INIT6 and INIT7 DDRC registers. */
+	if (is_lpddr4()) {
+		/* INIT6.mr5 */
+		mmio_clrsetbits_32(DDRC_BASE + OFFSET_DDRC_INIT6, INIT6_MR5_MASK, tr_res.vref_ca);
+
+		/* INIT7.mr6 */
+		mmio_clrsetbits_32(DDRC_BASE + OFFSET_DDRC_INIT7, INIT7_MR6_MASK, tr_res.vref_dq);
+	}
+
+	/* DFITMG1.dfi_t_wrdata_delay */
+	mmio_clrsetbits_32(DDRC_BASE + OFFSET_DDRC_DFITMG1,
+			   (DFITMG1_WRDATA_DELAY_MASK << DFITMG1_WRDATA_DELAY_POS),
+			   (((uint32_t)tr_res.tphy_wrdata_delay) << DFITMG1_WRDATA_DELAY_POS));
+
+	/* For multi-rank systems */
+	mstr_reg = mmio_read_32(DDRC_BASE);
+	if ((mstr_reg & MSTR_ACT_RANKS_MASK) == MSTR_DUAL_RANK_VAL) {
+		uint8_t rd_gap_ct = is_lpddr4() ? rd_gap_lp4 : rd_gap_ddr3;
+		uint8_t wr_gap_ct = is_lpddr4() ? wr_gap_lp4 : wr_gap_ddr3;
+
+		min = is_lpddr4() ? min_lp4 : min_ddr3;
+		rankctl_reg = mmio_read_32(DDRC_BASE + OFFSET_DDRC_RANKCTL);
+		/* RANKCTL.diff_rank_rd_gap */
+		rd_gap = (uint8_t)((rankctl_reg >> RANKCTL_RD_GAP_POS) &
+				   RANKCTL_RD_GAP_MASK);
+		rd_gap_new = (uint8_t)((rd_gap_ct + tr_res.cdd.rr +
+					(tr_res.cdd.rr % 2U)) / 2U);
+
+		/* ensure min and max of rd_gap field */
+		rd_gap_new = (rd_gap_new < min) ? min : ((rd_gap_new > max) ?
+							 max : rd_gap_new);
+		if (rd_gap_new > rd_gap) {
+			delta = (uint8_t)(rd_gap_new - rd_gap);
+			if (!update_bf(&rankctl_reg, RANKCTL_RD_GAP_POS,
+				       RANKCTL_RD_GAP_MASK, (int32_t)delta)) {
+				return BITFIELD_EXCEEDED;
+			}
+		}
+
+		/* RANKCTL.diff_rank_wr_gap */
+		wr_gap = (uint8_t)((rankctl_reg >> RANKCTL_WR_GAP_POS) &
+				   RANKCTL_WR_GAP_MASK);
+		wr_gap_new = (uint8_t)((wr_gap_ct + tr_res.cdd.ww +
+					(tr_res.cdd.ww % 2U)) / 2U);
+
+		/* ensure min and max of wr_gap field */
+		wr_gap_new = (wr_gap_new < min) ? min : ((wr_gap_new > max) ?
+							 max : wr_gap_new);
+		if (wr_gap_new > wr_gap) {
+			delta = (uint8_t)(wr_gap_new - wr_gap);
+			if (!update_bf(&rankctl_reg, RANKCTL_WR_GAP_POS,
+				       RANKCTL_WR_GAP_MASK, (int32_t)delta)) {
+				return BITFIELD_EXCEEDED;
+			}
+		}
+
+		if ((rd_gap_new > rd_gap) || (wr_gap_new > wr_gap)) {
+			mmio_write_32(DDRC_BASE + OFFSET_DDRC_RANKCTL, rankctl_reg);
+		}
+	}
+
+	return ret;
 }
 
 /* Check if memory type is LPDDR4 using MSTR register */
