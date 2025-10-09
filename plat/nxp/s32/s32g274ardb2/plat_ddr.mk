@@ -21,3 +21,5 @@ $(error The provided firmware binary was generated for a different platform, \
 not the one expected by the TF-A. Please provide the DDR firmware binary for 's32g274ardb2')
 endif
 endif
+
+$(eval $(call TOOL_ADD_IMG,DDR_FW_BIN_PATH,--ddr-fw))

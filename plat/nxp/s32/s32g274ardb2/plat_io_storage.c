@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,6 +18,7 @@
 #include <tools_share/firmware_image_package.h>
 
 #include <plat_io_storage.h>
+#include <tbbr_img_def.h>
 
 struct plat_io_policy {
 	uintptr_t *dev_handle;
