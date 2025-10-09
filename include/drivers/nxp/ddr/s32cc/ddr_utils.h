@@ -147,6 +147,10 @@
 /* Default timeout for DDR PHY operations */
 #define DEFAULT_TIMEOUT_US 1000000U
 
+/* Start addresses of IMEM and DMEM memory areas */
+#define IMEM_START_ADDR 0x403A0000U
+#define DMEM_START_ADDR 0x403B0000U
+
 struct cdd_type {
 	uint8_t rr;
 	uint8_t rw;
