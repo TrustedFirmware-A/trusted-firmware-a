@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -18,9 +18,12 @@
 #include <plat_console.h>
 #include <s32cc-clk-drv.h>
 
+#include <ddr_init.h>
+
 #include <plat_io_storage.h>
 #include <s32cc-bl-common.h>
 #include <s32cc-ncore.h>
+#include <tbbr_img_def.h>
 
 #define SIUL20_BASE		UL(0x4009C000)
 #define SIUL2_PC09_MSCR		UL(0x4009C2E4)
@@ -159,6 +162,21 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	plat_s32g2_io_setup();
 }
 
+int bl2_plat_handle_post_image_load(unsigned int image_id)
+{
+	const bl_mem_params_node_t *bl_mem_params;
+
+	bl_mem_params = get_bl_mem_params_node(DDR_FW_IMAGE_ID);
+
+	if (image_id == DDR_FW_IMAGE_ID) {
+		if (ddr_init(bl_mem_params->image_info.image_base) != 0U) {
+			ERROR("Failed to configure the DDR subsystem\n");
+			panic();
+		}
+	}
+	return 0;
+}
+
 void bl2_plat_arch_setup(void)
 {
 }
@@ -171,6 +189,10 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 
 	if (desc == NULL) {
 		return -EINVAL;
+	}
+
+	if (image_id == DDR_FW_IMAGE_ID) {
+		return 0;
 	}
 
 	img_info = &desc->image_info;
