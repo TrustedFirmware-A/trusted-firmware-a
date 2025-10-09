@@ -1,13 +1,26 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
+#include <tbbr_img_def.h>
 
 static bl_mem_params_node_t bl2_mem_params_descs[] = {
+	{
+		.image_id = DDR_FW_IMAGE_ID,
+
+		SET_STATIC_PARAM_HEAD(ep_info, PARAM_EP, VERSION_2,
+				      entry_point_info_t,
+				      SECURE | NON_EXECUTABLE),
+		SET_STATIC_PARAM_HEAD(image_info, PARAM_IMAGE_BINARY, VERSION_2,
+				      image_info_t, 0),
+		.image_info.image_max_size = IO_BUFFER_SIZE,
+		.image_info.image_base = IO_BUFFER_BASE,
+		.next_handoff_image_id = INVALID_IMAGE_ID,
+	},
 	{
 		.image_id = BL31_IMAGE_ID,
 
