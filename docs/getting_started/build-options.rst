@@ -324,6 +324,24 @@ Common build options
    The flag can take values 0 to 2, to align with the ``ENABLE_FEAT``
    mechanism. Default value is ``0``.
 
+-  ``ENABLE_FEAT_CRYPTO``: Numeric value to enable the ``FEAT_CRYPTO``
+   extension. It allows using the SIMD crypto extension AES, SHA1 and SHA2
+   instructions for mbedtls HASH256, which speeds up the authentication process
+   of the subsequent images in BL1 and BL2. ``FEAT_CRYPTO`` is an optional
+   feature available on Arm v8 onwards. This flag can take values
+   0 to 2, to align with the ``ENABLE_FEAT`` mechanism, however, value ``2``
+   is treated as ``0`` since there is no way to perform runtime check.
+   Default value is ``0``.
+
+-  ``ENABLE_FEAT_CRYPTO_SHA3``: Numeric value to enable the ``FEAT_CRYPTO``
+   extension. It allows using the SIMD crypto extension SHA3 instructions for
+   mbedtls HASH384 and HASH512, which speeds up the authentication process of
+   the subsequent images in BL1 and BL2. ``FEAT_CRYPTO_SHA3`` is an optional
+   feature available on Arm v8.2 onwards. This flag can take values
+   0 to 1, to align with the ``ENABLE_FEAT`` mechanism, however, value ``2``
+   is treated as ``0`` since there is no way to perform runtime check.
+   Default value is ``0``.
+
 - ``ENABLE_FEAT_DEBUGV8P9``: Numeric value to enable ``FEAT_DEBUGV8P9``
    extension which allows the ability to implement more than 16 breakpoints
    and/or watchpoints. This feature is mandatory from v8.9 and is optional

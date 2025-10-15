@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2024, Arm Limited. All rights reserved.
+# Copyright (c) 2015-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -157,6 +157,11 @@ $(eval $(call add_defines,\
         TF_MBEDTLS_USE_AES_GCM \
 )))
 
-$(eval $(call MAKE_LIB,mbedtls))
+ifeq ($(filter 1,$(ENABLE_FEAT_CRYPTO)),1)
+    REMOVED_CFLAGS		:=	-nostdinc -mgeneral-regs-only
+    $(eval $(call MAKE_LIB,mbedtls,${REMOVED_CFLAGS}))
+else
+    $(eval $(call MAKE_LIB,mbedtls))
+endif #(ENABLE_FEAT_CRYPTO)
 
 endif

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2016-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -84,6 +84,14 @@ DISABLE_BIN_GENERATION		:= 0
 # Enable capability to disable authentication dynamically. Only meant for
 # development platforms.
 DYN_DISABLE_AUTH		:= 0
+
+# Enable the SIMD crypto extension feature. The flags suppose to be in
+# arch_features.mk but since mbedtls_common.mk is included before arch_features.mk,
+# so this flag has to be defined here.
+ENABLE_FEAT_CRYPTO		:= 0
+
+# Enable the SIMD SHA3 crypto extension feature.
+ENABLE_FEAT_CRYPTO_SHA3		:= 0
 
 # Enable the Maximum Power Mitigation Mechanism on supporting cores.
 ENABLE_MPMM			:= 0

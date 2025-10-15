@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2019-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -212,5 +212,7 @@ __attribute__((always_inline))
 static inline bool is_feat_lse_supported(void) { return false; }
 __attribute__((always_inline))
 static inline bool is_feat_morello_supported(void) { return false; }
+__attribute__((always_inline))
+static inline bool is_feat_crypto_supported(void) { return false; }
 
 #endif /* ARCH_FEATURES_H */

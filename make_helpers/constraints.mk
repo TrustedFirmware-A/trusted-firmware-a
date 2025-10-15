@@ -295,6 +295,12 @@ ifeq (${ARCH},aarch32)
 	ifneq (${PLATFORM_NODE_COUNT},1)
                 $(error "NUMA AWARE PER CPU is not supported with ARCH=aarch32")
 	endif
+        ifeq (${ENABLE_FEAT_CRYPTO},1)
+                $(error "ENABLE_FEAT_CRYPTO cannot be used with ARCH=aarch32")
+        endif
+        ifeq (${ENABLE_FEAT_CRYPTO_SHA3},1)
+                $(error "ENABLE_FEAT_CRYPTO_SHA3 cannot be used with ARCH=aarch32")
+        endif
 	ifneq (${ENABLE_FEAT_MPAM},0)
                 $(error "ENABLE_FEAT_MPAM cannot be used with ARCH=aarch32")
 	endif
@@ -358,6 +364,21 @@ ifeq (${ENABLE_SVE_FOR_SWD}, 1)
             $(warning "ENABLE_SVE_FOR_SWD and ENABLE_SVE_FOR_NS together require CTX_INCLUDE_SVE_REGS")
         endif
     endif
+endif
+
+# Enabling SHA3 requires regular Crypto extension to be enabled
+ifeq (${ENABLE_FEAT_CRYPTO_SHA3}, 1)
+    ifeq (${ENABLE_FEAT_CRYPTO}, 0)
+        $(error "ENABLE_FEAT_CRYPTO_SHA3 requires ENABLE_FEAT_CRYPTO")
+    endif
+endif
+
+ifeq (${ENABLE_FEAT_CRYPTO_SHA3}, 2)
+    $(warning "ENABLE_FEAT_CRYPTO_SHA3 does not have any effect when set to 2")
+endif
+
+ifeq (${ENABLE_FEAT_CRYPTO}, 2)
+    $(warning "ENABLE_FEAT_CRYPTO does not have any effect when set to 2")
 endif
 
 # Enabling SVE in either world while enabling CTX_INCLUDE_FPREGS requires
