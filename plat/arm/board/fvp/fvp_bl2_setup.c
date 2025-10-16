@@ -105,7 +105,7 @@ struct bl_params *plat_get_next_bl_params(void)
 	arm_bl_params->head->image_id = param_node->image_id;
 
 	arm_bl2_setup_next_ep_info(param_node);
-#elif !RESET_TO_BL2 && !EL3_PAYLOAD_BASE
+#elif (!RESET_TO_BL2 || ARM_FW_CONFIG_LOAD_ENABLE) && !EL3_PAYLOAD_BASE
 	fw_config_base = 0UL;
 
 	/* Update the next image's ep info with the FW config address */
@@ -123,7 +123,8 @@ struct bl_params *plat_get_next_bl_params(void)
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
-#if !RESET_TO_BL2 && !EL3_PAYLOAD_BASE && !TRANSFER_LIST
+#if ((!RESET_TO_BL2 || ARM_FW_CONFIG_LOAD_ENABLE) && !EL3_PAYLOAD_BASE && \
+								!TRANSFER_LIST)
 	if (image_id == HW_CONFIG_ID) {
 		const struct dyn_cfg_dtb_info_t *hw_config_info __unused;
 		struct transfer_list_entry *te __unused;

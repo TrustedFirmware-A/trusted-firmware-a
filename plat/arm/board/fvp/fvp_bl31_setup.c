@@ -28,7 +28,8 @@ void __init bl31_early_platform_setup2(u_register_t arg0,
 	/* Initialize the console to provide early debug support */
 	arm_console_boot_init();
 
-#if !(TRANSFER_LIST || RESET_TO_BL31 || RESET_TO_BL2)
+#if (!TRANSFER_LIST && !RESET_TO_BL31 && (!RESET_TO_BL2 || \
+					  ARM_FW_CONFIG_LOAD_ENABLE))
 	const struct dyn_cfg_dtb_info_t *soc_fw_config_info;
 
 	INFO("BL31 FCONF: FW_CONFIG address = %lx\n", (uintptr_t)arg1);
@@ -50,7 +51,7 @@ void __init bl31_early_platform_setup2(u_register_t arg0,
 	assert(hw_config_info != NULL);
 	assert(hw_config_info->secondary_config_addr != 0UL);
 	arg2 = hw_config_info->secondary_config_addr;
-#endif /* !(TRANSFER_LIST || RESET_TO_BL31 || RESET_TO_BL2)*/
+#endif
 
 	arm_bl31_early_platform_setup(arg0, arg1, arg2, arg3);
 
@@ -118,7 +119,8 @@ void __init bl31_plat_arch_setup(void)
 	 * TODO: remove the ARM_XLAT_TABLES_LIB_V1 check when its support
 	 * gets deprecated.
 	 */
-#if !RESET_TO_BL31 && !RESET_TO_BL2 && !ARM_XLAT_TABLES_LIB_V1
+#if (!RESET_TO_BL31 && (!RESET_TO_BL2 || ARM_FW_CONFIG_LOAD_ENABLE) && \
+						!ARM_XLAT_TABLES_LIB_V1)
 	assert(hw_config_info != NULL);
 	assert(hw_config_info->config_addr != 0UL);
 
@@ -162,7 +164,7 @@ unsigned int plat_get_syscnt_freq2(void)
 {
 	unsigned int counter_base_frequency;
 
-#if !RESET_TO_BL31 && !RESET_TO_BL2
+#if !RESET_TO_BL31 && (!RESET_TO_BL2 || ARM_FW_CONFIG_LOAD_ENABLE)
 	/* Get the frequency through FCONF API for HW_CONFIG */
 	counter_base_frequency = FCONF_GET_PROPERTY(hw_config, cpu_timer, clock_freq);
 	if (counter_base_frequency > 0U) {

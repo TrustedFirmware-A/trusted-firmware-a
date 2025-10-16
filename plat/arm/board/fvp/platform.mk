@@ -142,6 +142,14 @@ endif
 
 $(eval $(call add_define,FVP_INTERCONNECT_DRIVER))
 
+ifeq ($(filter 1,${RESET_TO_BL2} ${RESET_TO_BL31}),)
+include_fconf_srcs = 1
+endif
+
+ifeq (${ARM_FW_CONFIG_LOAD_ENABLE},1)
+include_fconf_srcs = 1
+endif
+
 # Choose the GIC sources depending upon the how the FVP will be invoked
 ifeq (${FVP_USE_GIC_DRIVER}, FVP_GICV3)
 USE_GIC_DRIVER			:=	3
@@ -151,7 +159,8 @@ GICV3_SUPPORT_GIC600		:=	1
 GICV3_OVERRIDE_DISTIF_PWR_OPS	:=	1
 
 FVP_SECURITY_SOURCES += plat/arm/board/fvp/fvp_gicv3.c
-ifeq ($(filter 1,${RESET_TO_BL2} ${RESET_TO_BL31}),)
+
+ifdef include_fconf_srcs
 BL31_SOURCES		+=	plat/arm/board/fvp/fconf/fconf_gicv3_config_getter.c
 endif
 
@@ -373,7 +382,7 @@ BL31_SOURCES		+=	drivers/arm/fvp/fvp_pwrc.c			\
 
 # Support for fconf in BL31
 # Added separately from the above list for better readability
-ifeq ($(filter 1,${RESET_TO_BL2} ${RESET_TO_BL31}),)
+ifdef include_fconf_srcs
 BL31_SOURCES		+=	lib/fconf/fconf.c				\
 				lib/fconf/fconf_dyn_cfg_getter.c		\
 				plat/arm/board/fvp/fconf/fconf_hw_config_getter.c
@@ -511,7 +520,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/arm/board/fvp/fvp_stack_protector.c
 endif
 
 # Enable the dynamic translation tables library.
-ifeq ($(filter 1,${RESET_TO_BL2} ${ARM_XLAT_TABLES_LIB_V1}),)
+ifneq (${ARM_XLAT_TABLES_LIB_V1},1)
     ifeq (${ARCH},aarch32)
         BL32_CPPFLAGS	+=	-DPLAT_XLAT_TABLES_DYNAMIC
     else # AArch64
