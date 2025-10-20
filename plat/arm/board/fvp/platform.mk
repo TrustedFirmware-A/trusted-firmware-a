@@ -146,7 +146,7 @@ ifeq ($(filter 1,${RESET_TO_BL2} ${RESET_TO_BL31}),)
 include_fconf_srcs = 1
 endif
 
-ifeq (${ARM_FW_CONFIG_LOAD_ENABLE},1)
+ifneq ($(filter 1,${ARM_FW_CONFIG_LOAD_ENABLE} ${TRANSFER_LIST}),)
 include_fconf_srcs = 1
 endif
 
