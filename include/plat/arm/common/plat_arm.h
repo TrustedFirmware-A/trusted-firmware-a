@@ -249,19 +249,11 @@ void arm_bl1_plat_arch_setup(void);
 void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 				   u_register_t arg2, u_register_t arg3);
 void arm_bl2_platform_setup(void);
-void arm_bl2_plat_arch_setup(void);
 uint32_t arm_get_spsr(unsigned int image_id);
 int arm_bl2_plat_handle_post_image_load(unsigned int image_id);
 int arm_bl2_handle_post_image_load(unsigned int image_id);
 struct bl_params *arm_get_next_bl_params(void);
 void arm_bl2_setup_next_ep_info(bl_mem_params_node_t *next_param_node);
-
-/* BL2 at EL3 functions */
-void arm_bl2_el3_early_platform_setup(void);
-void arm_bl2_el3_plat_arch_setup(void);
-#if ARM_FW_CONFIG_LOAD_ENABLE
-void arm_bl2_el3_plat_config_load(void);
-#endif /* ARM_FW_CONFIG_LOAD_ENABLE */
 
 /* BL2U utility functions */
 void arm_bl2u_early_platform_setup(struct meminfo *mem_layout,

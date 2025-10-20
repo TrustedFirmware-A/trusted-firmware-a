@@ -1,5 +1,6 @@
 /*
  * Copyright 2018-2022 NXP
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -18,9 +19,9 @@
 #include <plat_nv_storage.h>
 #endif
 
-#pragma weak bl2_el3_early_platform_setup
-#pragma weak bl2_el3_plat_arch_setup
-#pragma weak bl2_el3_plat_prepare_exit
+#pragma weak bl2_early_platform_setup2
+#pragma weak bl2_plat_arch_setup
+#pragma weak bl2_plat_prepare_exit
 
 static dram_regions_info_t dram_regions_info  = {0};
 
@@ -140,7 +141,7 @@ static uint32_t ls_get_spsr_for_bl33_entry(void)
 }
 #endif /* AARCH32 */
 
-void bl2_el3_early_platform_setup(u_register_t arg0 __unused,
+void bl2_early_platform_setup2(u_register_t arg0 __unused,
 				  u_register_t arg1 __unused,
 				  u_register_t arg2 __unused,
 				  u_register_t arg3 __unused)
@@ -177,7 +178,7 @@ void bl2_el3_early_platform_setup(u_register_t arg0 __unused,
  * Perform the very early platform specific architectural setup here. At the
  * moment this is only initializes the mmu in a quick and dirty way.
  ******************************************************************************/
-void ls_bl2_el3_plat_arch_setup(void)
+void ls_bl2_plat_arch_setup(void)
 {
 	unsigned int flags = 0U;
 	/* Initialise the IO layer and register platform IO devices */
@@ -211,9 +212,9 @@ void ls_bl2_el3_plat_arch_setup(void)
 #endif
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
-	ls_bl2_el3_plat_arch_setup();
+	ls_bl2_plat_arch_setup();
 }
 
 void bl2_platform_setup(void)
@@ -266,7 +267,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	return ls_bl2_handle_post_image_load(image_id);
 }
 
-void bl2_el3_plat_prepare_exit(void)
+void bl2_plat_prepare_exit(void)
 {
 	return soc_bl2_prepare_exit();
 }

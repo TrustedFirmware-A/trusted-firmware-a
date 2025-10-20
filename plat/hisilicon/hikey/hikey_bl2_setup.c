@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2025, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -31,7 +31,7 @@
 
 #define BL2_RW_BASE		(BL_CODE_END)
 
-static meminfo_t bl2_el3_tzram_layout;
+static meminfo_t bl2_tzram_layout;
 static console_t console;
 static struct mmc_device_info mmc_info;
 
@@ -265,7 +265,7 @@ static void hikey_jumper_init(void)
 	mmio_write_32(IOMG_GPIO24, IOMG_MUX_FUNC0);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	/* Initialize the console to provide early debug support */
@@ -274,14 +274,14 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/*
 	 * Allow BL2 to see the whole Trusted RAM.
 	 */
-	bl2_el3_tzram_layout.total_base = BL2_RW_BASE;
-	bl2_el3_tzram_layout.total_size = BL31_LIMIT - BL2_RW_BASE;
+	bl2_tzram_layout.total_base = BL2_RW_BASE;
+	bl2_tzram_layout.total_size = BL31_LIMIT - BL2_RW_BASE;
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
-	hikey_init_mmu_el3(bl2_el3_tzram_layout.total_base,
-			   bl2_el3_tzram_layout.total_size,
+	hikey_init_mmu_el3(bl2_tzram_layout.total_base,
+			   bl2_tzram_layout.total_size,
 			   BL_CODE_BASE,
 			   BL_CODE_END,
 			   BL_COHERENT_RAM_BASE,

@@ -1909,7 +1909,8 @@ This function executes with the MMU and data caches disabled. It is only called
 by the primary CPU. The 4 arguments are passed by BL1 to BL2 and these arguments
 are platform specific.
 
-On Arm standard platforms, the arguments received are :
+On Arm standard platforms when RESET_TO_BL2 is not set, the arguments received
+are :
 
     arg0 - Points to load address of FW_CONFIG
 
@@ -2001,67 +2002,10 @@ Boot Loader Stage 2 (BL2) at EL3
 
 When the platform has a non-TF-A Boot ROM it is desirable to jump
 directly to BL2 instead of TF-A BL1. In this case BL2 is expected to
-execute at EL3 instead of executing at EL1. Refer to the :ref:`Firmware Design`
-document for more information.
+execute at EL3 instead of executing at EL1. Also on RME enabled systems BL2 runs
+at EL3. Refer to the :ref:`Firmware Design` document for more information.
 
-All mandatory functions of BL2 must be implemented, except the functions
-bl2_early_platform_setup and bl2_el3_plat_arch_setup, because
-their work is done now by bl2_el3_early_platform_setup and
-bl2_el3_plat_arch_setup. These functions should generally implement
-the bl1_plat_xxx() and bl2_plat_xxx() functionality combined.
-
-
-Function : bl2_el3_early_platform_setup() [mandatory]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-	Argument : u_register_t, u_register_t, u_register_t, u_register_t
-	Return   : void
-
-This function executes with the MMU and data caches disabled. It is only called
-by the primary CPU. This function receives four parameters which can be used
-by the platform to pass any needed information from the Boot ROM to BL2.
-
-On Arm standard platforms, this function does the following:
-
--  Initializes a UART (PL011 console), which enables access to the ``printf``
-   family of functions in BL2.
-
--  Initializes the storage abstraction layer used to load further bootloader
-   images. It is necessary to do this early on platforms with a SCP_BL2 image,
-   since the later ``bl2_platform_setup`` must be done after SCP_BL2 is loaded.
-
-- Initializes the private variables that define the memory layout used.
-
-Function : bl2_el3_plat_arch_setup() [mandatory]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-	Argument : void
-	Return   : void
-
-This function executes with the MMU and data caches disabled. It is only called
-by the primary CPU.
-
-The purpose of this function is to perform any architectural initialization
-that varies across platforms.
-
-On Arm standard platforms, this function enables the MMU.
-
-Function : bl2_el3_plat_prepare_exit() [optional]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-	Argument : void
-	Return   : void
-
-This function is called prior to exiting BL2 and run the next image.
-It should be used to perform platform specific clean up or bookkeeping
-operations before transferring control to the next image. This function
-runs with MMU disabled.
+The existing mandatory functions of BL2 must handle BL2 running at EL3.
 
 FWU Boot Loader Stage 2 (BL2U)
 ------------------------------

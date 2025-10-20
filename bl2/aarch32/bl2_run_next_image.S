@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,7 +25,7 @@ func bl2_run_next_image
 	dsb	sy
 	isb
 	mov	r0, r8
-	bl	bl2_el3_plat_prepare_exit
+	bl	bl2_plat_prepare_exit
 
 	/*
 	 * Extract PC and SPSR based on struct `entry_point_info_t`

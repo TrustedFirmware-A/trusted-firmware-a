@@ -109,6 +109,15 @@ void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 	/* Initialize the console to provide early debug support */
 	arm_console_boot_init();
 
+#if RESET_TO_BL2
+	/*
+	 * Allow BL2 to see the whole Trusted RAM. This is determined
+	 * statically since we cannot rely on BL1 passing this information
+	 * in the RESET_TO_BL2 case.
+	 */
+	bl2_tzram_layout.total_base = ARM_BL_RAM_BASE;
+	bl2_tzram_layout.total_size = ARM_BL_RAM_SIZE;
+#else /* !RESET_TO_BL2 */
 #if TRANSFER_LIST
 	secure_tl = (struct transfer_list_header *)arg3;
 
@@ -117,12 +126,13 @@ void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 
 	bl2_tzram_layout = *(meminfo_t *)transfer_list_entry_data(te);
 	transfer_list_rem(secure_tl, te);
-#else
+#else /* !TRANSFER_LIST */
 	config_base = (uintptr_t)arg0;
 
 	/* Setup the BL2 memory layout */
 	bl2_tzram_layout = *(meminfo_t *)arg1;
 #endif /* TRANSFER_LIST */
+#endif /* RESET_TO_BL2 */
 
 	/* Initialise the IO layer and register platform IO devices */
 	plat_arm_io_setup();
@@ -137,7 +147,7 @@ void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 		panic();
 	}
 
-#if TRANSFER_LIST
+#if TRANSFER_LIST && !RESET_TO_BL2
 	plat_log_gpt_ptr->plat_log_gpt_corruption((uintptr_t)secure_tl,
 						   plat_log_gpt_ptr->gpt_corrupted_info);
 #endif	/* TRANSFER_LIST */
@@ -150,8 +160,60 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 {
 	arm_bl2_early_platform_setup(arg0, arg1, arg2, arg3);
 
+#if RESET_TO_BL2 && !defined(HW_ASSISTED_COHERENCY)
+	/*
+	 * Initialize Interconnect for this cluster during cold boot.
+	 * No need for locks as no other CPU is active.
+	 */
+	plat_arm_interconnect_init();
+
+	/* Enable Interconnect coherency for the primary CPU's cluster. */
+	plat_arm_interconnect_enter_coherency();
+#endif
 	generic_delay_timer_init();
 }
+
+#if ARM_FW_CONFIG_LOAD_ENABLE && !TRANSFER_LIST
+/********************************************************************************
+ * FW CONFIG load function for BL2 when RESET_TO_BL2=1 &&
+ * ARM_FW_CONFIG_LOAD_ENABLE=1
+ *******************************************************************************/
+static void arm_bl2_plat_config_load(void)
+{
+	int ret;
+	const struct dyn_cfg_dtb_info_t *fw_config_info;
+
+	/* Set global DTB info for fixed fw_config information */
+	set_config_info(ARM_FW_CONFIG_BASE, ~0UL, ARM_FW_CONFIG_MAX_SIZE,
+			FW_CONFIG_ID);
+
+	/*
+	 * Fill the device tree information struct with the info from the
+	 * config dtb
+	 */
+	ret = fconf_load_config(FW_CONFIG_ID);
+	if (ret < 0) {
+		ERROR("Loading of FW_CONFIG failed %d\n", ret);
+		plat_error_handler(ret);
+	}
+
+	/*
+	 * FW_CONFIG loaded successfully. Check the FW_CONFIG device tree parsing
+	 * is successful.
+	 */
+	fw_config_info = FCONF_GET_PROPERTY(dyn_cfg, dtb, FW_CONFIG_ID);
+	if (fw_config_info == NULL) {
+		ret = -1;
+		ERROR("Invalid FW_CONFIG address\n");
+		plat_error_handler(ret);
+	}
+	ret = fconf_populate_dtb_registry(fw_config_info->config_addr);
+	if (ret < 0) {
+		ERROR("Parsing of FW_CONFIG failed %d\n", ret);
+		plat_error_handler(ret);
+	}
+}
+#endif /* ARM_FW_CONFIG_LOAD_ENABLE && !TRANSFER_LIST */
 
 /*
  * Perform  BL2 preload setup. Currently we initialise the dynamic
@@ -177,14 +239,14 @@ void bl2_plat_preload_setup(void)
 		ERROR("Secure transfer list initialisation failed!\n");
 		panic();
 	}
-#endif
+#endif /* RESET_TO_BL2 */
 	arm_transfer_list_dyn_cfg_init(secure_tl);
-#else
+#else /* !TRANSFER_LIST */
 #if ARM_FW_CONFIG_LOAD_ENABLE
-	arm_bl2_el3_plat_config_load();
+	arm_bl2_plat_config_load();
 #endif /* ARM_FW_CONFIG_LOAD_ENABLE */
 	arm_bl2_dyn_cfg_init();
-#endif
+#endif /* TRANSFER_LIST */
 
 }
 
@@ -214,7 +276,7 @@ void bl2_platform_setup(void)
  * initialising and enabling Granule Protection.
  * This function initialises the MMU in a quick and dirty way.
  ******************************************************************************/
-void arm_bl2_plat_arch_setup(void)
+static void arm_bl2_plat_arch_setup(void)
 {
 #if USE_COHERENT_MEM
 	/* Ensure ARM platforms don't use coherent memory in BL2. */
@@ -241,22 +303,26 @@ void arm_bl2_plat_arch_setup(void)
 	/* Initialise the secure environment */
 	plat_arm_security_setup();
 #endif
+
 	setup_page_tables(bl_regions, plat_arm_get_mmap());
 
 #ifdef __aarch64__
-#if ENABLE_RME
-	/* BL2 runs in EL3 when RME enabled. */
-	assert(is_feat_rme_present());
+	/* BL2 runs at EL3 incase of RESET_TO_BL2 or ENABLE_RME is set */
+#if BL2_RUNS_AT_EL3
 	enable_mmu_el3(0);
-
-	/* Initialise and enable granule protection after MMU. */
-	arm_gpt_setup();
 #else
 	enable_mmu_el1(0);
-#endif
-#else
+#endif /* BL2_RUNS_AT_EL3 */
+
+#if ENABLE_RME
+	/* Initialise and enable granule protection after MMU. */
+	assert(is_feat_rme_present());
+	arm_gpt_setup();
+#endif /* ENABLE_RME */
+
+#else /* !__aarch64__ */
 	enable_mmu_svc_mon(0);
-#endif
+#endif /* __aarch64__ */
 
 	arm_setup_romlib();
 }
@@ -265,6 +331,7 @@ void bl2_plat_arch_setup(void)
 {
 	const struct dyn_cfg_dtb_info_t *tb_fw_config_info __unused;
 	struct transfer_list_entry *te __unused;
+
 	arm_bl2_plat_arch_setup();
 
 #if TRANSFER_LIST
@@ -273,6 +340,12 @@ void bl2_plat_arch_setup(void)
 	transfer_list_rem(secure_tl, te);
 #endif /* CRYPTO_SUPPORT */
 #else
+
+	/*
+	 * In case of RESET_TO_BL2 bl2_plat_preload_setup handles loading
+	 * FW_CONFIG when ARM_FW_CONFIG_LOAD_ENABLE=1
+	 */
+#if !RESET_TO_BL2
 	/* Fill the properties struct with the info from the config dtb */
 	fconf_populate("FW_CONFIG", config_base);
 
@@ -281,6 +354,7 @@ void bl2_plat_arch_setup(void)
 	assert(tb_fw_config_info != NULL);
 
 	fconf_populate("TB_FW", tb_fw_config_info->config_addr);
+#endif /* !RESET_TO_BL2 */
 #endif /* TRANSFER_LIST */
 }
 

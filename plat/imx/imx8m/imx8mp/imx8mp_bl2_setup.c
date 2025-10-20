@@ -1,5 +1,6 @@
 /*
  * Copyright 2021 NXP
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,7 +41,7 @@ static const struct aipstz_cfg aipstz[] = {
 	{0},
 };
 
-void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
+void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		u_register_t arg2, u_register_t arg3)
 {
 	static console_t console;
@@ -65,7 +66,7 @@ void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
 	plat_imx_io_setup();
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 }
 

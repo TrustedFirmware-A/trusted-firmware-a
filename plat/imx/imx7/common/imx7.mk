@@ -44,7 +44,7 @@ BL2_SOURCES		+=	common/desc_image_load.c			\
 				plat/imx/common/imx_wdog.c			\
 				plat/imx/common/imx7_clock.c			\
 				plat/imx/imx7/common/imx7_bl2_mem_params_desc.c	\
-				plat/imx/imx7/common/imx7_bl2_el3_common.c	\
+				plat/imx/imx7/common/imx7_bl2_common.c		\
 				plat/imx/imx7/common/imx7_helpers.S		\
 				plat/imx/imx7/common/imx7_image_load.c		\
 				plat/imx/common/imx_io_storage.c		\

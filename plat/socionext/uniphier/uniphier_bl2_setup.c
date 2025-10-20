@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2025, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -28,7 +28,7 @@ static uintptr_t uniphier_mem_base = UNIPHIER_MEM_BASE;
 static unsigned int uniphier_soc = UNIPHIER_SOC_UNKNOWN;
 static int uniphier_bl2_kick_scp;
 
-void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
+void bl2_early_platform_setup2(u_register_t x0, u_register_t x1,
 				  u_register_t x2, u_register_t x3)
 {
 	uniphier_soc = uniphier_get_soc_id();
@@ -38,7 +38,7 @@ void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 	uniphier_console_setup(uniphier_soc);
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	int skip_scp = 0;
 	int ret;

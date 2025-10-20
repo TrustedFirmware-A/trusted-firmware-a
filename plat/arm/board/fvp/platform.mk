@@ -146,7 +146,7 @@ ifeq ($(filter 1,${RESET_TO_BL2} ${RESET_TO_BL31}),)
 include_fconf_srcs = 1
 endif
 
-ifneq ($(filter 1,${ARM_FW_CONFIG_LOAD_ENABLE} ${TRANSFER_LIST}),)
+ifneq ($(filter 1,${ARM_FW_CONFIG_LOAD_ENABLE} ${TRANSFER_LIST} ${ENABLE_RME}),)
 include_fconf_srcs = 1
 endif
 
@@ -348,7 +348,6 @@ endif
 ifeq (${RESET_TO_BL2},1)
 BL2_SOURCES		+=	plat/arm/board/fvp/${ARCH}/fvp_helpers.S	\
 				plat/arm/board/fvp/fvp_cpu_pwr.c		\
-				plat/arm/board/fvp/fvp_bl2_el3_setup.c		\
 				${FVP_CPU_LIBS}					\
 				${FVP_INTERCONNECT_SOURCES}
 endif

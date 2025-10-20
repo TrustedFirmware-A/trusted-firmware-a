@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2025, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
  *
@@ -56,7 +56,7 @@ const mmap_region_t agilex_plat_mmap[] = {
 
 boot_source_type boot_source = BOOT_SOURCE;
 
-void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
+void bl2_early_platform_setup2(u_register_t x0, u_register_t x1,
 				u_register_t x2, u_register_t x4)
 {
 	static console_t console;
@@ -92,7 +92,7 @@ void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 }
 
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 
 	unsigned long offset = 0;

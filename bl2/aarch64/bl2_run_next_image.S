@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,7 +22,7 @@ func bl2_run_next_image
 	 */
 	bl	disable_mmu_icache_el3
 	tlbi	alle3
-	bl	bl2_el3_plat_prepare_exit
+	bl	bl2_plat_prepare_exit
 
 	ldp	x0, x1, [x20, #ENTRY_POINT_INFO_PC_OFFSET]
 	msr	elr_el3, x0

@@ -1,5 +1,6 @@
 #
 # Copyright 2018-2021 NXP
+# Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -79,7 +80,7 @@ BL2_SOURCES		+=	drivers/io/io_fip.c			\
 				common/desc_image_load.c 		\
 				plat/nxp/common/setup/ls_image_load.c		\
 				plat/nxp/common/setup/ls_io_storage.c		\
-				plat/nxp/common/setup/ls_bl2_el3_setup.c	\
+				plat/nxp/common/setup/ls_bl2_setup.c	\
 				plat/nxp/common/setup/${ARCH}/ls_bl2_mem_params_desc.c
 
 BL31_SOURCES		+=	plat/nxp/common/setup/ls_bl31_setup.c	\

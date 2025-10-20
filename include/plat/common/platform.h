@@ -338,17 +338,9 @@ static inline void bl2_plat_mboot_finish(void)
 #endif /* MEASURED_BOOT || DICE_PROTECTION_ENVIRONMENTs */
 
 /*******************************************************************************
- * Mandatory BL2 at EL3 functions: Must be implemented
- * if RESET_TO_BL2 image is supported
+ * Optional BL2 functions (may be overridden)
  ******************************************************************************/
-void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
-				  u_register_t arg2, u_register_t arg3);
-void bl2_el3_plat_arch_setup(void);
-
-/*******************************************************************************
- * Optional BL2 at EL3 functions (may be overridden)
- ******************************************************************************/
-void bl2_el3_plat_prepare_exit(void);
+void bl2_plat_prepare_exit(void);
 
 /*******************************************************************************
  * Mandatory BL2U functions.

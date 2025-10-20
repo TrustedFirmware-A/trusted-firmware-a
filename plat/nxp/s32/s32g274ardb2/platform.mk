@@ -1,5 +1,6 @@
 #
 # Copyright 2024-2025 NXP
+# Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -65,7 +66,7 @@ BL_COMMON_SOURCES += \
 
 BL2_SOURCES += \
 	${BL_COMMON_SOURCES} \
-	${PLAT_S32G274ARDB2}/plat_bl2_el3_setup.c \
+	${PLAT_S32G274ARDB2}/plat_bl2_setup.c \
 	${PLAT_S32G274ARDB2}/plat_bl2_image_desc.c \
 	${PLAT_S32G274ARDB2}/plat_io_storage.c \
 	${PLAT_S32G274ARDB2}/s32cc_ncore.c \
