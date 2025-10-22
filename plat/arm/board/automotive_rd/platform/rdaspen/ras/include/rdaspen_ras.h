@@ -23,6 +23,8 @@
 #define ERX_CTRL_ED_ENABLE			U(1UL << 0)
 
 /* CPU RAS STATUS Register Defines */
+#define ERX_STATUS_AV				U(1UL << 31)
+#define ERX_STATUS_ADDRV(x)			(((x) & ERX_STATUS_AV) != 0U)
 #define ERX_STATUS_V				U(1UL << 30)
 #define ERX_STATUS_CE				U(1UL << 25)
 #define ERX_STATUS_UE				U(1UL << 29)

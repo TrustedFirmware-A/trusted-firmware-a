@@ -59,6 +59,16 @@
 		clock-output-names = "refclk24mhz";
 	};
 
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+		ras_buffer: cper@ffa00000 {
+			reg = <0x0 0xffa00000 0x0 0x00100000>;
+			no-map;
+		};
+	};
+
 	soc {
 		compatible = "simple-bus";
 		#address-cells = <2>;
@@ -169,6 +179,13 @@
 			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
 		};
 
+		ras-ffh@ffa00000 {
+			compatible = "arm,ras-ffh";
+			reg = <0x0 0xffa00000 0x0 0x00100000>;
+			status-block-size = <0x00010000>;
+			memory-region = <&ras_buffer>;
+			interrupts = <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
+		};
 	};
 
 	psci {
