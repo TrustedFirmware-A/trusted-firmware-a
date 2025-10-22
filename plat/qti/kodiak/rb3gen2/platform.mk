@@ -110,6 +110,7 @@ BL31_SOURCES	+=	plat/qti/qtiseclib/src/qtiseclib_interface_stub.c \
 else
 $(eval $(call add_define,QTISECLIB_PATH))
 # use library provided by QTISECLIB_PATH
+BL31_SOURCES	+=			drivers/qti/sec_core/sec_core_stub.c
 LDFLAGS += -L $(dir $(QTISECLIB_PATH))
 LDLIBS += -l$(patsubst lib%.a,%,$(notdir $(QTISECLIB_PATH)))
 endif

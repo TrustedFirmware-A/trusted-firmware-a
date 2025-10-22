@@ -13,6 +13,7 @@
 #include <drivers/console.h>
 #include <drivers/generic_delay_timer.h>
 #include <drivers/qti/accesscontrol/xpu.h>
+#include <drivers/qti/sec_core/sec_core.h>
 #include <lib/bl_aux_params/bl_aux_params.h>
 #include <lib/coreboot.h>
 #include <lib/spinlock.h>
@@ -99,6 +100,7 @@ void bl31_platform_setup(void)
 	plat_qti_gic_driver_init();
 	plat_qti_gic_init();
 	qti_interrupt_svc_init(bl32_image_ep_info.pc != 0);
+	qti_sec_core_init();
 	qtiseclib_bl31_platform_setup();
 
 	/* set boot state to cold boot complete. */
