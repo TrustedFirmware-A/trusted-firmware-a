@@ -87,6 +87,10 @@ void __no_pauth bl2_main(u_register_t arg0, u_register_t arg1, u_register_t arg2
 	/* Initialize boot source */
 	bl2_plat_preload_setup();
 
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_AUTH_START, PMF_CACHE_MAINT);
+#endif
+
 	if (is_feat_crypto_supported()) {
 #if BL2_RUNS_AT_EL3
 		disable_fpregs_traps_el3();
@@ -101,6 +105,11 @@ void __no_pauth bl2_main(u_register_t arg0, u_register_t arg1, u_register_t arg2
 		enable_fpregs_traps_el3();
 #endif
 	}
+
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_AUTH_END, PMF_CACHE_MAINT);
+#endif
+
 
 	/* Teardown the Measured Boot backend */
 	bl2_plat_mboot_finish();

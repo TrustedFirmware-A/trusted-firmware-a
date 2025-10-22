@@ -137,10 +137,19 @@ void __no_pauth bl1_main(void)
 	 * We currently interpret any image id other than
 	 * BL2_IMAGE_ID as the start of firmware update.
 	 */
-	if (image_id == BL2_IMAGE_ID)
-		bl1_load_bl2();
-	else
+	if (image_id == BL2_IMAGE_ID) {
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL1_AUTH_START, PMF_CACHE_MAINT);
+#endif
+
+	bl1_load_bl2();
+
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL1_AUTH_END, PMF_CACHE_MAINT);
+#endif
+	} else {
 		NOTICE("BL1-FWU: *******FWU Process Started*******\n");
+	}
 
 	if (is_feat_crypto_supported()) {
 		enable_fpregs_traps_el3();
