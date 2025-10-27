@@ -102,7 +102,11 @@ ifeq ($(QTISECLIB_PATH),)
 $(warning QTISECLIB_PATH is not provided while building, using stub implementation. \
 		Please refer to documentation for more details \
 		THIS FIRMWARE WILL NOT BOOT!)
-BL31_SOURCES	+=	plat/qti/qtiseclib/src/qtiseclib_interface_stub.c
+
+PLAT_INCLUDES	+=	-Iinclude/drivers/qti/sec_core/${CHIPSET}
+
+BL31_SOURCES	+=	plat/qti/qtiseclib/src/qtiseclib_interface_stub.c \
+			drivers/qti/sec_core/sec_core.c
 else
 $(eval $(call add_define,QTISECLIB_PATH))
 # use library provided by QTISECLIB_PATH
