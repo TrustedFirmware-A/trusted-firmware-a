@@ -6,7 +6,10 @@
 #include <common/debug.h>
 #include <services/el3_spmd_logical_sp.h>
 #include <services/ffa_svc.h>
+#include <services/lfa_svc.h>
 #include <smccc_helpers.h>
+
+#include <plat/arm/common/plat_arm_lfa_components.h>
 
 #define SPMD_LP_PARTITION_ID SPMD_LP_ID_START
 #define SPMD_LP_UUID {0xe98e43ad, 0xb7db524f, 0x47a3bf57, 0x1588f4e3}
@@ -50,6 +53,38 @@ uintptr_t plat_spmd_logical_sp_smc_handler(unsigned int smc_fid,
 	SMC_RET8(handle, retval.func, retval.arg1, retval.arg2, retval.arg3,
 			retval.arg4, retval.arg5, retval.arg6, retval.arg7);
 }
+
+#if SUPPORT_SP_LIVE_ACTIVATION
+
+static int32_t lfa_sp_prime(struct lfa_component_status *activation)
+{
+	/**
+	 * On the FVP simulation platform, Secure Partitions are assumed to be
+	 * preloaded and authenticated, so skip PRIME. This callback is expected
+	 * to be implemented thoroughly for real platforms.
+	 */
+	return LFA_SUCCESS;
+}
+
+static int32_t lfa_sp_activate(struct lfa_component_status *activation,
+			       uint64_t ep_address, uint64_t context_id)
+{
+	return LFA_SUCCESS;
+}
+
+static struct lfa_component_ops secure_partition_activator = {
+	.prime = lfa_sp_prime,
+	.activate = lfa_sp_activate,
+	.may_reset_cpu = false,
+	.cpu_rendezvous_required = false,
+};
+
+struct lfa_component_ops *get_secure_partition_activator(void)
+{
+	return &secure_partition_activator;
+}
+
+#endif /* SUPPORT_SP_LIVE_ACTIVATION */
 
 /* Register SPMD logical partition  */
 DECLARE_SPMD_LOGICAL_PARTITION(

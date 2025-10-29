@@ -181,6 +181,8 @@ uintptr_t plat_spmd_logical_sp_smc_handler(unsigned int smc_fid,
 		void *handle,
 		u_register_t flags);
 
+struct lfa_component_ops *get_secure_partition_activator(void);
+
 enum lfa_retc convert_ffa_error_code_to_lfa(int32_t ffa_error_code);
 
 enum lfa_retc spmd_lsp_start_request_sp_live_activation(uint16_t lsp_id,
