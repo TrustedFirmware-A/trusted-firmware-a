@@ -222,6 +222,8 @@
 #define FFA_PARTITION_VM_DESTROYED	U(1 << 7)
 #define FFA_PARTITION_DIRECT_REQ2_RECV	U(1 << 9)
 #define FFA_PARTITION_DIRECT_REQ2_SEND	U(1 << 10)
+#define FFA_PARTITION_LIVE_ACTIVATION	U(1 << 11)
+#define FFA_PARTITION_CPU_RENDEZVOUS	U(1 << 12)
 
 /*
  * "vm-availability-messages" values.
