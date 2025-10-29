@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -16,66 +16,11 @@
 
 #define SPMD_LP_MAX_SUPPORTED_SP 10
 
-static void fvp_get_partition_info(void)
-{
-	/*
-	 * This helper invokes FFA_PARTITION_INFO_GET_REGS to obtain partition
-	 * properties of Secure Partitions managed by SPMC. This happens even
-	 * before the normal world is booted. Hafnium SPMC mistakes this as a
-	 * FF-A invocation from NWd. As per FF-A version negotiation protocol,
-	 * Hafnium locks the version of NWd to v1.3 whereas the NWd never got
-	 * an opportunity to register its own framework version.
-	 *
-	 * This patch performs early exit from the helper utility to give NWd
-	 * endpoint/Hypervisor an opportunity to register its FF-A version with
-	 * SPM.
-	 *
-	 * TODO: Integrate this helper function for a new anticipated feature.
-	 */
-	return;
-
-	struct ffa_value ret = { 0 };
-	uint32_t target_uuid[4] = { 0 };
-	static struct ffa_partition_info_v1_1
-		part_info[SPMD_LP_MAX_SUPPORTED_SP] = { 0 };
-
-	uint16_t num_partitions = 0;
-
-	if (!spmd_el3_invoke_partition_info_get(target_uuid, 0, 0, &ret)) {
-		panic();
-	}
-
-	if (is_ffa_error(&ret)) {
-		panic();
-	}
-
-	num_partitions = ffa_partition_info_regs_get_last_idx(&ret) + 1;
-	if (num_partitions > SPMD_LP_MAX_SUPPORTED_SP) {
-		panic();
-	}
-
-	INFO("Number of secure partitions = %d\n", num_partitions);
-
-	for (uint16_t i = 0; i < num_partitions; i++) {
-		INFO("***Start Partition***\n");
-		if (!ffa_partition_info_regs_get_part_info(&ret, i, &part_info[i]))
-			panic();
-		INFO("\tPartition ID: 0x%x\n", part_info[i].ep_id);
-		INFO("\tvCPU count:0x%x\n", part_info[i].execution_ctx_count);
-		INFO("\tProperties: 0x%x\n", part_info[i].properties);
-		INFO("\tUUID: 0x%x 0x%x 0x%x 0x%x\n", part_info[i].uuid[0],
-				part_info[i].uuid[1], part_info[i].uuid[2],
-				part_info[i].uuid[3]);
-		INFO("***End Partition***\n");
-	}
-
-}
 
 static int32_t fvp_spmd_logical_partition_init(void)
 {
 	INFO("FVP SPMD LSP: Init function called.\n");
 
-	fvp_get_partition_info();
 	return 0;
 }
 
