@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited and Contributors. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef EL3_SPMD_LOGICAL_SP_H
@@ -76,6 +76,18 @@ CASSERT(sizeof(struct spmd_lp_desc) == 40, assert_spmd_lp_desc_size_mismatch);
  */
 #define EL3_SPMD_MAX_NUM_LP	U(5)
 
+/*
+ * Maximum number of struct ffa_partition_info_v1_3 descriptors that fit in one
+ * FFA_PARTITION_INFO_GET_REGS_64 response. The ABI lets the callee populate
+ * args3-args17 (15 x 64-bit registers = 120 bytes) in struct ffa_value; each
+ * descriptor consumes sizeof(struct ffa_partition_info_v1_3) = 48 bytes.
+ * Therefore, rounding it means 2 entries per call for FF-A v1.3.
+ */
+#define MAX_INFO_REGS_ENTRIES_PER_CALL	2U
+
+CASSERT(sizeof(struct ffa_partition_info_v1_3) == 48,
+	ffa_partition_info_desc_size_mismatch);
+
 static inline bool is_spmd_lp_id(unsigned int id)
 {
 #if ENABLE_SPMD_LP
@@ -131,7 +143,7 @@ uint64_t spmd_el3_populate_logical_partition_info(void *handle, uint64_t x1,
 
 bool ffa_partition_info_regs_get_part_info(
 	struct ffa_value *args, uint8_t idx,
-	struct ffa_partition_info_v1_1 *partition_info);
+	struct ffa_partition_info_v1_3 *partition_info);
 
 bool spmd_el3_invoke_partition_info_get(
 				const uint32_t target_uuid[4],

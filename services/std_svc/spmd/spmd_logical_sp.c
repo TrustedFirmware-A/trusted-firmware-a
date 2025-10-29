@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,19 +15,6 @@
 #include <services/el3_spmd_logical_sp.h>
 #include <services/spmc_svc.h>
 #include <smccc_helpers.h>
-
-
-/*
- * Maximum ffa_partition_info entries that can be returned by an invocation
- * of FFA_PARTITION_INFO_GET_REGS_64 is size in bytes, of available
- * registers/args in struct ffa_value divided by size of struct
- * ffa_partition_info. For this ABI, arg3-arg17 in ffa_value can be used, i.e.
- * 15 uint64_t fields. For FF-A v1.1, this value should be 5.
- */
-#define MAX_INFO_REGS_ENTRIES_PER_CALL \
-	(uint8_t)((15 * sizeof(uint64_t)) / \
-		  sizeof(struct ffa_partition_info_v1_1))
-CASSERT(MAX_INFO_REGS_ENTRIES_PER_CALL == 5, assert_too_many_info_reg_entries);
 
 #if ENABLE_SPMD_LP
 static bool is_spmd_lp_inited;
@@ -229,7 +216,7 @@ static void spmd_logical_sp_reset_info_regs_ongoing(
 }
 
 static void spmd_fill_lp_info_array(
-	struct ffa_partition_info_v1_1 (*partitions)[EL3_SPMD_MAX_NUM_LP],
+	struct ffa_partition_info_v1_3 (*partitions)[EL3_SPMD_MAX_NUM_LP],
 	uint32_t uuid[4], uint16_t *lp_count_out)
 {
 	uint16_t lp_count = 0;
@@ -257,9 +244,16 @@ static void spmd_fill_lp_info_array(
 				(FFA_PARTITION_INFO_GET_AARCH64_STATE <<
 				 FFA_PARTITION_INFO_GET_EXEC_STATE_SHIFT);
 			if (uuid_is_null) {
-				memcpy(&((*partitions)[array_index].uuid),
+				memcpy(&((*partitions)[array_index].protocol_uuid),
 					  &lp->uuid, sizeof(lp->uuid));
 			}
+
+			/* Zero the Image UUID. */
+			memset(&((*partitions)[array_index].image_uuid),
+					  0, sizeof(lp->uuid));
+
+			/* Same as SPMD's version. */
+			(*partitions)[array_index].ffa_version = FFA_VERSION_COMPILED;
 		}
 	}
 
@@ -353,21 +347,21 @@ void spmd_logical_sp_set_spmc_failure(void)
 /*
  * This function takes an ffa_value structure populated with partition
  * information from an FFA_PARTITION_INFO_GET_REGS ABI call, extracts
- * the values and writes it into a ffa_partition_info_v1_1 structure for
+ * the values and writes it into a ffa_partition_info structure for
  * other code to consume.
  */
 bool ffa_partition_info_regs_get_part_info(
 	struct ffa_value *args, uint8_t idx,
-	struct ffa_partition_info_v1_1 *partition_info)
+	struct ffa_partition_info_v1_3 *partition_info)
 {
 	uint64_t *arg_ptrs;
-	uint64_t info, uuid_lo, uuid_high;
+	uint64_t info, uuid_lo, uuid_high, image_uuid_lo, image_uuid_high, version;
 
 	/*
-	 * Each partition information is encoded in 3 registers, so there can be
-	 * a maximum of 5 entries.
+	 * Each partition information is encoded in 6 registers, so there can be
+	 * a maximum of 2 entries.
 	 */
-	if (idx >= 5 || partition_info == NULL) {
+	if (idx >= MAX_INFO_REGS_ENTRIES_PER_CALL || partition_info == NULL) {
 		return false;
 	}
 
@@ -376,7 +370,7 @@ bool ffa_partition_info_regs_get_part_info(
 	 * function, arg1 is reserved, arg2 encodes indices. arg3 and greater
 	 * values reflect partition properties.
 	 */
-	arg_ptrs = (uint64_t *)args + ((idx * 3) + 3);
+	arg_ptrs = (uint64_t *)args + ((idx * 6) + 3);
 	info = *arg_ptrs;
 
 	arg_ptrs++;
@@ -385,14 +379,27 @@ bool ffa_partition_info_regs_get_part_info(
 	arg_ptrs++;
 	uuid_high = *arg_ptrs;
 
-	partition_info->ep_id = (uint16_t)(info & 0xFFFFU);
-	partition_info->execution_ctx_count = (uint16_t)((info >> 16) & 0xFFFFU);
-	partition_info->properties = (uint32_t)(info >> 32);
-	partition_info->uuid[0] = (uint32_t)(uuid_lo & 0xFFFFFFFFU);
-	partition_info->uuid[1] = (uint32_t)((uuid_lo >> 32) & 0xFFFFFFFFU);
-	partition_info->uuid[2] = (uint32_t)(uuid_high & 0xFFFFFFFFU);
-	partition_info->uuid[3] = (uint32_t)((uuid_high >> 32) & 0xFFFFFFFFU);
+	arg_ptrs++;
+	image_uuid_lo = *arg_ptrs;
 
+	arg_ptrs++;
+	image_uuid_high = *arg_ptrs;
+
+	arg_ptrs++;
+	version = *arg_ptrs;
+
+	partition_info->ep_id = (uint16_t)info;
+	partition_info->execution_ctx_count = (uint16_t)(info >> 16);
+	partition_info->properties = (uint32_t)(info >> 32);
+	partition_info->protocol_uuid[0] = (uint32_t)uuid_lo;
+	partition_info->protocol_uuid[1] = (uint32_t)(uuid_lo >> 32);
+	partition_info->protocol_uuid[2] = (uint32_t)uuid_high;
+	partition_info->protocol_uuid[3] = (uint32_t)(uuid_high >> 32);
+	partition_info->image_uuid[0] = (uint32_t)image_uuid_lo;
+	partition_info->image_uuid[1] = (uint32_t)(image_uuid_lo >> 32);
+	partition_info->image_uuid[2] = (uint32_t)image_uuid_high;
+	partition_info->image_uuid[3] = (uint32_t)(image_uuid_high >> 32);
+	partition_info->ffa_version = (uint32_t)version;
 	return true;
 }
 
@@ -414,7 +421,7 @@ uint64_t spmd_el3_populate_logical_partition_info(void *handle, uint64_t x1,
 	uint32_t w3;
 	uint16_t start_index;
 	uint16_t tag;
-	static struct ffa_partition_info_v1_1 partitions[EL3_SPMD_MAX_NUM_LP];
+	static struct ffa_partition_info_v1_3 partitions[EL3_SPMD_MAX_NUM_LP];
 	uint16_t lp_count = 0;
 	uint16_t max_idx = 0;
 	uint16_t curr_idx = 0;
@@ -462,12 +469,12 @@ uint64_t spmd_el3_populate_logical_partition_info(void *handle, uint64_t x1,
 	max_idx = lp_count - 1;
 	num_entries_to_ret = (max_idx - start_index) + 1;
 	num_entries_to_ret =
-		MIN(num_entries_to_ret, MAX_INFO_REGS_ENTRIES_PER_CALL);
+		MIN(num_entries_to_ret, (uint8_t)MAX_INFO_REGS_ENTRIES_PER_CALL);
 	curr_idx = start_index + num_entries_to_ret - 1;
 	assert(curr_idx <= max_idx);
 
 	ret.func = FFA_SUCCESS_SMC64;
-	ret.arg2 = (uint64_t)((sizeof(struct ffa_partition_info_v1_1) & 0xFFFFU) << 48);
+	ret.arg2 = (uint64_t)((sizeof(struct ffa_partition_info_v1_3) & 0xFFFFU) << 48);
 	ret.arg2 |= (uint64_t)(curr_idx << 16);
 	ret.arg2 |= (uint64_t)max_idx;
 
@@ -477,10 +484,20 @@ uint64_t spmd_el3_populate_logical_partition_info(void *handle, uint64_t x1,
 					 partitions[idx].properties);
 		arg_ptrs++;
 		if (is_null_uuid(target_uuid)) {
+			/* Protocol UUID occupies two 64-bit registers. */
 			spmd_pack_lp_uuid(arg_ptrs, (arg_ptrs + 1),
-					  partitions[idx].uuid);
+					  partitions[idx].protocol_uuid);
 		}
 		arg_ptrs += 2;
+
+		/* Image UUID occupies two 64-bit registers. */
+		spmd_pack_lp_uuid(arg_ptrs, (arg_ptrs + 1),
+					  partitions[idx].image_uuid);
+		arg_ptrs += 2;
+
+		/* FF-A version. */
+		*arg_ptrs = partitions[idx].ffa_version;
+		arg_ptrs += 1;
 	}
 
 	SMC_RET18(handle, ret.func, ret.arg1, ret.arg2, ret.arg3, ret.arg4,

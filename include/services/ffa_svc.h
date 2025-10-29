@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -400,6 +400,17 @@ struct ffa_partition_info_v1_1 {
 	uint16_t execution_ctx_count;
 	uint32_t properties;
 	uint32_t uuid[4];
+};
+
+/* Extended structure for FF-A v1.3. */
+struct ffa_partition_info_v1_3 {
+	uint16_t ep_id;
+	uint16_t execution_ctx_count;
+	uint32_t properties;
+	uint32_t protocol_uuid[4];
+	uint32_t image_uuid[4];
+	uint32_t ffa_version;
+	uint32_t reserved;
 };
 
 #endif /* FFA_SVC_H */
