@@ -104,11 +104,13 @@ $(warning QTISECLIB_PATH is not provided while building, using stub implementati
 		THIS FIRMWARE WILL NOT BOOT!)
 
 PLAT_INCLUDES	+=	-Iinclude/drivers/qti/sec_core/${CHIPSET} \
-			-Iinclude/drivers/qti/qtimer/${CHIPSET}
+			-Iinclude/drivers/qti/qtimer/${CHIPSET} \
+			-Iinclude/drivers/qti/watchdog/${CHIPSET}
 
 BL31_SOURCES	+=	plat/qti/qtiseclib/src/qtiseclib_interface_stub.c \
 			drivers/qti/sec_core/sec_core.c \
-			drivers/qti/qtimer/qtimer.c
+			drivers/qti/qtimer/qtimer.c \
+			drivers/qti/watchdog/watchdog.c
 else
 $(eval $(call add_define,QTISECLIB_PATH))
 # use library provided by QTISECLIB_PATH
