@@ -21,6 +21,7 @@
 #define FFA_ERROR_INTERRUPTED		-5
 #define FFA_ERROR_DENIED		-6
 #define FFA_ERROR_RETRY			-7
+#define FFA_ERROR_ABORTED		-8
 
 /* The macros below are used to identify FFA calls from the SMC function ID */
 #define FFA_FNUM_MIN_VALUE	U(0x60)

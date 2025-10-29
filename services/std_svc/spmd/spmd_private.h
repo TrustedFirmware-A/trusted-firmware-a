@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -70,6 +70,12 @@ typedef struct spmd_spm_core_context {
 /* Define SPMD target function IDs for framework messages to the SPMC */
 #define SPMD_FWK_MSG_FFA_VERSION_REQ		U(0x8)
 #define SPMD_FWK_MSG_FFA_VERSION_RESP		U(0x9)
+
+/* Define LSP framework message for SP live activation flow. */
+#define LSP_FWK_MSG_START_LIVE_ACTIVATION_REQ	U(0xC)
+#define LSP_FWK_MSG_START_LIVE_ACTIVATION_RESP	U(0xD)
+#define LSP_FWK_MSG_FINISH_LIVE_ACTIVATION_REQ	U(0xE)
+#define LSP_FWK_MSG_FINISH_LIVE_ACTIVATION_RESP	U(0xF)
 
 /* Function to build SPMD to SPMC message */
 void spmd_build_spmc_message(gp_regs_t *gpregs, uint8_t target,

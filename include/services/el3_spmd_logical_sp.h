@@ -8,6 +8,7 @@
 #include <common/bl_common.h>
 #include <lib/cassert.h>
 #include <services/ffa_svc.h>
+#include <services/lfa_svc.h>
 
 /*******************************************************************************
  * Structure definition, typedefs & constants for the SPMD Logical Partitions.
@@ -158,6 +159,9 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 				 uint64_t x2,
 				 uint64_t x3,
 				 uint64_t x4,
+				 uint64_t x5,
+				 uint64_t x6,
+				 uint64_t x7,
 				 void *handle,
 				 struct ffa_value *retval);
 
@@ -176,5 +180,17 @@ uintptr_t plat_spmd_logical_sp_smc_handler(unsigned int smc_fid,
 		void *cookie,
 		void *handle,
 		u_register_t flags);
+
+enum lfa_retc convert_ffa_error_code_to_lfa(int32_t ffa_error_code);
+
+enum lfa_retc spmd_lsp_start_request_sp_live_activation(uint16_t lsp_id,
+						uint16_t sp_id,
+						uintptr_t image_base,
+						uint32_t image_page_count,
+						uintptr_t manifest_base,
+						uint32_t manifest_page_count);
+
+enum lfa_retc spmd_lsp_finish_request_sp_live_activation(uint16_t lsp_id,
+						 uint16_t sp_id);
 
 #endif /* EL3_SPMD_LOGICAL_SP_H */

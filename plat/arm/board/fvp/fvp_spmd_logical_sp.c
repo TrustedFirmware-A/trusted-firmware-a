@@ -43,7 +43,7 @@ uintptr_t plat_spmd_logical_sp_smc_handler(unsigned int smc_fid,
 	/*
 	 * Forward the SMC as direct request.
 	 */
-	if (!spmd_el3_ffa_msg_direct_req(send_recv_id, x2, x3, x4, handle, &retval)) {
+	if (!spmd_el3_ffa_msg_direct_req(send_recv_id, x2, x3, x4, 0U, 0U, 0U, handle, &retval)) {
 		panic();
 	}
 
