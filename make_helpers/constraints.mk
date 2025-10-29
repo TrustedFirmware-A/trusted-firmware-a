@@ -63,10 +63,24 @@ ifeq (${ENABLE_SPMD_LP}, 1)
 ifneq (${SPD},spmd)
         $(error Error: ENABLE_SPMD_LP requires SPD=spmd.)
 endif
+
 ifeq ($(SPMC_AT_EL3),1)
         $(error SPMC at EL3 not supported when enabling SPMD Logical partitions.)
 endif
 endif
+
+ifeq (${SUPPORT_SP_LIVE_ACTIVATION}, 1)
+ifeq (${LFA_SUPPORT}, 0)
+        $(error Error: SUPPORT_SP_LIVE_ACTIVATION requires LFA_SUPPORT=1)
+endif #(LFA_SUPPORT)
+ifeq (${ENABLE_SPMD_LP}, 0)
+        $(error Error: SUPPORT_SP_LIVE_ACTIVATION requires ENABLE_SPMD_LP=1)
+endif #(ENABLE_SPMD_LP)
+ifeq (${SPMD_SPM_AT_SEL2},0)
+        $(error Error: SUPPORT_SP_LIVE_ACTIVATION requires SPMD_SPM_AT_SEL2=1)
+endif #(SPMD_SPM_AT_SEL2)
+        $(warning SUPPORT_SP_LIVE_ACTIVATION is an experimental feature)
+endif #(SUPPORT_SP_LIVE_ACTIVATION)
 
 ifneq (${SPD},none)
 ifeq (${ARCH},aarch32)
