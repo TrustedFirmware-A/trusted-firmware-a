@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2025 NXP
+ * Copyright 2020-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,6 +9,7 @@
 #include <common/debug.h>
 #include <ddr_utils.h>
 #include <mmio_poll.h>
+#include <s32cc-clk-drv.h>
 
 static uint32_t get_mail(uint32_t *mail);
 static uint32_t ack_mail(void);
@@ -57,6 +58,10 @@ uint32_t set_axi_parity(void)
 	/* For LPDDR4 Set DFI1_ENABLED to 0x1 */
 	if (is_lpddr4()) {
 		mmio_setbits_32(DDR_SS_REG, DDR_SS_DFI_1_ENABLED);
+	}
+
+	if (plat_deassert_ddr_reset() != 0) {
+		return DEASSERT_FAILED;
 	}
 
 	/* Enable HIF, CAM Queueing */
