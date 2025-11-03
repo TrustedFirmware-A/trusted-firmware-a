@@ -28,10 +28,11 @@ void *cm_get_context(size_t security_state)
 	return &bl1_cpu_context[security_state];
 }
 
-#if ENABLE_RME
+#if BL2_RUNS_AT_EL3
 /*******************************************************************************
- * This function prepares the entry point information to run BL2 in Root world,
- * i.e. EL3, for the case when FEAT_RME is enabled.
+ * This function prepares the entry point information to run BL2 in EL3. BL2 is
+ * set to run at EL3 in case of RESET_TO_BL2=1 (not applicable for BL1) or RME
+ * is enabled.
  ******************************************************************************/
 void bl1_prepare_next_image(unsigned int image_id)
 {
@@ -114,4 +115,4 @@ void bl1_prepare_next_image(unsigned int image_id)
 
 	print_entry_point_info(next_bl_ep);
 }
-#endif /* ENABLE_RME */
+#endif /* BL2_RUNS_AT_EL3 */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2021, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,7 +9,6 @@
 #include <el3_common_macros.S>
 
 	.globl	bl1_entrypoint
-	.globl	bl1_run_bl2_in_root
 
 
 	/* -----------------------------------------------------
@@ -43,23 +42,24 @@ func bl1_entrypoint
 	bl	bl1_main
 
 	/* --------------------------------------------------
-	 * Do the transition to next boot image.
+	 * Do the transition to next boot image. BL2 is always compiled to run at
+	 * EL3 when BL2_RUNS_AT_EL3 is set.
 	 * --------------------------------------------------
 	 */
-#if ENABLE_RME
-	b	bl1_run_bl2_in_root
+#if BL2_RUNS_AT_EL3
+	b	bl1_run_bl2_in_el3
 #else
 	b	el3_exit
 #endif
 endfunc bl1_entrypoint
 
 	/* -----------------------------------------------------
-	 * void bl1_run_bl2_in_root();
-	 * This function runs BL2 in root/EL3 when RME is enabled.
+	 * void bl1_run_bl2_in_el3();
+	 * This function runs BL2 in EL3.
 	 * -----------------------------------------------------
 	 */
-
-func bl1_run_bl2_in_root
+#if BL2_RUNS_AT_EL3
+func bl1_run_bl2_in_el3
 	/* read bl2_ep_info */
 	adrp	x20, bl2_ep_info
 	add	x20, x20, :lo12:bl2_ep_info
@@ -83,4 +83,5 @@ func bl1_run_bl2_in_root
 	ldp	x2, x3, [x20, #(ENTRY_POINT_INFO_ARGS_OFFSET + 0x10)]
 	ldp	x0, x1, [x20, #(ENTRY_POINT_INFO_ARGS_OFFSET + 0x0)]
 	exception_return
-endfunc bl1_run_bl2_in_root
+endfunc bl1_run_bl2_in_el3
+#endif /* BL2_RUNS_AT_EL3 */
