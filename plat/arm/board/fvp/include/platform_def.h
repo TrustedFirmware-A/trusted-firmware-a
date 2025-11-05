@@ -309,6 +309,17 @@ FVP_TRUSTED_SRAM_SIZE == 512
 	 FVP_BL2_ROMLIB_OPTIMIZATION)
 #endif
 
+/*
+ * Enabling CPU library code that requires to set build flags
+ * HW_ASSISTED_COHERENCY=1 and USE_COHERENT_MEM=0 along with RESET_TO_BL2=1
+ * (BL2 in EL3 case) causes increase in resident text size of BL2 beyond 4K.
+ * This is due to FVP including many CPU libs. So set BL2_TEXT_RESIDENT_LIMIT
+ * to 8K.
+ */
+#if defined(IMAGE_BL2) && BL2_RUNS_AT_EL3 && SEPARATE_CODE_AND_RODATA
+#define BL2_TEXT_RESIDENT_LIMIT		(SZ_8K)
+#endif
+
 #if RESET_TO_BL31
 /* Size of Trusted SRAM - the first 4KB of shared memory - GPT L0 Tables */
 #define PLAT_ARM_MAX_BL31_SIZE		(PLAT_ARM_TRUSTED_SRAM_SIZE - \
