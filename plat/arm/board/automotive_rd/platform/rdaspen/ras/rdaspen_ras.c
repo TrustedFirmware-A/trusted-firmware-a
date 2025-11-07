@@ -9,6 +9,7 @@
 #include <plat/arm/css/common/css_pm.h>
 #include <plat/common/platform.h>
 
+#include <cper.h>
 #include <platform_def.h>
 #include <rdaspen_ras.h>
 
@@ -102,6 +103,15 @@ static int rdaspen_ras_cpu_intr_handler(
 	}
 
 	WARN("CPU RAS: Error Status value : 0x%lx\n", read_erxstatus_el1());
+
+	size_t esb_len =
+		cper_write_cpu_record((void *)RDASPEN_CPER_BUF_BASE, RDASPEN_CPER_BUF_SIZE);
+
+	if (esb_len) {
+		flush_dcache_range(RDASPEN_CPER_BUF_BASE, esb_len);
+		VERBOSE("RAS: ESB written len=%zu @0x%lx\n",
+				esb_len, (unsigned long)RDASPEN_CPER_BUF_BASE);
+	}
 
 	/* Clear the Inband Error. Inband Errors are CE and DE */
 	errx_status = read_erxstatus_el1();

@@ -81,6 +81,13 @@ BL31_SOURCES	+=	${RDASPEN_CPU_SOURCES}	\
 			plat/arm/common/arm_nor_psci_mem_protect.c \
 			drivers/arm/dsu/dsu.c
 
+ifeq ($(ENABLE_FEAT_RAS),1)
+ifeq ($(HANDLE_EA_EL3_FIRST_NS),1)
+BL31_SOURCES 	+=	$(RDASPEN_BASE)/../common/cper.c
+PLAT_INCLUDES	+=	-I$(RDASPEN_BASE)/../common/include
+endif
+endif
+
 ifeq (${TRUSTED_BOARD_BOOT}, 1)
 BL2_SOURCES	+=	${RDASPEN_BASE}/rdaspen_trusted_board_boot.c
 FIP_BL2_ARGS	:=	tb-fw
