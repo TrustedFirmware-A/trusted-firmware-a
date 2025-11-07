@@ -589,8 +589,8 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	 *  debug registers, other than those registers that are controlled by
 	 *  MDCR_EL3.TDOSA.
 	 */
-	mdcr_el3 |= ((MDCR_SDD_BIT | MDCR_SPD32(MDCR_SPD32_DISABLE))
-			& ~(MDCR_TDA_BIT | MDCR_TDOSA_BIT)) ;
+	mdcr_el3 |= MDCR_SDD_BIT | MDCR_SPD32(MDCR_SPD32_DISABLE);
+	mdcr_el3 &= ~(MDCR_TDA_BIT | MDCR_TDOSA_BIT);
 	write_ctx_reg(state, CTX_MDCR_EL3, mdcr_el3);
 
 #if IMAGE_BL31
