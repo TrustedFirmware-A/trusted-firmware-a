@@ -43,6 +43,7 @@ Platform Ports
    rpi4
    rpi5
    rcar-gen3
+   rz-a3
    rz-g2
    rockchip
    socionext-uniphier
