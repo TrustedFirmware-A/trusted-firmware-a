@@ -108,6 +108,7 @@ static int rdaspen_ras_cpu_intr_handler(
 		cper_write_cpu_record((void *)RDASPEN_CPER_BUF_BASE, RDASPEN_CPER_BUF_SIZE);
 
 	if (esb_len) {
+		print_cper((const void *)RDASPEN_CPER_BUF_BASE);
 		flush_dcache_range(RDASPEN_CPER_BUF_BASE, esb_len);
 		VERBOSE("RAS: ESB written len=%zu @0x%lx\n",
 				esb_len, (unsigned long)RDASPEN_CPER_BUF_BASE);

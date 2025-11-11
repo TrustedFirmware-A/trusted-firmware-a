@@ -330,3 +330,239 @@ size_t cper_write_cpu_record(void *buf, size_t buf_size)
 
 	return size;
 }
+
+static void print_guid(struct efi_guid g)
+{
+	VERBOSE("  SectionType   = {%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+		g.time_low, g.time_mid, g.time_hi_and_version,
+		g.clock_seq_and_node[0], g.clock_seq_and_node[1],
+		g.clock_seq_and_node[2], g.clock_seq_and_node[3],
+		g.clock_seq_and_node[4], g.clock_seq_and_node[5],
+		g.clock_seq_and_node[6], g.clock_seq_and_node[7]);
+}
+
+static void print_cache_error_info(uint64_t info)
+{
+	uint64_t validation = (info & 0x7FULL);
+	unsigned int tx = (unsigned int)((info & ARM_CACHE_ERR_TX_MASK) >>
+				 ARM_CACHE_ERR_TX_SHIFT);
+	unsigned int op = (unsigned int)((info & ARM_CACHE_ERR_OP_MASK) >>
+				 ARM_CACHE_ERR_OP_SHIFT);
+	unsigned int lvl = (unsigned int)((info & ARM_CACHE_ERR_LEVEL_MASK) >>
+				  ARM_CACHE_ERR_LEVEL_SHIFT);
+	unsigned int pcc = (unsigned int)((info >> ARM_CACHE_ERR_PCC_BIT) & 1U);
+	unsigned int corr = (unsigned int)((info >> ARM_CACHE_ERR_CORR_BIT) & 1U);
+	unsigned int ppc = (unsigned int)((info >> ARM_CACHE_ERR_PRECISE_PC_BIT) & 1U);
+	unsigned int rpc = (unsigned int)((info >> ARM_CACHE_ERR_RESTART_PC_BIT) & 1U);
+	uint64_t reserved = (info >> 29);
+
+	VERBOSE("  CacheErrorInfo:\n");
+	VERBOSE("    ValidationBit           = 0x%04llx\n",
+		(unsigned long long)validation);
+	VERBOSE("    TransactionType         = %u\n", tx);
+	VERBOSE("    Operation               = %u\n", op);
+	VERBOSE("    Level                   = %u\n", lvl);
+	VERBOSE("    ProcessorContextCorrupt = %u\n", pcc);
+	VERBOSE("    Corrected               = %u\n", corr);
+	VERBOSE("    PrecisePC               = %u\n", ppc);
+	VERBOSE("    RestartablePC           = %u\n", rpc);
+	VERBOSE("    Reserved[63:29]         = 0x%08llx\n",
+		(unsigned long long)reserved);
+}
+
+static void
+print_esb_header(const struct ACPI_GENERIC_ERROR_STATUS_BLOCK_HEADER *esb)
+{
+	if (esb == NULL) {
+		WARN("CPER: null ESB header\n");
+		return;
+	}
+	VERBOSE("ESB.Header:\n");
+	VERBOSE("  BlockStatus   = 0x%08x\n", esb->BlockStatus);
+	VERBOSE("  RawDataOffset = 0x%08x\n", esb->RawDataOffset);
+	VERBOSE("  RawDataLength = %u\n", esb->RawDataLength);
+	VERBOSE("  DataLength    = %u\n", esb->DataLength);
+	VERBOSE("  ErrorSeverity = %u\n", esb->ErrorSeverity);
+}
+
+static void
+print_data_entry_header(const struct ACPI_GENERIC_ERROR_DATA_ENTRY_HEADER *de)
+{
+	if (de == NULL) {
+		WARN("CPER: null Data Entry header\n");
+		return;
+	}
+	VERBOSE("DataEntry:\n");
+	print_guid(de->SectionType);
+	VERBOSE("  ErrorSeverity = %u\n", de->ErrorSeverity);
+	VERBOSE("  Revision      = 0x%04x\n", de->Revision);
+	VERBOSE("  ValidationBits= 0x%02x\n", de->ValidationBits);
+	VERBOSE("  Flags         = 0x%02x\n", de->Flags);
+	VERBOSE("  ErrorDataLen  = %u\n", de->ErrorDataLength);
+}
+
+static void
+print_cpu_section_header(const struct EFI_ARM_PROCESSOR_ERROR_RECORD_DATA *sec)
+{
+	if (sec == NULL) {
+		WARN("CPER: null CPU section\n");
+		return;
+	}
+	VERBOSE("CPU Section:\n");
+	VERBOSE("  ValidationBit = 0x%08x\n", sec->CpuInfo.ValidationBit);
+	VERBOSE("  ErrInfoNum    = %u\n", sec->CpuInfo.ErrInfoNum);
+	VERBOSE("  CtxtInfoNum   = %u\n", sec->CpuInfo.ContextInfoNum);
+	VERBOSE("  SectionLength = %u\n", sec->CpuInfo.SectionLength);
+	VERBOSE("  MPIDR_EL1     = 0x%016llx\n",
+		(unsigned long long)sec->CpuInfo.MPIDR_EL1);
+	VERBOSE("  MIDR_EL1      = 0x%016llx\n",
+		(unsigned long long)sec->CpuInfo.MIDR_EL1);
+	VERBOSE("  RunState      = %u\n", sec->CpuInfo.RunState);
+	VERBOSE("  PsciState     = %u\n", sec->CpuInfo.PsciState);
+}
+
+static void
+print_error_info(const struct EFI_ARM_PROCESSOR_ERROR_INFORMATION *ei)
+{
+	if (ei == NULL) {
+		WARN("CPER: null ErrorInfo\n");
+		return;
+	}
+	VERBOSE("ErrorInfo[0]:\n");
+	VERBOSE("  Version       = %u\n", ei->Version);
+	VERBOSE("  Length        = %u\n", ei->Length);
+	VERBOSE("  ValidationBit = 0x%04x\n", ei->ValidationBit);
+	VERBOSE("  Type          = %u\n", ei->Type);
+	VERBOSE("  MultipleError = %u\n", ei->MultipleError);
+	VERBOSE("  Flags         = 0x%02x\n", ei->Flags);
+	VERBOSE("  ErrorInfo     = 0x%016llx\n",
+		(unsigned long long)ei->ErrorInfo);
+
+	if (ei->Type == ARM_ERROR_TYPE_CACHE &&
+	    (ei->ValidationBit & EFI_ARM_PROC_ERROR_INFO_ERROR_INFO_VALID) &&
+	    ei->ErrorInfo != 0) {
+		print_cache_error_info(ei->ErrorInfo);
+	}
+
+	VERBOSE("  VirtFaultAddr = 0x%016llx\n",
+		(unsigned long long)ei->VirtualFaultAddress);
+	VERBOSE("  PhysFaultAddr = 0x%016llx\n",
+		(unsigned long long)ei->PhysicalFaultAddress);
+}
+
+static void
+print_context_block(const struct EFI_ARM_PROCESSOR_CONTEXT_INFORMATION *c,
+		    unsigned int idx)
+{
+	if (c == NULL) {
+		WARN("CPER: null Context block\n");
+		return;
+	}
+	VERBOSE("Context[%u]: type=%u size=%u\n", idx,
+		c->Hdr.RegisterContextType, c->Hdr.RegisterArraySize);
+
+	switch (c->Hdr.RegisterContextType) {
+	case EFI_ARM_CONTEXT_INFO_REG_TYPE_4:
+		VERBOSE("  GPR x0..x3: %016llx %016llx %016llx %016llx\n",
+			(unsigned long long)c->RegisterArray.Type4Gpr.X[0],
+			(unsigned long long)c->RegisterArray.Type4Gpr.X[1],
+			(unsigned long long)c->RegisterArray.Type4Gpr.X[2],
+			(unsigned long long)c->RegisterArray.Type4Gpr.X[3]);
+		VERBOSE("  SP = 0x%016llx\n",
+			(unsigned long long)c->RegisterArray.Type4Gpr.SP);
+		break;
+
+	case EFI_ARM_CONTEXT_INFO_REG_TYPE_5:
+		VERBOSE("  EL1: SPSR=0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.SPSR_EL1);
+		VERBOSE("  EL1: ELR=0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.ELR_EL1);
+		VERBOSE("  EL1: ESR=0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.ESR_EL1);
+		VERBOSE("  EL1: FAR=0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.FAR_EL1);
+		VERBOSE("  ISR_EL1    = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.ISR_EL1);
+		VERBOSE("  MAIR_EL1   = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.MAIR_EL1);
+		VERBOSE("  MIDR_EL1   = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.MIDR_EL1);
+		VERBOSE("  MPIDR_EL1  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.MPIDR_EL1);
+		VERBOSE("  SCTLR_EL1  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.SCTLR_EL1);
+		VERBOSE("  SP_EL0     = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.SP_EL0);
+		VERBOSE("  SP_EL1     = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.SP_EL1);
+		VERBOSE("  TCR_EL1    = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TCR_EL1);
+		VERBOSE("  TPIDR_EL0  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TPIDR_EL0);
+		VERBOSE("  TPIDR_EL1  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TPIDR_EL1);
+		VERBOSE("  TPIDRRO_EL0= 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TPIDRRO_EL0);
+		VERBOSE("  TTBR0_EL1  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TTBR0_EL1);
+		VERBOSE("  TTBR1_EL1  = 0x%016llx\n",
+			(unsigned long long)
+				c->RegisterArray.Type5SysRegs.TTBR1_EL1);
+		break;
+
+	default:
+		VERBOSE("  Unknown context type %u\n",
+			c->Hdr.RegisterContextType);
+		break;
+	}
+}
+
+static void
+print_contexts(const struct EFI_ARM_PROCESSOR_ERROR_RECORD_DATA *sec)
+{
+	for (unsigned int i = 0; i < sec->CpuInfo.ContextInfoNum; i++)
+		print_context_block(&sec->CpuContextInfo[i], i);
+}
+
+/* Dump the CPER buffer contents */
+void print_cper(const void *buf)
+{
+	if (!buf) {
+		WARN("%s : null buffer\n", __func__);
+		return;
+	}
+
+	const struct ACPI_GENERIC_ERROR_STATUS_BLOCK_HEADER *esb = buf;
+	const struct ACPI_GENERIC_ERROR_DATA_ENTRY_HEADER *de =
+		(const void *)(esb + 1);
+	const struct EFI_ARM_PROCESSOR_ERROR_RECORD_DATA *sec =
+		(const void *)(de + 1);
+	const struct EFI_ARM_PROCESSOR_ERROR_INFORMATION *ei =
+		&sec->CpuErrInfo[0];
+
+	VERBOSE("\n========== CPER DUMP ==========\n");
+
+	print_esb_header(esb);
+	print_data_entry_header(de);
+	print_cpu_section_header(sec);
+	print_error_info(ei);
+	print_contexts(sec);
+
+	VERBOSE("========== END OF CPER DUMP ==========\n\n");
+}
