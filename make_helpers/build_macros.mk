@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -369,6 +369,7 @@ endef
 #   $(2) = source file (%.c)
 #   $(3) = library name
 #   $(4) = uppercase name of the library
+#   $(5) = optional list of cflags that needed to be removed
 define MAKE_C_LIB
 $(eval OBJ := $(1)/$(patsubst %.c,%.o,$(notdir $(2))))
 $(eval DEP := $(patsubst %.o,%.d,$(OBJ)))
@@ -376,7 +377,7 @@ $(eval LIB := $(notdir $(1)))
 
 $(OBJ): $(2) $(filter-out %.d,$(MAKEFILE_LIST)) | $$$$(@D)/
 	$$(s)echo "  CC      $$<"
-	$$(q)$($(ARCH)-cc) $$(LIB$(4)_CFLAGS) $$(TF_CFLAGS) $(call MAKE_DEP,$(DEP),$(OBJ)) -c $$< -o $$@
+	$$(q)$($(ARCH)-cc) $$(LIB$(4)_CFLAGS) $$(filter-out $(5),$$(TF_CFLAGS)) $(call MAKE_DEP,$(DEP),$(OBJ)) -c $$< -o $$@
 
 -include $(DEP)
 
@@ -488,10 +489,11 @@ endef
 #   $(2) = list of source files
 #   $(3) = name of the library
 #   $(4) = uppercase name of the library
+#   $(5) = optional list of cflags that needed to be removed
 define MAKE_LIB_OBJS
         $(eval C_OBJS := $(filter %.c,$(2)))
         $(eval REMAIN := $(filter-out %.c,$(2)))
-        $(eval $(foreach obj,$(C_OBJS),$(call MAKE_C_LIB,$(1),$(obj),$(3),$(4))))
+        $(eval $(foreach obj,$(C_OBJS),$(call MAKE_C_LIB,$(1),$(obj),$(3),$(4),$(5))))
 
         $(eval S_OBJS := $(filter %.S,$(REMAIN)))
         $(eval REMAIN := $(filter-out %.S,$(REMAIN)))
@@ -532,6 +534,7 @@ endef
 # MAKE_LIB macro defines the targets and options to build each BL image.
 # Arguments:
 #   $(1) = Library name
+#   $(2) = Optinal list of cflags needed to removed
 define MAKE_LIB
         $(eval BL         := $(call uppercase,$(1)))
         $(eval BUILD_DIR  := ${BUILD_PLAT}/lib$(1))
@@ -540,7 +543,7 @@ define MAKE_LIB
         $(eval SOURCES    := $(LIB$(BL)_SRCS))
         $(eval OBJS       := $(addprefix $(BUILD_DIR)/,$(call SOURCES_TO_OBJS,$(SOURCES))))
 
-$(eval $(call MAKE_LIB_OBJS,$(BUILD_DIR),$(SOURCES),$(1),$(BL)))
+$(eval $(call MAKE_LIB_OBJS,$(BUILD_DIR),$(SOURCES),$(1),$(BL),$(2)))
 
 libraries: ${LIB_DIR}/lib$(1).a
 ifeq ($($(ARCH)-ld-id),arm-link)
