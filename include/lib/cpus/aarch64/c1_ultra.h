@@ -26,4 +26,9 @@
 #define C1_ULTRA_SVCRSM					S0_3_C4_C2_3
 #define C1_ULTRA_SVCRZA					S0_3_C4_C4_3
 
+/*******************************************************************************
+ * CPU Auxiliary control register 6 specific definitions
+ ******************************************************************************/
+#define C1_ULTRA_IMP_CPUACTLR6_EL1				S3_0_C15_C8_1
+
 #endif /* C1_ULTRA_H */
