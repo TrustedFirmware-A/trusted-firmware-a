@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
- * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+ * Copyright (c) 2024-2026, Altera Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -208,6 +208,14 @@
 #define A530_JTAG_ID							0x3000
 #define A534_JTAG_ID							0x40003000
 #define JTAG_ID_MASK							0xF000F000
+#define SUB_JTAG_ID_MASK						0xCFF0FFFF
+
+/* SM7 REVA JTAG ID */
+#define JTAG_SM7_REVA							0x0360F0DD
+/* SM7 REVB JTAG ID */
+#define JTAG_SM7_REVB							0x4360F0DD
+/* SM4 REVA JTAG ID */
+#define JTAG_SM4_REVA							0x0360C0DD
 
 /* Field Masking */
 #define SYSMGR_SDMMC_DRVSEL(x)						(((x) & 0x7) << 0)

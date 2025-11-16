@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+ * Copyright (c) 2024-2026, Altera Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,4 +40,10 @@ bool is_agilex5_A5C4(void)
 bool is_agilex5_A5F4(void)
 {
 	return ((intel_hps_get_jtag_id() & JTAG_ID_MASK) == A5F4_JTAG_ID);
+}
+
+/* Check for Agilex5 SM7 A0 */
+bool is_agilex5_SM7_A0(void)
+{
+	return ((intel_hps_get_jtag_id() & SUB_JTAG_ID_MASK) == JTAG_SM7_REVA);
 }
