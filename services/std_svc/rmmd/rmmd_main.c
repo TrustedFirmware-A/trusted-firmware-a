@@ -80,6 +80,9 @@ uint64_t rmmd_rmm_sync_entry(rmmd_rmm_context_t *rmm_ctx)
 
 	/* Restore the realm context assigned above */
 	cm_el2_sysregs_context_restore(REALM);
+#if RMM_V1_COMPAT
+	cm_el2_sysregs_context_restore_gic(REALM);
+#endif
 	cm_set_next_eret_context(REALM);
 
 	/* Enter RMM */
@@ -91,6 +94,9 @@ uint64_t rmmd_rmm_sync_entry(rmmd_rmm_context_t *rmm_ctx)
 	 * to clear EL2 context registers.
 	 */
 	cm_el2_sysregs_context_save(REALM);
+#if RMM_V1_COMPAT
+	cm_el2_sysregs_context_save_gic(REALM);
+#endif
 
 	return rc;
 }
@@ -126,6 +132,14 @@ static int32_t rmm_init(void)
 
 	INFO("RMM init start.\n");
 
+#if !RMM_V1_COMPAT
+	/*
+	 * The SPMD could init before. RMMD doesn't restore GIC context so it
+	 * can be shared with NS, so just this once restore GIC context. Use the
+	 * NS copy as the Realm copy will be unused.
+	 */
+	cm_el2_sysregs_context_restore_gic(NON_SECURE);
+#endif
 	rc = rmmd_rmm_sync_entry(ctx);
 	if (rc != E_RMM_BOOT_SUCCESS) {
 		ERROR("RMM init failed: %ld\n", rc);
@@ -239,9 +253,16 @@ static uint64_t	rmmd_smc_forward(uint32_t src_sec_state,
 
 	/* Save incoming security state */
 	cm_el2_sysregs_context_save(src_sec_state);
+#if RMM_V1_COMPAT
+	cm_el2_sysregs_context_save_gic(src_sec_state);
+#endif
 
 	/* Restore outgoing security state */
 	cm_el2_sysregs_context_restore(dst_sec_state);
+#if RMM_V1_COMPAT
+	cm_el2_sysregs_context_restore_gic(dst_sec_state);
+#endif
+
 	cm_set_next_eret_context(dst_sec_state);
 
 	/*

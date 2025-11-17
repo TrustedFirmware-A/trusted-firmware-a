@@ -443,6 +443,13 @@ These functions are utilized by the world-specific dispatcher components running
 at EL3 to facilitate the saving and restoration of the EL2 system registers
 during a world switch.
 
+.. c:function::	void cm_el2_sysreg_context_save_gic(uint32_t security_state);
+.. c:function::	void cm_el2_sysreg_context_restore_gic(uint32_t security_state);
+
+These functions are utilized by world dispatcher components at EL3 to save and
+restore GIC-related EL2 system register context during a world switch. They are
+required when worlds do not share GIC context.
+
 Pauth Registers
 ---------------
 
