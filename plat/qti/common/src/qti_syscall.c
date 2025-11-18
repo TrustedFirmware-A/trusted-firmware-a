@@ -18,9 +18,10 @@
 #include <smccc_helpers.h>
 #include <tools_share/uuid.h>
 
+#include <drivers/qti/accesscontrol/accesscontrol.h>
+
 #include <qti_plat.h>
 #include <qti_secure_io_cfg.h>
-#include <qtiseclib_interface.h>
 
 /*
  * SIP service - SMC function IDs for SiP Service queries
@@ -100,11 +101,11 @@ static bool qti_check_syscall_availability(u_register_t smc_fid)
 	}
 }
 
-bool qti_mem_assign_validate_param(memprot_info_t *mem_info,
+bool qti_mem_assign_validate_param(qti_accesscontrol_mem_t *mem_info,
 				   u_register_t u_num_mappings,
 				   uint32_t *source_vm_list,
 				   u_register_t src_vm_list_cnt,
-				   memprot_dst_vm_perm_info_t *dest_vm_list,
+				   qti_accesscontrol_perm_t *dest_vm_list,
 				   u_register_t dst_vm_list_cnt)
 {
 	int i;
@@ -234,14 +235,13 @@ static uintptr_t qti_sip_mem_assign(void *handle, uint32_t smc_cc,
 		      (unsigned int)dyn_map_start, (unsigned int)dyn_map_size);
 		goto unmap_return;
 	}
-	memprot_info_t *mem_info_p = (memprot_info_t *) x2;
-	uint32_t u_num_mappings = x3 / sizeof(memprot_info_t);
+	qti_accesscontrol_mem_t  *mem_info_p = (qti_accesscontrol_mem_t  *)x2;
+	uint32_t u_num_mappings = x3 / sizeof(qti_accesscontrol_mem_t);
 	uint32_t *source_vm_list_p = (uint32_t *) x4;
 	uint32_t src_vm_list_cnt = x5 / sizeof(uint32_t);
-	memprot_dst_vm_perm_info_t *dest_vm_list_p =
-		(memprot_dst_vm_perm_info_t *) x6;
-	uint32_t dst_vm_list_cnt =
-		x7 / sizeof(memprot_dst_vm_perm_info_t);
+	qti_accesscontrol_perm_t *dest_vm_list_p =
+		(qti_accesscontrol_perm_t *)x6;
+	uint32_t dst_vm_list_cnt = x7 / sizeof(qti_accesscontrol_perm_t);
 	if (qti_mem_assign_validate_param(mem_info_p, u_num_mappings,
 				source_vm_list_p, src_vm_list_cnt,
 				dest_vm_list_p,
@@ -250,14 +250,14 @@ static uintptr_t qti_sip_mem_assign(void *handle, uint32_t smc_cc,
 		goto unmap_return;
 	}
 
-	memprot_info_t mem_info[QTI_VM_MAX_LIST_SIZE];
+	qti_accesscontrol_mem_t mem_info[QTI_VM_MAX_LIST_SIZE];
 	/* Populating the arguments */
 	for (int i = 0; i < u_num_mappings; i++) {
 		mem_info[i].mem_addr = mem_info_p[i].mem_addr;
 		mem_info[i].mem_size = mem_info_p[i].mem_size;
 	}
 
-	memprot_dst_vm_perm_info_t dest_vm_list[QTI_VM_LAST];
+	qti_accesscontrol_perm_t dest_vm_list[QTI_VM_LAST];
 
 	for (int i = 0; i < dst_vm_list_cnt; i++) {
 		dest_vm_list[i].dst_vm = dest_vm_list_p[i].dst_vm;
@@ -278,11 +278,11 @@ static uintptr_t qti_sip_mem_assign(void *handle, uint32_t smc_cc,
 		      (unsigned int)dyn_map_start, (unsigned int)dyn_map_size);
 		goto unmap_return;
 	}
-	/* Invoke API lib api. */
-	ret = qtiseclib_mem_assign(mem_info, u_num_mappings,
-			source_vm_list, src_vm_list_cnt,
-			dest_vm_list, dst_vm_list_cnt);
 
+
+	ret = qti_accesscontrol_mem_assign(mem_info, u_num_mappings,
+					   source_vm_list, src_vm_list_cnt,
+					   dest_vm_list, dst_vm_list_cnt);
 	if (ret == 0) {
 		SMC_RET2(handle, QTI_SIP_SUCCESS, ret);
 	}
