@@ -165,14 +165,6 @@ ifdef W
 endif
 
 ################################################################################
-# Setup ARCH_MAJOR/MINOR before parsing arch_features.
-################################################################################
-ifeq (${ENABLE_RME},1)
-	ARM_ARCH_MAJOR := 9
-	ARM_ARCH_MINOR := 2
-endif
-
-################################################################################
 # Common sources and include directories
 ################################################################################
 include lib/compiler-rt/compiler-rt.mk
