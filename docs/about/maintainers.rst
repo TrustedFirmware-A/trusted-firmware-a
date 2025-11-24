@@ -853,8 +853,8 @@ QEMU platform port
 :|F|: docs/plat/qemu.rst
 :|F|: plat/qemu/
 
-QTI platform port
-^^^^^^^^^^^^^^^^^
+QTI platform port and SoC drivers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Lachit Patel <lpatel@codeaurora.org>
 :|G|: `lachitp`_
 :|M|: Sreevyshanavi Kare <skare@codeaurora.org>
@@ -865,9 +865,14 @@ QTI platform port
 :|G|: `quic_sgorecha`_
 :|M|: Sumit Garg <sumit.garg@oss.qualcomm.com>
 :|G|: `b49020`_
+:|M|: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+:|G|: `ldts`_
 :|M|: QTI TF Maintainers <qti.trustedfirmware.maintainers@codeaurora.org>
 :|F|: docs/plat/qti/
 :|F|: plat/qti/
+:|F|: drivers/qti/
+:|F|: include/drivers/qti/
+:|F|: tools/qti/
 
 QTI MSM8916 platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1145,6 +1150,7 @@ Conventional Changelog Extensions
 .. _kostapr: https://github.com/kostapr
 .. _lachitp: https://github.com/lachitp
 .. _laurenw-arm: https://github.com/laurenw-arm
+.. _ldts: https://github.com/ldts
 .. _leon-chen-mtk: https://github.com/leon-chen-mtk
 .. _linyidi: https://github.com/linyidi
 .. _loosper-arm: https://github.com/loosper-arm
