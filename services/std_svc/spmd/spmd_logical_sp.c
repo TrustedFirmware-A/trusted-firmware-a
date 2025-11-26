@@ -135,12 +135,13 @@ static void spmd_encode_ffa_error(struct ffa_value *retval, int32_t error_code)
 }
 
 static void spmd_build_direct_message_req(spmd_spm_core_context_t *ctx,
+					  uint64_t function_id,
 					  uint64_t x1, uint64_t x2,
 					  uint64_t x3, uint64_t x4)
 {
 	gp_regs_t *gpregs = get_gpregs_ctx(&ctx->cpu_ctx);
 
-	write_ctx_reg(gpregs, CTX_GPREG_X0, FFA_MSG_SEND_DIRECT_REQ_SMC32);
+	write_ctx_reg(gpregs, CTX_GPREG_X0, function_id);
 	write_ctx_reg(gpregs, CTX_GPREG_X1, x1);
 	write_ctx_reg(gpregs, CTX_GPREG_X2, x2);
 	write_ctx_reg(gpregs, CTX_GPREG_X3, x3);
@@ -562,24 +563,21 @@ bool spmd_el3_invoke_partition_info_get(
 }
 
 /*******************************************************************************
- * This function sends an FF-A Direct Request from a partition in EL3 to a
- * partition that may reside under an SPMC (only lower ELs supported). The main
- * use of this API is for SPMD logical partitions.
- * The API is expected to be used when there are platform specific SMCs that
- * need to be routed to a secure partition that is FF-A compliant or when
- * there are group 0 interrupts that need to be handled first in EL3 and then
- * forwarded to an FF-A compliant secure partition. Therefore, it is expected
- * that the handle to the context provided belongs to the non-secure context.
- * This also means that interrupts/SMCs that trap to EL3 during secure execution
- * cannot use this API.
- * x1, x2, x3 and x4 are encoded as specified in the FF-A specification.
- * retval is used to pass the direct response values to the caller.
- * The function returns true if retval has valid values, and false otherwise.
+ * Common helper function for sending FF-A Direct Requests from EL3.
+ * This function contains the common logic for both Direct Request and
+ * Direct Request2 ABIs.
+ *
+ * x1, x2, x3, x4: Parameters as specified in FF-A specification
+ * ffa_msg_function_id: FFA function ID to use (Direct Req or Direct Req2)
+ * handle: Context handle (must be non-secure)
+ * retval: Output parameter for direct response values
+ * return true if retval has valid values, false otherwise
  ******************************************************************************/
-bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
+static bool spmd_el3_ffa_msg_direct_req_common(uint64_t x1,
 				 uint64_t x2,
 				 uint64_t x3,
 				 uint64_t x4,
+				 uint64_t ffa_msg_function_id,
 				 void *handle,
 				 struct ffa_value *retval)
 {
@@ -602,13 +600,12 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 	}
 
 	/*
-	 * x2 must be zero, since there is no support for framework message via
-	 * an SPMD logical partition. This is sort of a useless check and it is
-	 * possible to not take parameter. However, as the framework extends it
-	 * may be useful to have x2 and extend this function later with
-	 * functionality based on x2.
+	 * x2 must be zero for Direct Request (not Direct Request2), since
+	 * there is no support for framework message via an SPMD logical
+	 * partition. This check is only performed for Direct Request.
 	 */
-	if (x2 != 0) {
+	if ((ffa_msg_function_id != FFA_MSG_SEND_DIRECT_REQ2_SMC64) &&
+								(x2 != 0)) {
 		VERBOSE("x2 must be zero. Cannot send framework message.\n");
 			spmd_encode_ffa_error(retval, FFA_ERROR_DENIED);
 		return true;
@@ -680,7 +677,8 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 	 * required because the spec requires that a direct message request
 	 * from an SPMD LP look like a function call from it's perspective.
 	 */
-	spmd_build_direct_message_req(ctx, x1, x2, x3, x4);
+	spmd_build_direct_message_req(ctx, ffa_msg_function_id,
+					x1, x2, x3, x4);
 	spmd_logical_sp_set_dir_req_ongoing(ctx);
 
 	rc = spmd_spm_core_sync_entry(ctx);
@@ -721,6 +719,63 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 #else
 	return false;
 #endif
+}
+
+/*******************************************************************************
+ * This function sends an FF-A Direct Request2 from a partition in EL3 to a
+ * partition that may reside under an SPMC (only lower ELs supported). The main
+ * use of this API is for SPMD logical partitions.
+ * The API is expected to be used when there are platform specific SMCs that
+ * need to be routed to a secure partition that is FF-A compliant or when
+ * there are group 0 interrupts that need to be handled first in EL3 and then
+ * forwarded to an FF-A compliant secure partition. Therefore, it is expected
+ * that the handle to the context provided belongs to the non-secure context.
+ * This also means that interrupts/SMCs that trap to EL3 during secure execution
+ * cannot use this API.
+ * x1, x2, x3 and x4 are encoded as specified in the FF-A specification.
+ * retval is used to pass the direct response values to the caller.
+ * The function returns true if retval has valid values, and false otherwise.
+ ******************************************************************************/
+bool spmd_el3_ffa_msg_direct_req2(uint64_t x1,
+				 uint64_t x2,
+				 uint64_t x3,
+				 uint64_t x4,
+				 void *handle,
+				 struct ffa_value *retval)
+{
+	return spmd_el3_ffa_msg_direct_req_common(x1, x2, x3, x4,
+						  FFA_MSG_SEND_DIRECT_REQ2_SMC64,
+						  handle,
+						  retval);
+}
+
+
+/*******************************************************************************
+ * This function sends an FF-A Direct Request from a partition in EL3 to a
+ * partition that may reside under an SPMC (only lower ELs supported). The main
+ * use of this API is for SPMD logical partitions.
+ * The API is expected to be used when there are platform specific SMCs that
+ * need to be routed to a secure partition that is FF-A compliant or when
+ * there are group 0 interrupts that need to be handled first in EL3 and then
+ * forwarded to an FF-A compliant secure partition. Therefore, it is expected
+ * that the handle to the context provided belongs to the non-secure context.
+ * This also means that interrupts/SMCs that trap to EL3 during secure execution
+ * cannot use this API.
+ * x1, x2, x3 and x4 are encoded as specified in the FF-A specification.
+ * retval is used to pass the direct response values to the caller.
+ * The function returns true if retval has valid values, and false otherwise.
+ ******************************************************************************/
+bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
+				 uint64_t x2,
+				 uint64_t x3,
+				 uint64_t x4,
+				 void *handle,
+				 struct ffa_value *retval)
+{
+	return spmd_el3_ffa_msg_direct_req_common(x1, x2, x3, x4,
+						  FFA_MSG_SEND_DIRECT_REQ_SMC32,
+						  handle,
+						  retval);
 }
 
 bool

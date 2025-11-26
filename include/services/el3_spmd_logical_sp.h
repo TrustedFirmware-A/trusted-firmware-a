@@ -99,6 +99,7 @@ static inline bool is_ffa_success(struct ffa_value *retval)
 static inline bool is_ffa_direct_msg_resp(struct ffa_value *retval)
 {
 	return (retval->func == FFA_MSG_SEND_DIRECT_RESP_SMC32) ||
+		(retval->func == FFA_MSG_SEND_DIRECT_RESP2_SMC64) ||
 		(retval->func == FFA_MSG_SEND_DIRECT_RESP_SMC64);
 }
 
@@ -142,6 +143,13 @@ void spmc_logical_sp_set_spmc_failure(void);
 
 int32_t spmd_logical_sp_init(void);
 bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
+				 uint64_t x2,
+				 uint64_t x3,
+				 uint64_t x4,
+				 void *handle,
+				 struct ffa_value *retval);
+
+bool spmd_el3_ffa_msg_direct_req2(uint64_t x1,
 				 uint64_t x2,
 				 uint64_t x3,
 				 uint64_t x4,
