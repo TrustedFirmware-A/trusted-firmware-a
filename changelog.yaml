@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2021-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -1077,6 +1077,9 @@ subsections:
             deprecated:
               - drivers/arm/rss
               - rss
+
+          - title: Simple Firmware Communications Protocol (SFCP)
+            scope: sfcp
 
           - title: TZC
             scope: tzc
