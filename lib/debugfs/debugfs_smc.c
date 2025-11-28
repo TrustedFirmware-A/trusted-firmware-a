@@ -53,6 +53,8 @@ static union debugfs_parms {
 	} bind;
 } parms;
 
+static volatile union debugfs_parms *shared_ns_buf = DEBUGFS_SHARED_BUF_VIRT;
+
 /* debugfs_access_lock protects shared buffer and internal */
 /* FS functions from concurrent accesses.                 */
 static spinlock_t debugfs_access_lock;
@@ -93,8 +95,7 @@ uintptr_t debugfs_smc_handler(unsigned int smc_fid,
 
 	if (debugfs_initialized == true) {
 		/* Copy NS shared buffer to internal secure location */
-		memcpy(&parms, (void *)DEBUGFS_SHARED_BUF_VIRT,
-		       sizeof(union debugfs_parms));
+		parms = *shared_ns_buf;
 	}
 
 	switch (cmd) {
@@ -172,8 +173,7 @@ uintptr_t debugfs_smc_handler(unsigned int smc_fid,
 	case STAT:
 		ret = stat(parms.stat.path, &parms.stat.dir);
 		if (ret == 0) {
-			memcpy((void *)DEBUGFS_SHARED_BUF_VIRT, &parms,
-			       sizeof(union debugfs_parms));
+			*shared_ns_buf = parms;
 			smc_ret = SMC_OK;
 			smc_resp = 0;
 		}

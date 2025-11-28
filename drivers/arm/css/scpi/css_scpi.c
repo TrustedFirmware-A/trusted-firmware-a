@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,6 +18,9 @@
 #define SCPI_SHARED_MEM_SCP_TO_AP	PLAT_CSS_SCP_COM_SHARED_MEM_BASE
 #define SCPI_SHARED_MEM_AP_TO_SCP	(PLAT_CSS_SCP_COM_SHARED_MEM_BASE \
 								 + 0x100)
+
+static volatile scpi_cmd_t *shared_mem_ap_to_scp =
+	(volatile scpi_cmd_t *)SCPI_SHARED_MEM_AP_TO_SCP;
 
 /* Header and payload addresses for commands from AP to SCP */
 #define SCPI_CMD_HEADER_AP_TO_SCP		\
@@ -73,7 +76,7 @@ static int scpi_secure_message_receive(scpi_cmd_t *cmd)
 	 */
 	dmbld();
 
-	memcpy(cmd, (void *) SCPI_SHARED_MEM_SCP_TO_AP, sizeof(*cmd));
+	*cmd = *shared_mem_ap_to_scp;
 
 	return 0;
 }
@@ -119,7 +122,7 @@ int scpi_wait_ready(void)
 	 */
 	scpi_cmd.status = status;
 	scpi_secure_message_start();
-	memcpy((void *) SCPI_SHARED_MEM_AP_TO_SCP, &scpi_cmd, sizeof(scpi_cmd));
+	*shared_mem_ap_to_scp = scpi_cmd;
 	scpi_secure_message_send(0);
 	scpi_secure_message_end();
 
