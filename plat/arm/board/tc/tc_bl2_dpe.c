@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include <common/debug.h>
+#include <drivers/arm/sfcp.h>
 #include <drivers/measured_boot/metadata.h>
 #include <drivers/measured_boot/rse/dice_prot_env.h>
 #include <plat/arm/common/plat_arm.h>
@@ -15,7 +16,6 @@
 #include <tools_share/tbbr_oid.h>
 
 #include "tc_dpe.h"
-#include <tc_rse_comms.h>
 
 /*
  * The content and the values of this array depends on:
@@ -230,6 +230,8 @@ void plat_dpe_get_context_handle(int *ctx_handle)
 
 void bl2_plat_mboot_init(void)
 {
+	enum sfcp_error_t sfcp_err;
+
 #if defined(SPD_spmd)
 	size_t i;
 	const size_t array_size = ARRAY_SIZE(tc_dpe_metadata);
@@ -253,8 +255,12 @@ void bl2_plat_mboot_init(void)
 	}
 #endif
 
-	/* Initialize the communication channel between AP and RSE */
-	(void)plat_rse_comms_init();
+	/* Initialize SFCP for communications between AP and RSE */
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		ERROR("Unable to initialize SFCP\n");
+		plat_panic_handler();
+	}
 
 	dpe_init(tc_dpe_metadata);
 }

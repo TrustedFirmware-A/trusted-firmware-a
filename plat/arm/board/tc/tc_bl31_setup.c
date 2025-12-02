@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,16 +10,15 @@
 #include <tc_plat.h>
 
 #include <arch_helpers.h>
-#include <common/bl_common.h>
 #include <common/debug.h>
 #include <drivers/arm/css/css_mhu_doorbell.h>
 #include <drivers/arm/css/scmi.h>
 #include <drivers/arm/dsu.h>
 #include <drivers/arm/sbsa.h>
+#include <drivers/arm/sfcp.h>
 #include <lib/fconf/fconf.h>
 #include <lib/fconf/fconf_dyn_cfg_getter.h>
 #include <plat/arm/common/plat_arm.h>
-#include <plat/common/platform.h>
 
 #ifdef PLATFORM_TEST_TFM_TESTSUITE
 #include <psa/crypto_platform.h>
@@ -29,7 +28,6 @@
 #include <psa/error.h>
 
 #include <plat/common/platform.h>
-#include <tc_rse_comms.h>
 
 #ifdef PLATFORM_TEST_TFM_TESTSUITE
 /*
@@ -164,7 +162,7 @@ static void set_mcn_mtu_tag_addr(void)
 
 void bl31_platform_setup(void)
 {
-	psa_status_t status;
+	enum sfcp_error_t sfcp_err;
 
 	tc_bl31_common_platform_setup();
 	enable_ns_mcn_pmu();
@@ -173,10 +171,11 @@ void bl31_platform_setup(void)
 	plat_arm_ni_setup(NCI_BASE_ADDR);
 #endif
 
-	/* Initialise RSE communication channel */
-	status = plat_rse_comms_init();
-	if (status != PSA_SUCCESS) {
-		ERROR("Failed to initialize RSE communication channel - psa_status = %d\n", status);
+	/* Initialize SFCP for communications between AP and RSE */
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		ERROR("Unable to initialize SFCP: %d\n", sfcp_err);
+		plat_panic_handler();
 	}
 #if defined(TARGET_FLAVOUR_FPGA) && TARGET_PLATFORM == 4
 	set_mcn_mtu_tag_addr();

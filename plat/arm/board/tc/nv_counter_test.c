@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,22 +7,24 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <drivers/arm/sfcp.h>
 #include <plat/common/platform.h>
 #include "rse_platform_api.h"
 
 #include <platform_def.h>
-#include <tc_rse_comms.h>
 
 int nv_counter_test(void)
 {
+	enum sfcp_error_t sfcp_err;
 	psa_status_t status;
 	uint32_t old_val;
 	uint32_t new_val;
 	uint32_t id;
 
-	status = plat_rse_comms_init();
-	if (status != PSA_SUCCESS) {
-		printf("Failed to initialize RSE communication channel - psa_status = %d\n", status);
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		printf("Failed to initialize RSE communication channel - sfcp_error = %d\n",
+		       sfcp_err);
 		return -1;
 	}
 

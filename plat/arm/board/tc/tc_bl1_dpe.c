@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,7 @@
 
 #include <common/debug.h>
 #include <drivers/arm/css/sds.h>
+#include <drivers/arm/sfcp.h>
 #include <drivers/delay_timer.h>
 #include <drivers/generic_delay_timer.h>
 #include <drivers/measured_boot/metadata.h>
@@ -18,7 +19,6 @@
 #include <tools_share/zero_oid.h>
 
 #include "tc_dpe.h"
-#include <tc_rse_comms.h>
 
 struct dpe_metadata tc_dpe_metadata[] = {
 	{
@@ -121,8 +121,14 @@ void plat_dpe_get_context_handle(int *ctx_handle)
 
 void bl1_plat_mboot_init(void)
 {
-	/* Initialize the communication channel between AP and RSE */
-	(void)plat_rse_comms_init();
+	enum sfcp_error_t sfcp_err;
+
+	/* Initialize SFCP for communications between AP and RSE */
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		ERROR("Unable to initialize SFCP\n");
+		plat_panic_handler();
+	}
 
 	dpe_init(tc_dpe_metadata);
 }

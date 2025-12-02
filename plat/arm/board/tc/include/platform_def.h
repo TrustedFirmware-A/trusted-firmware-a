@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -411,6 +411,11 @@
 #define PLAT_MAX_PE_PER_CPU		U(1)
 
 #define PLATFORM_CORE_COUNT		(PLAT_MAX_CPUS_PER_CLUSTER * PLAT_ARM_CLUSTER_COUNT)
+
+/* The number of nodes in the SFCP system. This must be kept
+ * up to date with the value in other nodes
+ */
+#define SFCP_NUMBER_NODES		(4)
 
 /* Message Handling Unit (MHU) base addresses */
 #define PLAT_CSS_MHU_BASE		UL(0x46000000)
