@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,13 +7,11 @@
 #include <common/debug.h>
 #include <drivers/arm/gic600_multichip.h>
 #include <drivers/arm/mhu.h>
-#include <drivers/arm/rse_comms.h>
+#include <drivers/arm/sfcp.h>
 #include <plat/arm/common/plat_arm.h>
 #include <plat/common/platform.h>
 #include <platform_def.h>
 #include <nrd_plat.h>
-#include <rdv3_mhuv3.h>
-#include <rdv3_rse_comms.h>
 
 unsigned int plat_arm_nrd_get_platform_id(void)
 {
@@ -197,19 +195,6 @@ int plat_rmmd_mecid_key_update(uint16_t mecid, unsigned int reason)
 	 * This empty hook is for compilation to succeed.
 	 */
 	return 0;
-}
-
-int plat_rse_comms_init(void)
-{
-	struct mhu_addr mhu_addresses;
-
-	/* Get sender and receiver frames for AP-RSE communication */
-	mhu_v3_get_secure_device_base(&mhu_addresses.sender_base, true);
-	mhu_v3_get_secure_device_base(&mhu_addresses.receiver_base, false);
-
-	VERBOSE("Initializing the rse_comms now\n");
-	/* Initialize the communication channel between AP and RSE */
-	return rse_mbx_init(&mhu_addresses);
 }
 
 int plat_spmd_handle_group0_interrupt(uint32_t intid)

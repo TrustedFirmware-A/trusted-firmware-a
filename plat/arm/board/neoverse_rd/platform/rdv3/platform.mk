@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -58,7 +58,7 @@ override PLATFORM_NODE_COUNT	:= NRD_CHIP_COUNT
 endif
 
 include plat/arm/board/neoverse_rd/common/nrd-common.mk
-include drivers/arm/rse/rse_comms.mk
+include drivers/arm/sfcp/sfcp.mk
 include drivers/auth/mbedtls/mbedtls_common.mk
 ifeq (${MEASURED_BOOT},1)
 include drivers/measured_boot/rse/rse_measured_boot.mk
@@ -79,13 +79,13 @@ PLAT_BL_COMMON_SOURCES							\
 
 PLAT_MEASURED_BOOT_SOURCES						\
 		:=	${MEASURED_BOOT_SOURCES} 			\
-			${RSE_COMMS_SOURCES}				\
+			${SFCP_SOURCES}				\
 			${RDV3_BASE}/rdv3_common_measured_boot.c \
 			lib/psa/measured_boot.c
 
 BL1_SOURCES	+=	${NRD_CPU_SOURCES}				\
 			${RDV3_BASE}/rdv3_err.c		\
-			${RDV3_BASE}/rdv3_mhuv3.c
+			${RDV3_BASE}/rdv3_sfcp.c
 ifeq (${TRUSTED_BOARD_BOOT}, 1)
 BL1_SOURCES	+=	${RDV3_BASE}/rdv3_trusted_boot.c
 endif
@@ -96,7 +96,7 @@ endif
 
 BL2_SOURCES	+=	${RDV3_BASE}/rdv3_bl2_setup.c		\
 			${RDV3_BASE}/rdv3_err.c		\
-			${RDV3_BASE}/rdv3_mhuv3.c		\
+			${RDV3_BASE}/rdv3_sfcp.c		\
 			${RDV3_BASE}/rdv3_security.c		\
 			lib/utils/mem_region.c				\
 			plat/arm/common/arm_nor_psci_mem_protect.c
@@ -114,9 +114,9 @@ endif
 
 BL31_SOURCES	+=	${NRD_CPU_SOURCES}				\
 			${MBEDTLS_SOURCES}				\
-			${RSE_COMMS_SOURCES}				\
+			${SFCP_SOURCES}				\
 			${RDV3_BASE}/rdv3_bl31_setup.c	\
-			${RDV3_BASE}/rdv3_mhuv3.c		\
+			${RDV3_BASE}/rdv3_sfcp.c		\
 			${RDV3_BASE}/rdv3_topology.c		\
 			${RDV3_BASE}/rdv3_plat_attest_token.c	\
 			${RDV3_BASE}/rdv3_realm_attest_key.c	\
