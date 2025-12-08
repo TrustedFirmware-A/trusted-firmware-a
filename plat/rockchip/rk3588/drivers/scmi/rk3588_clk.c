@@ -31,22 +31,27 @@ enum pll_type_sel {
 #define RK3588_CPUL_PVTPLL_CON0_H	0x44
 #define RK3588_CPUL_PVTPLL_CON1		0x48
 #define RK3588_CPUL_PVTPLL_CON2		0x4c
+#define RK3588_CPUL_PVTPLL_STATUS	0x60
 #define RK3588_CPUB_PVTPLL_CON0_L	0x00
 #define RK3588_CPUB_PVTPLL_CON0_H	0x04
 #define RK3588_CPUB_PVTPLL_CON1		0x08
 #define RK3588_CPUB_PVTPLL_CON2		0x0c
+#define RK3588_CPUB_PVTPLL_STATUS	0x18
 #define RK3588_DSU_PVTPLL_CON0_L	0x60
 #define RK3588_DSU_PVTPLL_CON0_H	0x64
 #define RK3588_DSU_PVTPLL_CON1		0x70
 #define RK3588_DSU_PVTPLL_CON2		0x74
+#define RK3588_DSU_PVTPLL_STATUS	0x80
 #define RK3588_GPU_PVTPLL_CON0_L	0x00
 #define RK3588_GPU_PVTPLL_CON0_H	0x04
 #define RK3588_GPU_PVTPLL_CON1		0x08
 #define RK3588_GPU_PVTPLL_CON2		0x0c
+#define RK3588_GPU_PVTPLL_STATUS	0x18
 #define RK3588_NPU_PVTPLL_CON0_L	0x0c
 #define RK3588_NPU_PVTPLL_CON0_H	0x10
 #define RK3588_NPU_PVTPLL_CON1		0x14
 #define RK3588_NPU_PVTPLL_CON2		0x18
+#define RK3588_NPU_PVTPLL_STATUS	0x24
 #define RK3588_PVTPLL_MAX_LENGTH	0x3f
 
 #define GPLL_RATE			1188000000
@@ -423,7 +428,8 @@ static unsigned long clk_scmi_cpul_get_rate(rk_scmi_clock_t *clock)
 	src = mmio_read_32(DSUCRU_BASE + CRU_CLKSEL_CON(6)) & 0x0060;
 	src = src >> 5;
 	if (src == 2) {
-		return sys_clk_info.cpul_rate;
+		udelay(2);
+		return (mmio_read_32(LITCOREGRF_BASE + RK3588_CPUL_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		src = mmio_read_32(DSUCRU_BASE + CRU_CLKSEL_CON(5)) & 0xc000;
 		src = src >> 14;
@@ -593,7 +599,8 @@ static unsigned long clk_scmi_cpub01_get_rate(rk_scmi_clock_t *clock)
 	value = mmio_read_32(BIGCORE0CRU_BASE + CRU_CLKSEL_CON(0));
 	src = (value & 0x6000) >> 13;
 	if (src == 2) {
-		return sys_clk_info.cpub01_rate;
+		udelay(2);
+		return (mmio_read_32(BIGCORE0GRF_BASE + RK3588_CPUB_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		src = (value & 0x00c0) >> 6;
 		div = (value & 0x1f00) >> 8;
@@ -762,7 +769,8 @@ static unsigned long clk_scmi_cpub23_get_rate(rk_scmi_clock_t *clock)
 	value = mmio_read_32(BIGCORE1CRU_BASE + CRU_CLKSEL_CON(0));
 	src = (value & 0x6000) >> 13;
 	if (src == 2) {
-		return sys_clk_info.cpub23_rate;
+		udelay(2);
+		return (mmio_read_32(BIGCORE1GRF_BASE + RK3588_CPUB_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		src = (value & 0x00c0) >> 6;
 		div = (value & 0x1f00) >> 8;
@@ -794,7 +802,8 @@ static unsigned long clk_scmi_dsu_get_rate(rk_scmi_clock_t *clock)
 
 	src = mmio_read_32(DSUCRU_BASE + CRU_CLKSEL_CON(1)) & 0x1;
 	if (src != 0) {
-		return sys_clk_info.dsu_rate;
+		udelay(2);
+		return (mmio_read_32(DSUGRF_BASE + RK3588_DSU_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		src = mmio_read_32(DSUCRU_BASE + CRU_CLKSEL_CON(0)) & 0x3000;
 		src = src >> 12;
@@ -916,7 +925,8 @@ static unsigned long clk_scmi_gpu_get_rate(rk_scmi_clock_t *clock)
 	int div, src;
 
 	if ((mmio_read_32(CRU_BASE + CRU_CLKSEL_CON(158)) & 0x4000) != 0) {
-		return sys_clk_info.gpu_rate;
+		udelay(2);
+		return (mmio_read_32(GPUGRF_BASE + RK3588_GPU_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		div = mmio_read_32(CRU_BASE + CRU_CLKSEL_CON(158)) & 0x1f;
 		src = mmio_read_32(CRU_BASE + CRU_CLKSEL_CON(158)) & 0x00e0;
@@ -1014,7 +1024,8 @@ static unsigned long clk_scmi_npu_get_rate(rk_scmi_clock_t *clock)
 	int div, src;
 
 	if ((mmio_read_32(CRU_BASE + CRU_CLKSEL_CON(74)) & 0x1) != 0) {
-		return sys_clk_info.npu_rate;
+		udelay(2);
+		return (mmio_read_32(NPUGRF_BASE + RK3588_NPU_PVTPLL_STATUS) & 0x3FFF) * MHz;
 	} else {
 		div = mmio_read_32(CRU_BASE + CRU_CLKSEL_CON(73)) & 0x007c;
 		div = div >> 2;
