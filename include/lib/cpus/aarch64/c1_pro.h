@@ -39,4 +39,8 @@
 #define C1_PRO_SVCRSM				S0_3_C4_C2_3
 #define C1_PRO_SVCRZA				S0_3_C4_C4_3
 
+#ifndef __ASSEMBLER__
+long check_erratum_c1_pro_3300099(long cpu_rev);
+#endif /* __ASSEMBLER__ */
+
 #endif /* C1_PRO_H */
