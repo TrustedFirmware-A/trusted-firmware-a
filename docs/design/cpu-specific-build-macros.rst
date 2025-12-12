@@ -1313,6 +1313,10 @@ architecture that can be enabled by the platform as desired.
    This is used to control how the LL_CACHE* PMU events count.
    Default value is 0 (Disabled).
 
+-  ``NEOVERSE_Vx_EXTERNAL_LLC``: This flag has the same behaviour as
+   ``NEOVERSE_Nx_EXTERNAL_LLC`` but for Neoverse-V2. This is disabled
+   by default. Default value is 0 (Disabled).
+
 GIC Errata Workarounds
 ----------------------
 -  ``GIC600_ERRATA_WA_2384374``: This flag applies part 2 of errata 2384374

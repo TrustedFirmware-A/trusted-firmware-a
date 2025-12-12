@@ -44,6 +44,7 @@ CPU_FLAG_LIST += WORKAROUND_CVE_2024_7881
 # Flags to indicate internal or external Last level cache
 # By default internal
 CPU_FLAG_LIST += NEOVERSE_Nx_EXTERNAL_LLC
+CPU_FLAG_LIST += NEOVERSE_Vx_EXTERNAL_LLC
 
 # CPU Errata Build flags.
 # These should be enabled by the platform if the erratum workaround needs to be
