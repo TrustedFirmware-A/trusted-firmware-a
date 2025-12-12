@@ -61,6 +61,7 @@ CPU_FLAG_LIST += WORKAROUND_CVE_2026_0995
 # Flags to indicate internal or external Last level cache
 # By default internal
 CPU_FLAG_LIST += NEOVERSE_Nx_EXTERNAL_LLC
+CPU_FLAG_LIST += NEOVERSE_Vx_EXTERNAL_LLC
 
 # Flag to enable or disable hardware prefetcher for Neoverse N2 CPU
 # By default enabled
