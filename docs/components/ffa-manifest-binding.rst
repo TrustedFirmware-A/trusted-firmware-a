@@ -206,6 +206,68 @@ associated with the related Secure Partition.
    - All other values are unsupported. If a partition does not specify this
      field in the manifest, the SPMC takes implementation defined action.
 
+- live-activation-support
+   - value type: <empty>
+   - Presence of this field indicates support for partition framework messages
+     necessary for live activation as defined in the FF-A v1.3 ALP2 spec.
+
+- live-activation-register
+   - value type: <u32>
+   - Register used by the SPMC to report to the SP that it is undergoing live
+     activation. Must be one of ``x0``–``x3`` or ``x5``–``x7`` so that it does
+     not clash with the boot-info register or the reserved ``x4`` linear vCPU
+     index.
+
+- image-uuid
+   - value type: <prop-encoded-array>
+   - Exactly one tuple of 4 <u32> values identifying the partition image UUID.
+     The UUID must not be all zeros and must not collide with any protocol UUID
+     exposed by the partition.
+
+- live-state-buffer-info
+   - value type: <phandle>
+   - Child node with ``compatible = "arm,ffa-manifest,live-state-buffer"`` whose
+     ``live-state-buffer`` property points to the backing memory-region entry.
+
+When ``live-activation-support`` is present the manifest must also meet the
+following requirements:
+
+- ``lifecycle-support`` must be present and ``execution-ctx-count`` must be 1.
+- ``live-activation-register`` and ``image-uuid`` must follow the constraints
+  above; manifests advertising multiple image UUIDs or invalid registers are
+  rejected.
+- The live state buffer referenced via ``live-state-buffer-info`` must be
+  defined under ``memory-regions`` and describe a page-aligned, read/write
+  region that sits outside the working memory region (which is overwritten
+  during activation) and is large enough to preserve the framework state.
+
+Informative example:
+
+.. code:: dts
+
+   lifecycle-support;
+   execution-ctx-count = <1>;
+   abort-action = <1>;
+   live-activation-support;
+   live-activation-register = <1>;
+   image-uuid = <0x962a7bf0 0x174d471d 0xa686c89e 0x5c3e254e>;
+
+   live-state-buffer-info {
+       compatible = "arm,ffa-manifest,live-state-buffer";
+       live-state-buffer = <&livestatebuffer>;
+   };
+
+   memory-regions {
+       compatible = "arm,ffa-manifest-memory-regions";
+
+       livestatebuffer: live-state-buffer {
+           description = "live-state-buffer";
+           base-address = <0x00000000 0x06780000>;
+           pages-count = <1>;
+           attributes = <0x3>; /* read-write */
+       };
+   };
+
 .. _services:
 
 Services
