@@ -229,6 +229,63 @@ launches the SPMC (BL32) passing the following information through registers:
 - X4 holds the currently running core linear id.
 
 
+Support for Secure Partition live activation
+============================================
+
+Live firmware activation, defined in the LFA spec `[9]`_, is implemented by the
+agent framework in TF-A BL31. The framework handles the LFA SMCs and expects
+each platform to describe every activatable firmware component (BL31, RMM,
+Secure Partitions, etc.) through a set of callbacks. Secure Partitions (SPs)
+require additional oversight because they are managed by the Secure Partition
+Manager Core (SPMC) through FF-A.
+
+Consequently, TF-A shall implement Logical Secure Partition (LSP)
+managed by SPMD at EL3 that bridges the LFA calls to FF-A framework messages
+understood by the SPMC. Note that support for live activation is limited to
+v1.3 compliant Secure Partitions with single execution context and managed by
+S-EL2 SPMC.
+
+A typical Secure Partition is highly platform specific given the way it is
+integrated by an OEM; every platform decides which SP packages are bundled in
+the FIP, how and where the new SP images are staged and so on.
+Therefore, the LSP in TF-A project needs to be independently implemented by
+the platform port based on the guidance in FF-A specification. TF-A code base
+supplies reusable helpers in ``services/std_svc/spmd/spmd_logical_sp.c``.
+
+
+Live Firmware Activation LSP responsibilities
+---------------------------------------------
+
+An LSP must implement the ``prime`` and ``activate`` callbacks for the LFA
+framework to execute SP live activation. At a minimum, an LSP must:
+
+- Implement the platform-specific steps needed to stage a new partition package
+  for SP.
+- Perform partition discovery and ensure the partition properties are suitable
+  for live activation.
+- Translate ``LFA_ACTIVATE`` into the FF-A framework messages defined by
+  FF-A v1.3 ALP2: ``FFA_FRAMEWORK_MSG_LIVE_ACTIVATION_START_REQ`` followed by
+  ``FFA_FRAMEWORK_MSG_LIVE_ACTIVATION_FINISH_REQ``. The SPMC at S-EL2 then
+  performs the in-place activation and responds with SUCCESS status code to
+  the corresponding framework messages.
+
+Reference implementation
+------------------------
+
+The Arm FVP port implements all of the above in:
+
+- ``plat/arm/board/fvp/fvp_lfa.c`` – enumerates components and ties them to LFA.
+- ``plat/arm/board/fvp/fvp_spmd_logical_sp.c`` – provides the logical
+  partition, prime/activate callbacks, and staging logic.
+- ``services/std_svc/spmd/spmd_logical_sp.c`` – common helpers that build and
+  parse the FF-A framework messages on behalf of the platform LSP.
+
+Platforms that wish to add live activation for their own SPs can use the FVP
+code as a template, customize the staging strategy and component table, and
+ensure that the SP manifests include the live activation properties documented
+in the FF-A manifest binding (`docs/components/ffa-manifest-binding.rst`).
+Secure Partition live activation is guarded by few build options `[8]`_.
+
 References
 ==========
 
@@ -260,6 +317,14 @@ References
 
 [7] https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#dynamic-configuration-during-cold-boot
 
---------------
+.. _[8]:
 
-*Copyright (c) 2020-2024, Arm Limited and Contributors. All rights reserved.*
+[8] :ref:`SP Live Activation build options<sp_live_activation_build_options>`
+
+.. _[9]:
+
+[9] https://developer.arm.com/documentation/den0147/1-0bet1/?lang=en
+
+----
+
+*Copyright (c) 2020-2026, Arm Limited and Contributors. All rights reserved.*
