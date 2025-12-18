@@ -56,6 +56,10 @@ struct skip_image {
 			} cp_ap;
 			int cp_index;
 		} test;
+
+		struct {
+			int (*check)(struct skip_image *im);
+		} user_defined;
 	} info;
 };
 
