@@ -482,11 +482,11 @@ sysreg_handler64:
 2:
 	/*
 	 * UNDEF injection to lower EL, the support is only provided for lower
-	 * EL in AArch64 mode, for AArch32 mode it will do elx_panic as before.
+	 * EL in AArch64 mode. Report an AArch32 trap before panicking.
 	 */
 	mrs	x0, spsr_el3
 	tst	x0, #(SPSR_M_MASK << SPSR_M_SHIFT)
-	b.ne	elx_panic
+	b.ne	bl31_aarch32_sysreg_panic
 	/* Pass context pointer as an argument to inject_undef64 */
 	mov	x0, x19
 	bl	inject_undef64
