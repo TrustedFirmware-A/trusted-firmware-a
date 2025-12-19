@@ -102,9 +102,7 @@
 	   * it in the data section.
 	   */
 	  .pushsection .data
-	  define_asm_spinlock \_name\()_errata_lock
-	  \_name\()_errata_reported:
-	  .word	0
+	  define_asm_spinlock \_name\()_errata_reported
 	  .popsection
 
 	  /* Place CPU string in rodata */
@@ -118,7 +116,6 @@
 
 #ifdef IMAGE_BL32
 	/* Pointers to errata lock and reported flag */
-	.word \_name\()_errata_lock
 	.word \_name\()_errata_reported
 #endif
 #endif

@@ -83,12 +83,11 @@
 #define CPU_ERRATA_LIST_END	CPU_ERRATA_LIST_START + CPU_ERRATA_LIST_START_SIZE
 #define CPU_CPU_STR		CPU_ERRATA_LIST_END + CPU_ERRATA_LIST_END_SIZE
 #define CPU_ERRATA_LOCK		CPU_CPU_STR + CPU_CPU_STR_SIZE
-#define CPU_ERRATA_PRINTED	CPU_ERRATA_LOCK + CPU_ERRATA_LOCK_SIZE
 #if __aarch64__
-#define CPU_REG_DUMP		CPU_ERRATA_PRINTED + CPU_ERRATA_PRINTED_SIZE
+#define CPU_REG_DUMP		CPU_ERRATA_LOCK + CPU_ERRATA_LOCK_SIZE
 #define CPU_OPS_SIZE		CPU_REG_DUMP + CPU_REG_DUMP_SIZE
 #else
-#define CPU_OPS_SIZE		CPU_ERRATA_PRINTED + CPU_ERRATA_PRINTED_SIZE
+#define CPU_OPS_SIZE		CPU_ERRATA_LOCK + CPU_ERRATA_LOCK_SIZE
 #endif /* __aarch64__ */
 
 #ifndef __ASSEMBLER__
@@ -111,8 +110,7 @@ struct cpu_ops {
 #if REPORT_ERRATA
 	char *cpu_str;
 #if defined(IMAGE_BL31) || defined(IMAGE_BL32)
-	spinlock_t *errata_lock;
-	unsigned int *errata_reported;
+	spinlock_t *errata_reported;
 #endif /* defined(IMAGE_BL31) || defined(IMAGE_BL32) */
 #endif /* REPORT_ERRATA */
 #if defined(IMAGE_BL31) && CRASH_REPORTING
