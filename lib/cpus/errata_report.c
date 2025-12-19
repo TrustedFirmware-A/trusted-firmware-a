@@ -64,9 +64,8 @@ void print_errata_status(void) {}
 /*
  * New errata status message printer
  */
-void generic_errata_report(void)
+static void generic_errata_report(struct cpu_ops *cpu_ops)
 {
-	struct cpu_ops *cpu_ops = get_cpu_ops_ptr();
 	struct erratum_entry *entry = cpu_ops->errata_list_start;
 	struct erratum_entry *end = cpu_ops->errata_list_end;
 	long rev_var = cpu_get_rev_var();
@@ -122,16 +121,20 @@ static __unused int errata_needs_reporting(spinlock_t *lock, uint32_t *reported)
  */
 void print_errata_status(void)
 {
-#ifdef IMAGE_BL1
-	generic_errata_report();
-#else /* IMAGE_BL1 */
+#if IMAGE_BL1
+	struct cpu_ops *cpu_ops = get_cpu_ops_ptr();
+#else
 	struct cpu_ops *cpu_ops = (void *) get_cpu_data(cpu_ops_ptr);
+#endif
 
 	assert(cpu_ops != NULL);
 
-	if (errata_needs_reporting(cpu_ops->errata_lock, cpu_ops->errata_reported)) {
-		generic_errata_report();
+#if !IMAGE_BL1
+	if (!errata_needs_reporting(cpu_ops->errata_lock, cpu_ops->errata_reported)) {
+		return;
 	}
-#endif /* IMAGE_BL1 */
+#endif
+
+	generic_errata_report(cpu_ops);
 }
 #endif /* !REPORT_ERRATA */
