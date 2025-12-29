@@ -709,6 +709,13 @@ Marvell platform ports and SoC drivers
 :|F|: drivers/marvell/
 :|F|: tools/marvell/
 
+Marvell Armada a80x0_nbx platform port
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:|M|: Vincent Jardin <vjardin@free.fr>
+:|G|: `vjardin`_
+:|F|: docs/plat/marvell/armada/a80x0_nbx.rst
+:|F|: plat/marvell/armada/a8k/a80x0_nbx/
+
 MediaTek platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Leon Chen <leon.chen@mediatek.com>
@@ -1194,6 +1201,7 @@ Conventional Changelog Extensions
 .. _TravMurav: https://github.com/TravMurav
 .. _uarif1: https://github.com/uarif1
 .. _vijayenthiran-arm: https://github.com/vijayenthiran-arm
+.. _vjardin: https://github.com/vjardin
 .. _artkopotev: https://github.com/artkopotev
 .. _vwadekar: https://github.com/vwadekar
 .. _Yann-lms: https://github.com/Yann-lms

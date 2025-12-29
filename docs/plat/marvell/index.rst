@@ -5,6 +5,7 @@ Marvell
    :maxdepth: 1
    :caption: Contents
 
+   armada/a80x0_nbx
    armada/build
    armada/uart-booting
    armada/porting
