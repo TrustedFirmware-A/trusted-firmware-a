@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -267,6 +267,7 @@ ifeq (${BUILD_CPUS_WITH_NO_FVP_MODEL},1)
 				lib/cpus/aarch64/c1_premium.S		\
 				lib/cpus/aarch64/canyon.S		\
 				lib/cpus/aarch64/caddo.S		\
+				lib/cpus/aarch64/rosillo.S		\
 				lib/cpus/aarch64/veymont.S		\
 				lib/cpus/aarch64/dionysus.S		\
 				lib/cpus/aarch64/venom.S		\
