@@ -16,6 +16,7 @@
 #include <ti_sci_protocol.h>
 #include <k3_gicv3.h>
 #include <ti_sci.h>
+#include <soc.h>
 
 #define CORE_PWR_STATE(state) ((state)->pwr_domain_state[MPIDR_AFFLVL0])
 #define CLUSTER_PWR_STATE(state) ((state)->pwr_domain_state[MPIDR_AFFLVL1])
@@ -97,7 +98,7 @@ void k3_pwr_domain_off(const psci_power_state_t *target_state)
 	cluster = MPIDR_AFFLVL1_VAL(read_mpidr_el1());
 	proc_id = PLAT_PROC_START_ID + core;
 	device_id = PLAT_PROC_DEVICE_START_ID + core;
-	cluster_id = PLAT_CLUSTER_DEVICE_START_ID + (cluster * 2);
+	cluster_id = get_plat_cluster_start_id() + (cluster * 2);
 
 	/*
 	 * If we are the last core in the cluster then we take a reference to

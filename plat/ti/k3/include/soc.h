@@ -10,5 +10,6 @@
 #include <stdint.h>
 
 uint32_t get_soc_part_no(void);
+uint32_t get_plat_cluster_start_id(void);
 
 #endif /* SOC_H */
