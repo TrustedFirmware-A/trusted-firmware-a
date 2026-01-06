@@ -36,3 +36,4 @@ BL31_SOURCES		+=	\
 				${PLAT_PATH}/common/k3_topology.c	\
 				${K3_TI_SCI_TRANSPORT}			\
 				${K3_PSCI_SOURCES}			\
+				${PLAT_PATH}/common/soc.c		\
