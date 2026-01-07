@@ -133,6 +133,9 @@
 	 */
 	.macro end_vector_entry label
 	.cfi_endproc
+	.iflt \label + (32 * 4) - .
+		.error "\label won't fit in exception vector"
+	.endif
 	.fill	\label + (32 * 4) - .
 	.endm
 
