@@ -94,7 +94,7 @@ void bl31_plat_arch_setup(void)
  ******************************************************************************/
 void bl31_platform_setup(void)
 {
-#ifdef QTI_MSM_XPU_BYPASS
+#if QTI_MSM_XPU_BYPASS
 	INFO("Bypassing QTI MSM XPU...\n");
 	qti_msm_xpu_bypass();
 #endif
