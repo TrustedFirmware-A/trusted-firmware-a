@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -850,14 +850,6 @@ static inline uint64_t el_implemented(unsigned int el)
 
 		return (read_id_aa64pfr0_el1() >> shift) & ID_AA64PFR0_ELX_MASK;
 	}
-}
-
-/*
- * Read number of break points available.
- */
-static inline unsigned int read_brps_id_field(void)
-{
-	return EXTRACT(ID_AA64DFR1_BRP, read_id_aa64dfr1_el1());
 }
 
 /*
