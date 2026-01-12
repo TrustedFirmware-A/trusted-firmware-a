@@ -397,11 +397,11 @@ void detect_arch_features(unsigned int core_pos)
 	tainted |= check_feature(ENABLE_FEAT_VHE, read_feat_vhe_id_field(),
 				 "VHE", 1, 1);
 	tainted |= check_feature(ENABLE_SPE_FOR_NS, read_feat_spe_id_field(),
-				 "SPE", 1, 4);
+				 "SPE", 1, 6);
 
 	/* v8.2 features */
 	tainted |= check_feature(ENABLE_SVE_FOR_NS, read_feat_sve_id_field(),
-				 "SVE", 1, 1);
+				 "SVE", 1, 3);
 	tainted |= check_feature(ENABLE_FEAT_RAS, read_feat_ras_id_field(),
 				 "RAS", 1, 2);
 
@@ -490,7 +490,7 @@ void detect_arch_features(unsigned int core_pos)
 	tainted |= check_feature(ENABLE_BRBE_FOR_NS, read_feat_brbe_id_field(),
 				 "BRBE", 1, 2);
 	tainted |= check_feature(ENABLE_TRBE_FOR_NS, read_feat_trbe_id_field(),
-				 "TRBE", 1, 1);
+				 "TRBE", 1, 2);
 	tainted |= check_feature(ENABLE_FEAT_UINJ, read_feat_uinj_id_field(),
 				 "UINJ", 1, 1);
 
@@ -498,7 +498,7 @@ void detect_arch_features(unsigned int core_pos)
 	tainted |= check_feature(ENABLE_SME_FOR_NS, read_feat_sme_id_field(),
 				 "SME", 1, 2);
 	tainted |= check_feature(ENABLE_SME2_FOR_NS, read_feat_sme_id_field(),
-				 "SME2", 2, 2);
+				 "SME2", 2, 3);
 	tainted |= check_feature(ENABLE_FEAT_FPMR, read_feat_fpmr_id_field(),
 				 "FPMR", 1, 1);
 
