@@ -230,7 +230,6 @@ int ti_sci_get_revision(struct ti_sci_msg_version *version)
 
 /**
  * ti_sci_query_fw_caps() - Get the FW/SoC capabilities
- * @handle:		Pointer to TI SCI handle
  * @fw_caps:		Each bit in fw_caps indicating one FW/SOC capability
  *
  * Return: 0 if all went well, else returns appropriate error value.
