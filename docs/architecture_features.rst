@@ -90,67 +90,67 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +-----------------------+--------+
 | Feature               | Status |
 +=======================+========+
-| FEAT_PMUv3_EXTPMN     |        |
+| FEAT_PMUv3_EXTPMN     |   NA   |
 +-----------------------+--------+
-| FEAT_SPEv1p5          |        |
+| FEAT_SPEv1p5          |   NA   |
 +-----------------------+--------+
 | FEAT_SPE_EXC          |        |
 +-----------------------+--------+
 | FEAT_SPE_nVM          |        |
 +-----------------------+--------+
-| FEAT_TRBEv1p1         |        |
+| FEAT_TRBEv1p1         |   NA   |
 +-----------------------+--------+
 | FEAT_TRBE_EXC         |        |
 +-----------------------+--------+
-| FEAT_SME_MOP4         |        |
+| FEAT_SME_MOP4         |   NA   |
 +-----------------------+--------+
-| FEAT_SME_TMOP         |        |
+| FEAT_SME_TMOP         |   NA   |
 +-----------------------+--------+
-| FEAT_PoPS             |        |
+| FEAT_PoPS             |   NA   |
 +-----------------------+--------+
-| FEAT_SME2p2           |        |
+| FEAT_SME2p2           |   NA   |
 +-----------------------+--------+
-| FEAT_CMPBR            |        |
+| FEAT_CMPBR            |   NA   |
 +-----------------------+--------+
-| FEAT_SSVE_AES         |        |
+| FEAT_SSVE_AES         |   NA   |
 +-----------------------+--------+
-| FEAT_RME_GPC3         |  WIP   |
+| FEAT_RME_GPC3         |   WIP  |
 +-----------------------+--------+
-| FEAT_RME_GDI          |  OK    |
+| FEAT_RME_GDI          |   OK   |
 +-----------------------+--------+
-| FEAT_SVE2p2           |        |
+| FEAT_SVE2p2           |   NA   |
 +-----------------------+--------+
-| FEAT_SSVE_BitPerm     |        |
+| FEAT_SSVE_BitPerm     |   NA   |
 +-----------------------+--------+
-| FEAT_SSVE_FEXPA       |        |
+| FEAT_SSVE_FEXPA       |   NA   |
 +-----------------------+--------+
-| FEAT_SVE_AES2         |        |
+| FEAT_SVE_AES2         |   NA   |
 +-----------------------+--------+
-| FEAT_LSFE             |        |
+| FEAT_LSFE             |   NA   |
 +-----------------------+--------+
-| FEAT_FPRCVT           |        |
+| FEAT_FPRCVT           |   NA   |
 +-----------------------+--------+
-| FEAT_SVE_F16F32MM     |        |
+| FEAT_SVE_F16F32MM     |   NA   |
 +-----------------------+--------+
-| FEAT_F8F16MM          |        |
+| FEAT_F8F16MM          |   NA   |
 +-----------------------+--------+
-| FEAT_F8F32MM          |        |
+| FEAT_F8F32MM          |   NA   |
 +-----------------------+--------+
-| FEAT_SVE_BFSCALE      |        |
+| FEAT_SVE_BFSCALE      |   NA   |
 +-----------------------+--------+
-| FEAT_OCCMO            |        |
+| FEAT_OCCMO            |   NA   |
 +-----------------------+--------+
-| FEAT_LS64WB           |        |
+| FEAT_LS64WB           |   NA   |
 +-----------------------+--------+
-| FEAT_AMU_EXTACR       |        |
+| FEAT_AMU_EXTACR       |   NA   |
 +-----------------------+--------+
-| FEAT_MPAM_MSC_DOMAINS |        |
+| FEAT_MPAM_MSC_DOMAINS |   NA   |
 +-----------------------+--------+
-| FEAT_MPAM_MSC_DCTRL   |        |
+| FEAT_MPAM_MSC_DCTRL   |   NA   |
 +-----------------------+--------+
 | FEAT_MPAM_PE_BW_CTRL  |   OK   |
 +-----------------------+--------+
-| FEAT_PCDPHINT         |        |
+| FEAT_PCDPHINT         |   NA   |
 +-----------------------+--------+
 | FEAT_SRMASK           |        |
 +-----------------------+--------+
@@ -158,9 +158,9 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +-----------------------+--------+
 | FEAT_UINJ             |   OK   |
 +-----------------------+--------+
-| FEAT_NV2p1            |        |
+| FEAT_NV2p1            |   NA   |
 +-----------------------+--------+
-| FEAT_LSUI             |        |
+| FEAT_LSUI             |   NA   |
 +-----------------------+--------+
 
 2023 Extensions
@@ -328,7 +328,7 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_LRCPC3              |        |
 +--------------------------+--------+
-| FEAT_SPEv1p4             |        |
+| FEAT_SPEv1p4             |  NA    |
 +--------------------------+--------+
 | FEAT_SPE_FDS             |        |
 +--------------------------+--------+
