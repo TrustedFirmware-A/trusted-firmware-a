@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -80,6 +80,12 @@ static unsigned int read_feat_vhe_id_field(void)
 {
 	return ISOLATE_FIELD(read_id_aa64mmfr1_el1(), ID_AA64MMFR1_EL1_VHE_SHIFT,
 			     ID_AA64MMFR1_EL1_VHE_MASK);
+}
+
+static unsigned int read_feat_spe_id_field(void)
+{
+	return ISOLATE_FIELD(read_id_aa64dfr0_el1(), ID_AA64DFR0_PMS_SHIFT,
+			     ID_AA64DFR0_PMS_MASK);
 }
 
 static unsigned int read_feat_sve_id_field(void)
@@ -390,6 +396,8 @@ void detect_arch_features(unsigned int core_pos)
 				 "PAN", 1, 3);
 	tainted |= check_feature(ENABLE_FEAT_VHE, read_feat_vhe_id_field(),
 				 "VHE", 1, 1);
+	tainted |= check_feature(ENABLE_SPE_FOR_NS, read_feat_spe_id_field(),
+				 "SPE", 1, 4);
 
 	/* v8.2 features */
 	tainted |= check_feature(ENABLE_SVE_FOR_NS, read_feat_sve_id_field(),
