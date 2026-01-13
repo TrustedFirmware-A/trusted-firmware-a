@@ -90,7 +90,14 @@ static int write_mailbox_cmd_buffer(uint32_t *cin, uint32_t cout,
 
 	do {
 		if (is_mailbox_cmdbuf_full(*cin)) {
+			/*
+			 * Intermediate doorbell: Buffer is full. Trigger the
+			 * hardware CIN update and notify SDM, then wait for
+			 * buffer space.
+			 * Only trigger once per fill event.
+			 */
 			if (!(*is_doorbell_triggered)) {
+				mmio_write_32(MBOX_OFFSET + MBOX_CIN, *cin);
 				mmio_write_32(MBOX_OFFSET +
 					      MBOX_DOORBELL_TO_SDM, 1U);
 				*is_doorbell_triggered = true;
@@ -99,7 +106,6 @@ static int write_mailbox_cmd_buffer(uint32_t *cin, uint32_t cout,
 		} else {
 			mmio_write_32(MBOX_ENTRY_TO_ADDR(CMD, (*cin)++), data);
 			*cin %= MBOX_CMD_BUFFER_SIZE;
-			mmio_write_32(MBOX_OFFSET + MBOX_CIN, *cin);
 			break;
 		}
 	} while (--timeout != 0U);
@@ -154,6 +160,14 @@ static int fill_mailbox_circular_buffer(uint32_t header_cmd, uint32_t *args,
 		}
 	}
 
+	/*
+	 * Final doorbell: Notify SDM that command is complete.
+	 * This is required even if an early doorbell was triggered during
+	 * buffer-full handling, because there is at least one data written
+	 * after SDM consumed the first batch.
+	 * Update CIN before the doorbell so SDM reads complete data.
+	 */
+	mmio_write_32(MBOX_OFFSET + MBOX_CIN, cmd_free_offset);
 	mmio_write_32(MBOX_OFFSET + MBOX_DOORBELL_TO_SDM, 1U);
 
 #if SIP_SVC_V3
