@@ -275,8 +275,8 @@
 	 * FEAT_SB, if it's enabled.
 	 */
 	.macro speculation_barrier
-#if ENABLE_FEAT_SB
-	// todo feat state
+	/* fallback to the old slower variant for FEAT_STATE_CHECKED */
+#if ENABLE_FEAT_SB == 1
 	sb_barrier_insn
 #else
 	dsb	sy
@@ -298,12 +298,7 @@
 	 */
 	.macro exception_return
 	eret
-#if ENABLE_FEAT_SB
-	sb_barrier_insn
-#else
-	dsb	nsh
-	isb
-#endif
+	speculation_barrier
 	.endm
 
 	/*
