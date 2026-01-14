@@ -8,7 +8,8 @@
 RDASPEN_BASE		 =	plat/arm/board/automotive_rd/platform/rdaspen
 RDASPEN_CPU_SOURCES	:=	lib/cpus/aarch64/cortex_a720_ae.S
 
-PLAT_INCLUDES		+=	-I${RDASPEN_BASE}/include/
+PLAT_INCLUDES		+=	-I${RDASPEN_BASE}/include/ 	\
+				-I${RDASPEN_BASE}/ras/include/
 
 override ARM_FW_CONFIG_LOAD_ENABLE		:=	1
 override ARM_PLAT_MT				:=	1
@@ -50,6 +51,13 @@ USE_COHERENT_MEM				:=	0
 USE_DSU_DRIVER				:=	1
 PRESERVE_DSU_PMU_REGS			:=	1
 
+# RAS Enablement
+ENABLE_FEAT_RAS				:= 	1
+HANDLE_EA_EL3_FIRST_NS			:=	1
+EL3_EXCEPTION_HANDLING			:=	1
+FAULT_INJECTION_SUPPORT			?=	1
+
+
 # ERRATA
 ERRATA_A720_AE_3699562			:=	1
 
@@ -66,10 +74,19 @@ BL2_SOURCES	+=	${RDASPEN_CPU_SOURCES}	\
 BL31_SOURCES	+=	${RDASPEN_CPU_SOURCES}	\
 			${RDASPEN_BASE}/rdaspen_bl31_setup.c	\
 			${RDASPEN_BASE}/rdaspen_topology.c	\
+			${RDASPEN_BASE}/ras/rdaspen_ras.c	\
+			${RDASPEN_BASE}/ras/rdaspen_ras_helpers.S \
 			drivers/cfi/v2m/v2m_flash.c		\
 			lib/utils/mem_region.c	\
 			plat/arm/common/arm_nor_psci_mem_protect.c \
 			drivers/arm/dsu/dsu.c
+
+ifeq ($(ENABLE_FEAT_RAS),1)
+ifeq ($(HANDLE_EA_EL3_FIRST_NS),1)
+BL31_SOURCES 	+=	$(RDASPEN_BASE)/../common/cper.c
+PLAT_INCLUDES	+=	-I$(RDASPEN_BASE)/../common/include
+endif
+endif
 
 ifeq (${TRUSTED_BOARD_BOOT}, 1)
 BL2_SOURCES	+=	${RDASPEN_BASE}/rdaspen_trusted_board_boot.c

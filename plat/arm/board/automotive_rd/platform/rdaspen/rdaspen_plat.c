@@ -24,6 +24,9 @@ const mmap_region_t plat_arm_mmap[] = {
 	RDASPEN_MAP_NS_DRAM2,
 	RDASPEN_MAP_TRUSTED_NVCTR,
 #endif
+#if IMAGE_BL31
+	RDASPEN_MAP_CPER_BUF,
+#endif
 	RDASPEN_MAP_S_DRAM,
 	{0}
 };
