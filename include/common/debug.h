@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -105,6 +105,7 @@
 #endif /* EARLY_CONSOLE */
 
 const char *get_el_str(unsigned int el);
+const char *get_mode_str(unsigned int spsr_mode);
 
 #if ENABLE_BACKTRACE
 void backtrace(const char *cookie);
@@ -113,7 +114,6 @@ void backtrace(const char *cookie);
 #endif
 
 void __dead2 el3_panic(void);
-void __dead2 elx_panic(void);
 
 #define panic()				\
 	do {				\
@@ -121,21 +121,6 @@ void __dead2 elx_panic(void);
 		console_flush();	\
 		el3_panic();		\
 	} while (false)
-
-#if CRASH_REPORTING
-/* --------------------------------------------------------------------
- * do_lower_el_panic assumes it's called due to a panic from a lower EL
- * This call will not return.
- * --------------------------------------------------------------------
- */
-#define	lower_el_panic()		\
-	do {				\
-		console_flush();	\
-		elx_panic();		\
-	} while (false)
-#else
-#define	lower_el_panic()
-#endif
 
 /* Function called when stack protection check code detects a corrupted stack */
 void __dead2 __stack_chk_fail(void);

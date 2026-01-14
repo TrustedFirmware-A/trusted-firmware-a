@@ -248,7 +248,10 @@ void handler_sync_exception(cpu_context_t *ctx)
 		 * only provided for lower EL in AArch64 mode. */
 		if (ret == TRAP_RET_UNHANDLED) {
 			if (read_spsr_el3() & MASK(SPSR_M)) {
-				lower_el_panic();
+				ERROR("Trapped an instruction from AArch32 %s mode\n",
+				      get_mode_str((unsigned int)GET_M32(read_spsr_el3())));
+				ERROR("at address 0x%lx, reason 0x%lx\n", read_elr_el3(), read_esr_el3());
+				panic();
 			}
 			inject_undef64(ctx);
 		} else if (ret == TRAP_RET_CONTINUE) {
