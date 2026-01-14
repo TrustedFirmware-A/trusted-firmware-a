@@ -26,7 +26,7 @@ int rv_iommu_hw_sem_trylock(void);
 int apu_hw_sema_ctl(uint32_t sem_addr, uint8_t usr_bit, uint8_t ctl, uint32_t timeout,
 		    uint8_t bypass);
 
-#define HW_SEM_TIMEOUT	(300) /* 300 us */
+#define HW_SEM_TIMEOUT	(3000) /* 3000 us */
 #define HW_SEM_NO_WAIT	(0)   /* no wait */
 
 /* APU MBOX */
