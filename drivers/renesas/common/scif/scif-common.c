@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2021-2026, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -46,7 +46,7 @@ void scif_console_set_regs(uint32_t fsr, uint32_t tdr)
 	rcar_putc_tdr = tdr;
 }
 
-int console_rcar_putc(int c, console_t *pconsole)
+int console_renesas_putc(int c, console_t *pconsole)
 {
 	if (rcar_putc_fsr == 0 || rcar_putc_tdr == 0)
 		return -1;
@@ -59,7 +59,7 @@ int console_rcar_putc(int c, console_t *pconsole)
 	return c;
 }
 
-int console_rcar_flush(console_t *pconsole)
+int console_renesas_flush(console_t *pconsole)
 {
 	/* Nothing to do */
 	return 0;

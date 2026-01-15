@@ -52,7 +52,7 @@
 #define SCFCR_TFRST_EN		BIT(2)
 #define SCFCR_RFRS_EN		BIT(1)
 
-int console_rcar_init(uintptr_t base_addr, uint32_t uart_clk,
+int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
 		      uint32_t baud_rate)
 {
 	uint32_t prr = mmio_read_32(PRR);

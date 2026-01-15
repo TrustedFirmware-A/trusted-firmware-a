@@ -9,6 +9,6 @@
 
 #include <string.h>
 
-int32_t rcar_log_init(void);
+int32_t renesas_log_init(void);
 
 #endif /* RCAR_PRINTF_H */

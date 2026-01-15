@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2019-2026, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -72,7 +72,7 @@ void rcar_console_boot_init(void)
 {
 	int ret;
 
-	ret = console_rcar_register(0, 0, 0, &rcar_boot_console);
+	ret = console_renesas_register(0, 0, 0, &rcar_boot_console);
 	if (!ret)
 		panic();
 
@@ -87,7 +87,7 @@ void rcar_console_runtime_init(void)
 {
 	int ret;
 
-	ret = console_rcar_register(1, 0, 0, &rcar_runtime_console);
+	ret = console_renesas_register(1, 0, 0, &rcar_runtime_console);
 	if (!ret)
 		panic();
 

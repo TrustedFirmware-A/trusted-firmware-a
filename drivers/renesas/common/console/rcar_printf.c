@@ -43,7 +43,7 @@ typedef struct log_map {
 	uint8_t res_data[RCAR_LOG_RES_SIZE];
 } logmap_t;
 
-int console_rcar_putc(int c, console_t *pconsole)
+int console_renesas_putc(int c, console_t *pconsole)
 {
 	logmap_t *t_log;
 
@@ -75,7 +75,7 @@ int console_rcar_putc(int c, console_t *pconsole)
 	return 1;
 }
 
-int32_t rcar_log_init(void)
+int32_t renesas_log_init(void)
 {
 	logmap_t *t_log = (logmap_t *)RCAR_BL31_LOG_BASE;
 	uint32_t *log_data = (uint32_t *)t_log->log_data;
@@ -107,13 +107,13 @@ int32_t rcar_log_init(void)
 	return 1;
 }
 
-int console_rcar_flush(console_t *pconsole)
+int console_renesas_flush(console_t *pconsole)
 {
 	/* Nothing to do */
 	return 0;
 }
 
-int console_rcar_init(uintptr_t base_addr, uint32_t uart_clk,
+int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
 		      uint32_t baud_rate)
 {
 	return 1;
