@@ -25,6 +25,10 @@
 #error "Travis must be compiled with FEAT_PABANDON enabled"
 #endif
 
+#if ERRATA_SME_POWER_DOWN == 0
+#error "Travis needs ERRATA_SME_POWER_DOWN=1 to powerdown correctly"
+#endif
+
 cpu_reset_prologue travis
 
 cpu_reset_func_start travis
@@ -36,20 +40,6 @@ cpu_reset_func_start travis
 cpu_reset_func_end travis
 
 func travis_core_pwr_dwn
-#if ENABLE_SME_FOR_NS
-        /* ---------------------------------------------------
-         * Disable SME if enabled and supported
-         * ---------------------------------------------------
-         */
-	mrs     x0, ID_AA64PFR1_EL1
-	ubfx	x0, x0, #ID_AA64PFR1_EL1_SME_SHIFT, \
-		#ID_AA64PFR1_EL1_SME_WIDTH
-        cmp     x0, #ID_AA64PFR1_EL1_SME_NOT_SUPPORTED
-	b.eq	1f
-	msr	TRAVIS_SVCRSM, xzr
-	msr	TRAVIS_SVCRZA, xzr
-1:
-#endif
 	/* ---------------------------------------------------
 	 * Flip CPU power down bit in power control register.
 	 * It will be set on powerdown and cleared on wakeup
