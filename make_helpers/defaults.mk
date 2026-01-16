@@ -82,6 +82,9 @@ DYN_DISABLE_AUTH		:= 0
 # Enable the Maximum Power Mitigation Mechanism on supporting cores.
 ENABLE_MPMM			:= 0
 
+# Enable support for powerdown abandons
+FEAT_PABANDON			:= 0
+
 # Enable MPMM configuration via FCONF.
 ENABLE_MPMM_FCONF		:= 0
 
