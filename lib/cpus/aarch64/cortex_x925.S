@@ -120,6 +120,7 @@ cpu_reset_func_start cortex_x925
 	/* Disable speculative loads */
 	msr	SSBS, xzr
 	apply_erratum cortex_x925, ERRATUM(3324334), ERRATA_X925_3324334
+	enable_mpmm
 cpu_reset_func_end cortex_x925
 
 	/* ----------------------------------------------------

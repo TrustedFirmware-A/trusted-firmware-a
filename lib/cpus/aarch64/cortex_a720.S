@@ -104,6 +104,7 @@ cpu_reset_func_start cortex_a720
 	msr	SSBS, xzr
 	apply_erratum cortex_a720, ERRATUM(3456091), ERRATA_A720_3456091
 
+	enable_mpmm
 cpu_reset_func_end cortex_a720
 
 	/* ----------------------------------------------------

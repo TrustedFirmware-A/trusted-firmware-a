@@ -25,10 +25,6 @@
 #	include <lib/fconf/fconf_amu_getter.h>
 #endif
 
-#if ENABLE_MPMM
-#	include <lib/mpmm/mpmm.h>
-#endif
-
 struct amu_ctx {
 	uint64_t group0_cnts[AMU_GROUP0_MAX_COUNTERS];
 #if ENABLE_AMU_AUXILIARY_COUNTERS
@@ -258,10 +254,6 @@ void amu_init_el3(void)
 		write_amcr_el0_cg1rz(0U);
 #endif
 	}
-
-#if ENABLE_MPMM
-	mpmm_enable();
-#endif
 }
 
 void amu_init_el2_unused(void)
@@ -583,10 +575,6 @@ static void *amu_context_restore(const void *arg)
 	if (amcfgr_el0_ncg > 0) {
 		write_amcntenset1_el0_px(ctx->group1_enable);
 	}
-#endif
-
-#if ENABLE_MPMM
-	mpmm_enable();
 #endif
 
 	return (void *)0;

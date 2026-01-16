@@ -300,6 +300,7 @@ cpu_reset_func_start cortex_a710
 	msr	SSBS, xzr
 	apply_erratum cortex_a710, ERRATUM(3324338), ERRATA_A710_3324338
 
+	enable_mpmm
 cpu_reset_func_end cortex_a710
 
 	/* ---------------------------------------------

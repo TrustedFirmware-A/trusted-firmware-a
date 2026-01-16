@@ -86,6 +86,7 @@ cpu_reset_func_start cortex_a725
 	/* Disable speculative loads */
 	msr	SSBS, xzr
 	apply_erratum cortex_a725, ERRATUM(3456106), ERRATA_A725_3456106
+	enable_mpmm
 cpu_reset_func_end cortex_a725
 
 	/* ----------------------------------------------------

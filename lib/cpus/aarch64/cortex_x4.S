@@ -144,6 +144,7 @@ check_erratum_ls cortex_x4, CVE(2024, 7881), CPU_REV(0, 2)
 cpu_reset_func_start cortex_x4
 	/* Disable speculative loads */
 	msr	SSBS, xzr
+	enable_mpmm
 cpu_reset_func_end cortex_x4
 
 	/* ----------------------------------------------------

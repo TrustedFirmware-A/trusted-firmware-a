@@ -287,6 +287,7 @@ cpu_reset_func_start cortex_x2
 	msr	SSBS, xzr
 	apply_erratum cortex_x2, ERRATUM(3324338), ERRATA_X2_3324338
 
+	enable_mpmm
 cpu_reset_func_end cortex_x2
 
 	/* ---------------------------------------------

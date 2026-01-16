@@ -190,6 +190,7 @@ cpu_reset_func_start cortex_a715
 	msr	SSBS, xzr
 	apply_erratum cortex_a715, ERRATUM(3456084), ERRATA_A715_3456084
 
+	enable_mpmm
 cpu_reset_func_end cortex_a715
 
 	/* ----------------------------------------------------
