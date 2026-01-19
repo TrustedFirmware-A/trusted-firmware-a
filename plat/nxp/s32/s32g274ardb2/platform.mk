@@ -23,6 +23,8 @@ PLAT_INCLUDES = \
 	-I${PLAT_S32G274ARDB2}/include \
 	-Idrivers/imx/usdhc \
 
+include plat/nxp/s32/s32g274ardb2/plat_ddr.mk
+
 PROGRAMMABLE_RESET_ADDRESS := 1
 
 COLD_BOOT_SINGLE_CPU := 0
@@ -67,6 +69,7 @@ BL2_SOURCES += \
 	${PLAT_S32G274ARDB2}/plat_bl2_image_desc.c \
 	${PLAT_S32G274ARDB2}/plat_io_storage.c \
 	${PLAT_S32G274ARDB2}/s32cc_ncore.c \
+	${DDR_DRV_SRCS} \
 	common/desc_image_load.c \
 	common/tf_crc32.c \
 	drivers/delay_timer/delay_timer.c \
