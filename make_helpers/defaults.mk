@@ -470,3 +470,8 @@ PLATFORM_NODE_COUNT		:= 1
 
 # Support for live activation of SPs managed by S-EL2 SPMC
 SUPPORT_SP_LIVE_ACTIVATION	:= 0
+
+# Negative I/O test: intentionally report a short read for a selected
+# image_id. Test/CI only. Do not enable in production builds.
+TEST_IO_SHORT_READ_FI		:= 0
+TEST_IO_SHORT_READ_FI_IMAGE_ID	:= 0

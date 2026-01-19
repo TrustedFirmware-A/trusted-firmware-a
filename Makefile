@@ -648,6 +648,7 @@ $(eval $(call assert_booleans,\
 	HOB_LIST \
 	LFA_SUPPORT \
 	SUPPORT_SP_LIVE_ACTIVATION \
+	TEST_IO_SHORT_READ_FI \
 )))
 
 # Numeric_Flags
@@ -729,6 +730,7 @@ $(eval $(call assert_numerics,\
 	USE_SPINLOCK_CAS \
 	IMPDEF_SYSREG_TRAP \
 	W \
+	TEST_IO_SHORT_READ_FI_IMAGE_ID \
 )))
 
 ifdef KEY_SIZE
@@ -922,6 +924,8 @@ $(eval $(call add_defines,\
 	HW_CONFIG_BASE \
 	LFA_SUPPORT \
 	SUPPORT_SP_LIVE_ACTIVATION \
+	TEST_IO_SHORT_READ_FI \
+	TEST_IO_SHORT_READ_FI_IMAGE_ID \
 )))
 
 ifeq (${PLATFORM_REPORT_CTX_MEM_USE}, 1)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2021-2025, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -136,6 +136,18 @@ static int load_image(unsigned int image_id, image_info_t *image_data)
 		WARN("Failed to load image id=%u (%i)\n", image_id, io_result);
 		goto exit_load_image;
 	}
+
+/*
+ * For testing purposes only. Simulate a short read to hit the partial
+ * read error handling path.
+ */
+#if TEST_IO_SHORT_READ_FI
+	if (image_id == TEST_IO_SHORT_READ_FI_IMAGE_ID) {
+		INFO("Artificially shorten read operation for image_id=%u bytes\n",
+		     TEST_IO_SHORT_READ_FI_IMAGE_ID);
+		bytes_read = image_size - 1U;
+	}
+#endif
 
 	/* TODO: Consider whether to try to recover/retry a partially successful read */
 	if (bytes_read < image_size) {

@@ -1702,6 +1702,22 @@ SP Live Activation build options
 
   This flag is experimental and currently exercised on FVP. Default value is 0.
 
+Negative test scenario options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- ``TEST_IO_SHORT_READ_FI``: Boolean flag to enable a negative-test for the
+  BL image loader. When set to ``1``, TF-A intentionally simulates a short
+  read for the image selected by ``TEST_IO_SHORT_READ_FI_IMAGE_ID`` by reporting
+  fewer bytes read than the image size. This exercises the "read too short"
+  error handling path in ``load_image()`` and is intended for test/CI only.
+  Default is ``0`` (disabled). Must not be used on production devices.
+
+- ``TEST_IO_SHORT_READ_FI_IMAGE_ID``: Numeric flag that selects the ``image_id``
+  for which the short-read fault is injected when ``TEST_IO_SHORT_READ_FI=1``.
+  The value must match the image identifiers used by the platform image loading
+  flow (for example ``BL31_IMAGE_ID``, ``BL33_IMAGE_ID``, etc., depending on the
+  build and platform). Default is ``0``.
+
 --------------
 
 *Copyright (c) 2019-2026, Arm Limited. All rights reserved.*
