@@ -22,7 +22,8 @@ psa_status_t rse_protocol_serialize_msg(psa_handle_t handle,
 
 	assert(msg != NULL);
 	assert(msg_len != NULL);
-	assert(in_vec != NULL);
+	assert((in_len == 0u) || (in_vec != NULL));
+	assert((out_len == 0u) || (out_vec != NULL));
 
 	switch (msg->header.protocol_ver) {
 	case RSE_COMMS_PROTOCOL_EMBED:
