@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Arm Limited. All rights reserved.
+ * Copyright (c) 2022-2026 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier:    BSD-3-Clause
  *
@@ -387,7 +387,7 @@ static enum drtm_retc drtm_dl_check_args(uint64_t x1,
 	}
 
 	rc = mmap_add_dynamic_region_alloc_va(x1, &va_mapping, va_mapping_size,
-					      MT_MEMORY | MT_NS | MT_RO |
+					      MT_NS | MT_RO_DATA |
 					      MT_SHAREABILITY_ISH);
 	if (rc != 0) {
 		WARN("DRTM: %s: mmap_add_dynamic_region() failed rc=%d\n",
@@ -514,7 +514,7 @@ static enum drtm_retc drtm_dl_check_args(uint64_t x1,
 	 */
 	va_mapping_size = ALIGNED_UP((dlme_end - dlme_start), DRTM_PAGE_SIZE);
 	rc = mmap_add_dynamic_region_alloc_va(dlme_start, &va_mapping, va_mapping_size,
-					      MT_MEMORY | MT_NS | MT_RO |
+					      MT_NS | MT_RO_DATA |
 					      MT_SHAREABILITY_ISH);
 	if (rc != 0) {
 		ERROR("DRTM: %s: mmap_add_dynamic_region_alloc_va() failed rc=%d\n",
