@@ -402,7 +402,7 @@
 #if defined(IMAGE_BL1) && TRANSFER_LIST
 #define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x200)
 #else
-#define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x400)
+#define PLAT_ARM_EVENT_LOG_MAX_SIZE		SZ_2K
 #endif
 
 /* Number of SCMI channels on the platform */
