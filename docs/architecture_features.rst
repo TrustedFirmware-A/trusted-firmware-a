@@ -244,7 +244,7 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | Feature                  | Status |
 +==========================+========+
-| FEAT_BWE                 |        |
+| FEAT_BWE                 |   NA   |
 +--------------------------+--------+
 | FEAT_ADERR               |        |
 +--------------------------+--------+
@@ -256,11 +256,11 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_RASv2               |        |
 +--------------------------+--------+
-| FEAT_CSSC                |        |
+| FEAT_CSSC                |   NA   |
 +--------------------------+--------+
-| FEAT_RPRFM               |        |
+| FEAT_RPRFM               |   NA   |
 +--------------------------+--------+
-| FEAT_PRFMSLC             |        |
+| FEAT_PRFMSLC             |   NA   |
 +--------------------------+--------+
 | FEAT_SPECRES2            |        |
 +--------------------------+--------+
@@ -268,13 +268,13 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_ECBHB               |   NA   |
 +--------------------------+--------+
-| FEAT_SME2p1              |        |
+| FEAT_SME2p1              |   NA   |
 +--------------------------+--------+
-| FEAT_SME_F16F16          |        |
+| FEAT_SME_F16F16          |   NA   |
 +--------------------------+--------+
-| FEAT_SVE_B16B16          |        |
+| FEAT_SVE_B16B16          |   NA   |
 +--------------------------+--------+
-| FEAT_SME_B16B16          |        |
+| FEAT_SME_B16B16          |   NA   |
 +--------------------------+--------+
 | FEAT_FGT2                |   OK   |
 +--------------------------+--------+
@@ -284,27 +284,27 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_MTE_NO_ADDRESS_TAGS |   NA   |
 +--------------------------+--------+
-| FEAT_MTE_TAGGED_FAR      |        |
+| FEAT_MTE_TAGGED_FAR      |   NA   |
 +--------------------------+--------+
 | FEAT_MTE_PERM            |   NA   |
 +--------------------------+--------+
 | FEAT_MTE_STORE_ONLY      |   NA   |
 +--------------------------+--------+
-| FEAT_ITE                 |        |
+| FEAT_ITE                 |   NA   |
 +--------------------------+--------+
-| FEAT_TRBE_EXT            |        |
+| FEAT_TRBE_EXT            |   NA   |
 +--------------------------+--------+
 | FEAT_TRBE_MPAM           |        |
 +--------------------------+--------+
-| FEAT_ETEv1p3             |        |
+| FEAT_ETEv1p3             |   NA   |
 +--------------------------+--------+
 | FEAT_GCS                 |   OK   |
 +--------------------------+--------+
-| FEAT_CHK                 |        |
+| FEAT_CHK                 |   NA   |
 +--------------------------+--------+
-| FEAT_SPE_DPFZS           |        |
+| FEAT_SPE_DPFZS           |   NA   |
 +--------------------------+--------+
-| FEAT_SPE_CRR             |        |
+| FEAT_SPE_CRR             |   NA   |
 +--------------------------+--------+
 | FEAT_EBEP                |   OK   |
 +--------------------------+--------+
@@ -316,23 +316,23 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_PMUv3_ICNTR         |        |
 +--------------------------+--------+
-| FEAT_PMUv3p9             |        |
+| FEAT_PMUv3p9             |   OK   |
 +--------------------------+--------+
-| FEAT_SVE2p1              |        |
+| FEAT_SVE2p1              |   NA   |
 +--------------------------+--------+
 | FEAT_Debugv8p9           |   OK   |
 +--------------------------+--------+
-| FEAT_ABLE                |        |
+| FEAT_ABLE                |   NA   |
 +--------------------------+--------+
-| FEAT_PCSRv8p9            |        |
+| FEAT_PCSRv8p9            |   NA   |
 +--------------------------+--------+
-| FEAT_LRCPC3              |        |
+| FEAT_LRCPC3              |   NA   |
 +--------------------------+--------+
-| FEAT_SPEv1p4             |  NA    |
+| FEAT_SPEv1p4             |   NA   |
 +--------------------------+--------+
-| FEAT_SPE_FDS             |        |
+| FEAT_SPE_FDS             |   OK   |
 +--------------------------+--------+
-| FEAT_PMUv3_EDGE          |        |
+| FEAT_PMUv3_EDGE          |   NA   |
 +--------------------------+--------+
 | FEAT_D128                |   OK   |
 +--------------------------+--------+
@@ -340,7 +340,7 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_S1PIE               |   OK   |
 +--------------------------+--------+
-| FEAT_ATS1A               |        |
+| FEAT_ATS1A               |   NA   |
 +--------------------------+--------+
 | FEAT_S1POE               |   OK   |
 +--------------------------+--------+
@@ -350,21 +350,21 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +--------------------------+--------+
 | FEAT_SYSREG128           |   OK   |
 +--------------------------+--------+
-| FEAT_SYSINSTR128         |        |
+| FEAT_SYSINSTR128         |   NA   |
 +--------------------------+--------+
-| FEAT_LSE128              |        |
+| FEAT_LSE128              |   NA   |
 +--------------------------+--------+
-| FEAT_HAFT                |        |
+| FEAT_HAFT                |   NA   |
 +--------------------------+--------+
 | FEAT_THE                 |   OK   |
 +--------------------------+--------+
-| FEAT_LVA3                |        |
+| FEAT_LVA3                |   NA   |
 +--------------------------+--------+
-| FEAT_MTE_ASYNC           |        |
+| FEAT_MTE_ASYNC           |   NA   |
 +--------------------------+--------+
-| FEAT_EDHSR               |        |
+| FEAT_EDHSR               |   NA   |
 +--------------------------+--------+
-| FEAT_AMU_EXT64           |        |
+| FEAT_AMU_EXT64           |   NA   |
 +--------------------------+--------+
 
 
