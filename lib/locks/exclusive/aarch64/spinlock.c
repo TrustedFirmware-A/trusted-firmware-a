@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -114,7 +114,7 @@ static bool spin_trylock_excl(volatile uint32_t *dst)
 
 		__asm__ volatile (
 		"stxr	%w[ret], %w[src], [%[dst]]\n"
-		: "+m" (*dst), [ret] "=r" (ret)
+		: "+m" (*dst), [ret] "=&r" (ret)
 		: [src] "r" (src), [dst] "r" (dst));
 
 		if (ret == 0) {
