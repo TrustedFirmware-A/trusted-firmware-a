@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 NXP
+ * Copyright 2023-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -96,14 +96,14 @@ int mc_rgm_ddr_reset(uintptr_t rgm, uint32_t timeout)
 	int err;
 
 	prst = mmio_read_32(MC_RGM_PRST(MC_RGM_BASE_ADDR, 0U));
-	if ((prst & MC_RGM_PRST_PERIPH_N_RST(3)) == 0U) {
+	if ((prst & MC_RGM_PRST_PERIPH_N_RST(MC_RGM_DDR_PERIPH)) == 0U) {
 		return -EINVAL;
 	}
 
-	mc_rgm_release_periph(MC_RGM_BASE_ADDR, 0, 3);
+	mc_rgm_release_periph(MC_RGM_BASE_ADDR, 0, MC_RGM_DDR_PERIPH);
 
 	err = mmio_read_32_poll_timeout(MC_RGM_PSTAT(MC_RGM_BASE_ADDR, 0U), pstat,
-					((pstat & MC_RGM_PSTAT_PERIPH(3)) == 0U),
+					((pstat & MC_RGM_PSTAT_PERIPH(MC_RGM_DDR_PERIPH)) == 0U),
 					timeout);
 	return err;
 }

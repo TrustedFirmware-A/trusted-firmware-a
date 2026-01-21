@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /*
- * Copyright 2020-2021, 2023-2025 NXP
+ * Copyright 2020-2021, 2023-2026 NXP
  */
 #ifndef S32CC_CLK_REGS_H
 #define S32CC_CLK_REGS_H
@@ -19,6 +19,8 @@
 #define MC_RGM_BASE_ADDR		(0x40078000UL)
 #define RDC_BASE_ADDR			(0x40080000UL)
 #define MC_CGM5_BASE_ADDR		(0x40068000UL)
+
+#define MC_RGM_DDR_PERIPH		3U
 
 /* FXOSC */
 #define FXOSC_CTRL(FXOSC)		((FXOSC) + 0x0UL)
