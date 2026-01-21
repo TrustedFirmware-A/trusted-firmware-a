@@ -909,11 +909,11 @@
  * is reserved in Morello it should not have any effect anyways.
  */
 #define CPTR_EL3_RESET_VAL	((TAM_BIT | TTA_BIT | EC_BIT) & \
-				~(CPTR_EZ_BIT | ESM_BIT | TFP_BIT | TCPAC_BIT))
+				~(CPTR_EZ_BIT | ESM_BIT | TCPAC_BIT))
 #else
 /* TCPAC is always set by default as the register is always present */
 #define CPTR_EL3_RESET_VAL	((TAM_BIT | TTA_BIT) & \
-				~(CPTR_EZ_BIT | ESM_BIT | TFP_BIT | TCPAC_BIT))
+				~(CPTR_EZ_BIT | ESM_BIT | TCPAC_BIT))
 #endif
 
 /* CPTR_EL2 definitions */

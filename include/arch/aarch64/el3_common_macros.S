@@ -529,6 +529,7 @@ feat_sctlr2_not_supported\@:
 	 *  available.
 	 *
 	 * CPTR_EL3.EZ: Set to one so that accesses to ZCR_EL3 do not trap
+	 * CPTR_EL3.TFP: Set to one so that accesses to SIMD trap
 	 * CPTR_EL3.ESM: Set to one so that SME related registers don't trap
 	 * CPTR_EL3.EC: Set to one when Morello is enabled so that access to morello
 	 *  architecture and registers are not trapped
@@ -555,6 +556,7 @@ feat_sctlr2_not_supported\@:
 
 		mrs	x15, cptr_el3
 		orr	x15, x15, #CPTR_EZ_BIT
+		orr	x15, x15, #TFP_BIT
 		orr	x15, x15, #ESM_BIT
 #if ENABLE_FEAT_MORELLO
 		orr	x15, x15, #EC_BIT
