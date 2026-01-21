@@ -63,6 +63,8 @@
 #define APU_RESERVE_MEMORY		(0x95000000)
 #define APU_SEC_INFO_OFFSET		(0x100000)
 #define APU_RESERVE_SIZE		(0x1400000)
+#define APUSYS_CE_MEM_BASE		(0x190A4400)
+#define APUSYS_CE_MEM_SIZE		(0x3000)
 
 /*******************************************************************************
  * SPM related constants

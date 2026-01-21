@@ -474,7 +474,14 @@ int apusys_rv_setup_ce_bin(void)
 
 		for (i = 0; i < ce_sub_hdr->bin_size; i += sizeof(uint32_t)) {
 			reg_val = *(uint32_t *)(ce_sub_hdr_bin + i);
-			mmio_write_32(ce_sub_hdr->mem_st + i, reg_val);
+			if (ce_sub_hdr->mem_st + i >= APUSYS_CE_MEM_BASE &&
+			    ce_sub_hdr->mem_st + i < APUSYS_CE_MEM_BASE + APUSYS_CE_MEM_SIZE) {
+				mmio_write_32(ce_sub_hdr->mem_st + i, reg_val);
+			} else {
+				ERROR("%s: mem_st addr 0x%x is out of range\n", __func__,
+				      ce_sub_hdr->mem_st + i);
+				return -EINVAL;
+			}
 		}
 
 		if (ce_sub_hdr->hw_entry) {
