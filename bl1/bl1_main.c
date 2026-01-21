@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -123,6 +123,10 @@ void __no_pauth bl1_main(void)
 	/* Initialize the measured boot */
 	bl1_plat_mboot_init();
 
+	if (is_feat_crypto_supported()) {
+		disable_fpregs_traps_el3();
+	}
+
 	/* Perform platform setup in BL1. */
 	bl1_platform_setup();
 
@@ -137,6 +141,10 @@ void __no_pauth bl1_main(void)
 		bl1_load_bl2();
 	else
 		NOTICE("BL1-FWU: *******FWU Process Started*******\n");
+
+	if (is_feat_crypto_supported()) {
+		enable_fpregs_traps_el3();
+	}
 
 	/* Teardown the measured boot driver */
 	bl1_plat_mboot_finish();
