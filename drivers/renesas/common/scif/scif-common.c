@@ -59,8 +59,17 @@ int console_renesas_putc(int c, console_t *pconsole)
 	return c;
 }
 
-int console_renesas_flush(console_t *pconsole)
+static console_t console_renesas_console = {
+	.flags = CONSOLE_FLAG_BOOT,
+	.putc = console_renesas_putc,
+};
+
+void console_renesas_register(uintptr_t baseaddr, uint32_t clock,
+			      uint32_t baud, uint32_t flags)
 {
-	/* Nothing to do */
-	return 0;
+	console_renesas_console.base = baseaddr;
+	console_renesas_console.flags = flags;
+
+	console_register(&console_renesas_console);
+	console_renesas_init(baseaddr, clock, baud);
 }

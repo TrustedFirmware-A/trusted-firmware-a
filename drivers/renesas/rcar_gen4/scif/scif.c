@@ -60,8 +60,8 @@
 #define MODEMR_HSCIF_DLMODE_1843200	2U
 #define MODEMR_HSCIF_DLMODE_3000000	3U
 
-int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
-		      uint32_t baud_rate)
+void console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
+			  uint32_t baud_rate)
 {
 	uint32_t modemr, mstpcr, mstpsr, mstpbit;
 
@@ -86,6 +86,4 @@ int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
 	mmio_clrbits_32(mstpcr, mstpbit);
 	while (mmio_read_32(mstpsr) & mstpbit)
 		;
-
-	return 1;
 }

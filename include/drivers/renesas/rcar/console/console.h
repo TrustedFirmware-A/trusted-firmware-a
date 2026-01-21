@@ -17,8 +17,8 @@
  * for the lifetime of the console, such as a global or static local variable.
  * Its contents will be reinitialized from scratch.
  */
-int console_renesas_register(uintptr_t baseaddr, uint32_t clock, uint32_t baud,
-			     console_t *console);
+int console_renesas_register(uintptr_t baseaddr, uint32_t clock,
+			     uint32_t baud, uint32_t flags);
 
 #endif /*__ASSEMBLER__*/
 

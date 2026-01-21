@@ -103,7 +103,6 @@ BL2_SOURCES	+=	${RCAR_GIC_SOURCES}				\
 			plat/renesas/common/bl2_cpg_init.c		\
 			drivers/renesas/common/scif/scif-common.c	\
 			drivers/renesas/common/scif/scif.c		\
-			drivers/renesas/common/scif/scif_helpers.S	\
 			drivers/renesas/common/common.c			\
 			drivers/renesas/common/io/io_emmcdrv.c		\
 			drivers/renesas/common/io/io_memdrv.c		\
@@ -132,7 +131,6 @@ BL31_SOURCES	+=	${RCAR_GIC_SOURCES}				\
 			plat/renesas/common/aarch64/platform_common.c	\
 			plat/renesas/common/bl31_plat_setup.c		\
 			plat/renesas/common/plat_pm.c			\
-			drivers/renesas/common/console/rcar_console.S	\
 			drivers/renesas/common/console/rcar_printf.c	\
 			drivers/renesas/common/delay/micro_delay.c	\
 			drivers/renesas/common/pwrc/call_sram.S		\

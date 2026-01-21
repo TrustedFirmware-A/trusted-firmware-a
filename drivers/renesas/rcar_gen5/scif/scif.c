@@ -18,10 +18,8 @@
 #define HSCIF_HSFTDR	(HSCIF_BASE + 0x000CU) /*  8 Transmit FIFO data register */
 #define HSCIF_HSFSR	(HSCIF_BASE + 0x0010U) /* 16 Serial status register */
 
-int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
-		      uint32_t baud_rate)
+void console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
+			  uint32_t baud_rate)
 {
 	scif_console_set_regs(HSCIF_HSFSR, HSCIF_HSFTDR);
-
-	return 1;
 }
