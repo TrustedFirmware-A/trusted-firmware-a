@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -27,18 +27,6 @@
 #endif
 
 cpu_reset_prologue c1_premium
-
-	/* ---------------------------------------------------------------
-	 * CVE-2024-7881 is mitigated for C1-Premium using erratum 3651221
-	 * workaround by disabling the affected prefetcher setting
-	 * CPUACTLR6_EL1[41].
-	 * ---------------------------------------------------------------
-	 */
-workaround_reset_start c1_premium, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
-	sysreg_bit_set C1_PREMIUM_CPUACTLR6_EL1, BIT(41)
-workaround_reset_end c1_premium, CVE(2024, 7881)
-
-check_erratum_ls c1_premium, CVE(2024, 7881), CPU_REV(0, 0)
 
 workaround_runtime_start c1_premium, ERRATUM(3324333), ERRATA_C1PREMIUM_3324333
 	speculation_barrier
@@ -113,6 +101,18 @@ workaround_reset_start c1_premium, ERRATUM(4102704), ERRATA_C1PREMIUM_4102704
 workaround_reset_end c1_premium, ERRATUM(4102704)
 
 check_erratum_ls c1_premium, ERRATUM(4102704), CPU_REV(1, 0)
+
+	/* ---------------------------------------------------------------
+	 * CVE-2024-7881 is mitigated for C1-Premium using erratum 3651221
+	 * workaround by disabling the affected prefetcher setting
+	 * CPUACTLR6_EL1[41].
+	 * ---------------------------------------------------------------
+	 */
+workaround_reset_start c1_premium, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
+	sysreg_bit_set C1_PREMIUM_CPUACTLR6_EL1, BIT(41)
+workaround_reset_end c1_premium, CVE(2024, 7881)
+
+check_erratum_ls c1_premium, CVE(2024, 7881), CPU_REV(0, 0)
 
 cpu_reset_func_start c1_premium
 	/* Disable speculative loads */
