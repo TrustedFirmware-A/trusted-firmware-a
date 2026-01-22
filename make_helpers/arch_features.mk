@@ -490,6 +490,9 @@ ENABLE_FEAT_CPA2			?=	0
 # Flag to enable Enhanced Software Step Extension (FEAT_STEP2)
 ENABLE_FEAT_STEP2			?=	0
 
+# Flag to enable Hardware Dirty state tracking structure (FEAT_HDBSS).
+ENABLE_FEAT_HDBSS			?=	0
+
 #----
 #9.6
 #----

@@ -437,6 +437,10 @@
 #define ID_AA64MMFR1_EL1_TWED_MASK		ULL(0xf)
 #define TWED_IMPLEMENTED			ULL(0x1)
 
+#define ID_AA64MMFR1_EL1_HAFDBS_SHIFT		U(0)
+#define ID_AA64MMFR1_EL1_HAFDBS_MASK		ULL(0xf)
+#define HDBSS_IMPLEMENTED			ULL(0x4)
+
 #define ID_AA64MMFR1_EL1_PAN_SHIFT		U(20)
 #define ID_AA64MMFR1_EL1_PAN_MASK		ULL(0xf)
 #define PAN_IMPLEMENTED				ULL(0x1)
@@ -732,6 +736,7 @@
 #endif
 #define SCR_NSE_SHIFT		U(62)
 #define SCR_NSE_BIT		(ULL(1) << SCR_NSE_SHIFT)
+#define SCR_HDBSSEn_BIT		(UL(1) << 60)
 #define SCR_FGTEN2_BIT		(UL(1) << 59)
 #define SCR_PFAREn_BIT		(UL(1) << 53)
 #define SCR_EnFPM_BIT		(ULL(1) << 50)
