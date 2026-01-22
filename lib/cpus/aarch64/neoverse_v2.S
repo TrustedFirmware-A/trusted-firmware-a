@@ -36,6 +36,11 @@ workaround_reset_start neoverse_v2, ERRATUM(2618597), ERRATA_V2_2618597
         msr     NEOVERSE_V2_CPUPWRCTLR_EL1, x0
 workaround_reset_end neoverse_v2, ERRATUM(2618597)
 
+/* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_3 */
+add_erratum_entry neoverse_v2, ERRATUM(ARCH_WORKAROUND_3), WORKAROUND_CVE_2022_23960
+
+check_erratum_ls neoverse_v2, ERRATUM(ARCH_WORKAROUND_3), CPU_REV(0, 0)
+
 check_erratum_ls neoverse_v2, ERRATUM(2618597), CPU_REV(0, 1)
 
 workaround_reset_start neoverse_v2, ERRATUM(2662553), ERRATA_V2_2662553
@@ -71,6 +76,12 @@ workaround_runtime_end neoverse_v2, ERRATUM(2801372), ERRATA_V2_2801372
 
 check_erratum_ls neoverse_v2, ERRATUM(2801372), CPU_REV(0, 1)
 
+workaround_reset_start neoverse_v2, ERRATUM(3442699), ERRATA_V2_3442699
+	sysreg_bit_set NEOVERSE_V2_CPUACTLR_EL1, NEOVERSE_V2_CPUACTLR_EL1_BIT_36
+workaround_reset_end neoverse_v2, ERRATUM(3442699)
+
+check_erratum_ls neoverse_v2, ERRATUM(3442699), CPU_REV(0, 2)
+
 add_erratum_entry neoverse_v2, ERRATUM(3701771), ERRATA_V2_3701771
 
 check_erratum_ls neoverse_v2, ERRATUM(3701771), CPU_REV(0, 2)
@@ -80,6 +91,18 @@ workaround_reset_start neoverse_v2, ERRATUM(3841324), ERRATA_V2_3841324
 workaround_reset_end neoverse_v2, ERRATUM(3841324)
 
 check_erratum_ls neoverse_v2, ERRATUM(3841324), CPU_REV(0, 1)
+
+workaround_reset_start neoverse_v2, ERRATUM(3888126), ERRATA_V2_3888126
+	sysreg_bit_set  NEOVERSE_V2_CPUACTLR2_EL1, BIT(22)
+workaround_reset_end neoverse_v2, ERRATUM(3888126)
+
+check_erratum_ls neoverse_v2, ERRATUM(3888126), CPU_REV(0, 2)
+
+workaround_reset_start neoverse_v2, ERRATUM(4302968), ERRATA_V2_4302968
+	sysreg_bit_set  NEOVERSE_V2_CPUACTLR5_EL1, BIT(50)
+workaround_reset_end neoverse_v2, ERRATUM(4302968)
+
+check_erratum_ls neoverse_v2, ERRATUM(4302968), CPU_REV(0, 2)
 
 workaround_reset_start neoverse_v2, CVE(2022,23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
@@ -104,16 +127,17 @@ check_erratum_ls neoverse_v2, CVE(2024, 5660), CPU_REV(0, 2)
 	wa_cve_2022_23960_bhb_vector_table NEOVERSE_V2_BHB_LOOP_COUNT, neoverse_v2
 #endif /* WORKAROUND_CVE_2022_23960 */
 
+	/* ----------------------------------------------------------------
+	 * CVE-2024-7881 is mitigated for Neoverse-V2 using erratum 3696445
+	 * workaround by disabling the affected prefetcher setting
+	 * CPUACTLR6_EL1[41].
+	 * ----------------------------------------------------------------
+	 */
 workaround_reset_start neoverse_v2, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
-       /* ---------------------------------
-        * Sets BIT41 of CPUACTLR6_EL1 which
-        * disables L1 Data cache prefetcher
-        * ---------------------------------
-        */
        sysreg_bit_set NEOVERSE_V2_CPUACTLR6_EL1, BIT(41)
 workaround_reset_end neoverse_v2, CVE(2024, 7881)
 
-check_erratum_chosen neoverse_v2, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
+check_erratum_ls neoverse_v2, CVE(2024, 7881), CPU_REV(0, 2)
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
