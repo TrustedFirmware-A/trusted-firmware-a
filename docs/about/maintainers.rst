@@ -698,6 +698,17 @@ Intel SocFPGA platform ports
 :|F|: plat/intel/soc/
 :|F|: drivers/intel/soc/
 
+Marvell platform ports and SoC drivers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:|M|: Jaiprakash Singh <jaiprakashs@marvell.com>
+:|G|: `sjaypee208`_
+:|M|: George Cherian <george.cherian@marvell.com>
+:|G|: `gcherianv`_
+:|F|: docs/plat/marvell/
+:|F|: plat/marvell/
+:|F|: drivers/marvell/
+:|F|: tools/marvell/
+
 MediaTek platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Leon Chen <leon.chen@mediatek.com>
@@ -708,15 +719,6 @@ MediaTek platform ports
 :|G|: `linyidi`_
 :|F|: docs/plat/mt\*.rst
 :|F|: plat/mediatek/
-
-Marvell platform ports and SoC drivers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Jaiprakash Singh <jaiprakashs@marvell.com>
-:|G|: `sjaypee208`_
-:|F|: docs/plat/marvell/
-:|F|: plat/marvell/
-:|F|: drivers/marvell/
-:|F|: tools/marvell/
 
 Nuvoton npcm845x platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1119,6 +1121,7 @@ Conventional Changelog Extensions
 .. _divin-raj: https://github.com/divin-raj
 .. _etienne-lms: https://github.com/etienne-lms
 .. _Gabriel-Fernandz: https://github.com/Gabriel-Fernandz
+.. _gcherianv: https://github.com/gcherianv
 .. _glneo: https://github.com/glneo
 .. _govindraj-arm: https://github.com/govindraj-arm
 .. _gprocopciucnxp: https://github.com/gprocopciucnxp
@@ -1180,6 +1183,7 @@ Conventional Changelog Extensions
 .. _sandrine-bailleux-arm: https://github.com/sandrine-bailleux-arm
 .. _shawnguo2: https://github.com/shawnguo2
 .. _sieumunt: https://github.com/sieumunt
+.. _sjaypee208: https://github.com/sjaypee208
 .. _smaeul: https://github.com/smaeul
 .. _soby-mathew: https://github.com/soby-mathew
 .. _sreekare: https://github.com/sreekare
@@ -1193,8 +1197,7 @@ Conventional Changelog Extensions
 .. _artkopotev: https://github.com/artkopotev
 .. _vwadekar: https://github.com/vwadekar
 .. _Yann-lms: https://github.com/Yann-lms
-.. _sjaypee208: https://github.com/sjaypee208
 
 --------------
 
-*Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.*
+*Copyright (c) 2019-2026, Arm Limited and Contributors. All rights reserved.*
