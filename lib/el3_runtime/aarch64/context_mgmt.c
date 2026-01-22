@@ -348,6 +348,13 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 		scr_el3 |= SCR_HDBSSEn_BIT;
 	}
 
+	if (is_feat_hacdbs_supported()) {
+		/* Set the HACDBSEn bit to enable access to hacdbsbr_el2 and
+		 * hacdbscons_el2
+		 */
+		scr_el3 |= SCR_HACDBSEn_BIT;
+	}
+
 	write_ctx_reg(state, CTX_SCR_EL3, scr_el3);
 
 	/* Initialize EL2 context registers */

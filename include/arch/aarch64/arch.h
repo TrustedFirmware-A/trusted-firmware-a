@@ -512,6 +512,10 @@
 /* ID_AA64MMFR4_EL1 definitions */
 #define ID_AA64MMFR4_EL1			S3_0_C0_C7_4
 
+#define ID_AA64MMFR4_EL1_HACDBS_SHIFT		U(12)
+#define ID_AA64MMFR4_EL1_HACDBS_MASK		ULL(0xf)
+#define HACDBS_IMPLEMENTED			ULL(0x1)
+
 #define ID_AA64MMFR4_EL1_FGWTE3_SHIFT		U(16)
 #define ID_AA64MMFR4_EL1_FGWTE3_MASK		ULL(0xf)
 #define FGWTE3_IMPLEMENTED			ULL(0x1)
@@ -736,6 +740,7 @@
 #endif
 #define SCR_NSE_SHIFT		U(62)
 #define SCR_NSE_BIT		(ULL(1) << SCR_NSE_SHIFT)
+#define SCR_HACDBSEn_BIT	(UL(1) << 61)
 #define SCR_HDBSSEn_BIT		(UL(1) << 60)
 #define SCR_FGTEN2_BIT		(UL(1) << 59)
 #define SCR_PFAREn_BIT		(UL(1) << 53)

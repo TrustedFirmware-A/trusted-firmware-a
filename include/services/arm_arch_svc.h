@@ -164,6 +164,12 @@
 #define SCR_FEAT_HDBSS (0)
 #endif
 
+#if ENABLE_FEAT_HACDBS
+#define SCR_FEAT_HACDBS SCR_HACDBSEn_BIT
+#else
+#define SCR_FEAT_HACDBS (0)
+#endif
+
 #ifndef SCR_PLAT_FEATS
 #define SCR_PLAT_FEATS (0)
 #endif
@@ -227,6 +233,7 @@
 	SCR_FEAT_PFAR		|						\
 	SCR_FEAT_IDTE3		|						\
 	SCR_FEAT_HDBSS		|						\
+	SCR_FEAT_HACDBS		|						\
 	SCR_PLAT_FEATS)
 #define SCR_EL3_FLIPPED (							\
 	SCR_FEAT_RAS		|						\

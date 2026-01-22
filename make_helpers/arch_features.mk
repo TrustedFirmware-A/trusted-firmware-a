@@ -493,6 +493,9 @@ ENABLE_FEAT_STEP2			?=	0
 # Flag to enable Hardware Dirty state tracking structure (FEAT_HDBSS).
 ENABLE_FEAT_HDBSS			?=	0
 
+# Flag to enable Hardening Address and Context Debug Banked State (FEAT_HACDBS).
+ENABLE_FEAT_HACDBS			?=	0
+
 #----
 #9.6
 #----

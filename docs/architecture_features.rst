@@ -223,7 +223,7 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +-------------------+--------+
 | FEAT_HDBSS        |   OK   |
 +-------------------+--------+
-| FEAT_HACDBS       |        |
+| FEAT_HACDBS       |   OK   |
 +-------------------+--------+
 | FEAT_TLBIW        |   NA   |
 +-------------------+--------+

@@ -352,6 +352,12 @@ static unsigned int read_feat_hdbss_id_field(void)
 			     ID_AA64MMFR1_EL1_HAFDBS_MASK);
 }
 
+static unsigned int read_feat_hacdbs_id_field(void)
+{
+	return ISOLATE_FIELD(read_id_aa64mmfr4_el1(), ID_AA64MMFR4_EL1_HACDBS_SHIFT,
+			     ID_AA64MMFR4_EL1_HACDBS_MASK);
+}
+
 /***********************************************************************************
  * TF-A supports many Arm architectural features starting from arch version
  * (8.0 till 8.7+). These features are mostly enabled through build flags. This
@@ -544,6 +550,8 @@ void detect_arch_features(unsigned int core_pos)
 				 "STEP2", 1, 1);
 	tainted |= check_feature(ENABLE_FEAT_HDBSS, read_feat_hdbss_id_field(),
 				 "HDBSS", 4, 4);
+	tainted |= check_feature(ENABLE_FEAT_HACDBS, read_feat_hacdbs_id_field(),
+				 "HACDBS", 1, 1);
 
 	/* Morello Arch feature */
 	tainted |= check_feature(ENABLE_FEAT_MORELLO, read_feat_morello_field(),
