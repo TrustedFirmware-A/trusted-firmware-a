@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,9 +8,12 @@
 #include <asm_macros.S>
 #include <common/bl_common.h>
 #include <neoverse_v3.h>
-#include <cpu_macros.S>
-#include <plat_macros.S>
 #include "wa_cve_2022_23960_bhb_vector.S"
+
+#include <cpu_macros.S>
+#include <wa_cve_2025_0647_cpprctx.h>
+
+#include <plat_macros.S>
 
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
@@ -114,6 +117,29 @@ workaround_reset_end neoverse_v3, CVE(2024, 7881)
 
 check_erratum_ls neoverse_v3, CVE(2024, 7881), CPU_REV(0, 1)
 
+	/*
+	 * Instruction patch sequence to trap 'cpp rctx' instructions to EL3.
+	 * Enables mitigation for CVE-2025-0647.
+	 */
+workaround_reset_start neoverse_v3, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+	mov	x0, #WA_PATCH_SLOT(3)
+	bl	wa_cve_2025_0647_instruction_patch
+workaround_reset_end neoverse_v3, CVE(2025, 647)
+
+check_erratum_chosen neoverse_v3, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+
+#if WORKAROUND_CVE_2025_0647
+func neoverse_v3_impl_defined_el3_handler
+	mov	x0, #0
+
+	/* See if this call came from trap handler. */
+	cmp	x1, #EC_IMP_DEF_EL3
+	bne	wa_cve_2025_0647_do_cpp_wa
+	orr	x0, x0, #WA_IS_TRAP_HANDLER
+	b	wa_cve_2025_0647_do_cpp_wa
+endfunc neoverse_v3_impl_defined_el3_handler
+#endif
+
 	/* ---------------------------------------------
 	 * HW will do the cache maintenance while powering down
 	 * ---------------------------------------------
@@ -155,6 +181,17 @@ func neoverse_v3_cpu_reg_dump
 	ret
 endfunc neoverse_v3_cpu_reg_dump
 
+#if WORKAROUND_CVE_2025_0647
+declare_cpu_ops_eh neoverse_v3, NEOVERSE_V3_VNAE_MIDR, \
+	neoverse_v3_reset_func, \
+	neoverse_v3_impl_defined_el3_handler, \
+	neoverse_v3_core_pwr_dwn
+
+declare_cpu_ops_eh neoverse_v3, NEOVERSE_V3_MIDR, \
+	neoverse_v3_reset_func, \
+	neoverse_v3_impl_defined_el3_handler, \
+	neoverse_v3_core_pwr_dwn
+#else
 declare_cpu_ops neoverse_v3, NEOVERSE_V3_VNAE_MIDR, \
 	neoverse_v3_reset_func, \
 	neoverse_v3_core_pwr_dwn
@@ -162,3 +199,4 @@ declare_cpu_ops neoverse_v3, NEOVERSE_V3_VNAE_MIDR, \
 declare_cpu_ops neoverse_v3, NEOVERSE_V3_MIDR, \
 	neoverse_v3_reset_func, \
 	neoverse_v3_core_pwr_dwn
+#endif
