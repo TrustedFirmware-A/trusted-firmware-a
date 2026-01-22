@@ -527,6 +527,8 @@ consult the Arm ARM on any specifics about the feature itself.
 
 - Register the feature in ``common/feat_detect.c``.
 
+- Register the feature in lib/extensions/idte/idte3.c.
+
 - Add support for the feature. This will be very feature specific and exact code
   will depend on why support is being added. Usually, support will be a few
   lines in ``lib/el3_runtime/aarch64/context_mgmt.c``. Some common things to do
@@ -558,7 +560,8 @@ consult the Arm ARM on any specifics about the feature itself.
   include a brief description of what the enablement does, what values the flag
   can take, the default, and that it conforms to the ``ENABLE_FEAT`` mechanism.
   Adding feature enablement that does not conform to this mechanism is only done
-  in exceptional cases.
+  in exceptional cases. You should also update the list of features at the top
+  of this file.
 
 - Enable the feature for the FVP platform in ``plat/arm/board/fvp/platform.mk``,
   setting it to ``2`` (``FEAT_STATE_CHECKED``).
