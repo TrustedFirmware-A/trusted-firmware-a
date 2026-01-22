@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Arm Limited. All rights reserved.
+ * Copyright (c) 2024-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -107,9 +107,6 @@
 #define V2M_FLASH_BLOCK_SIZE			UL(0x00040000)	/* 256 KB */
 #define PLAT_ARM_FLASH_IMAGE_BASE		V2M_FLASH0_BASE
 #define PLAT_ARM_FLASH_IMAGE_MAX_SIZE		(V2M_FLASH0_SIZE - V2M_FLASH_BLOCK_SIZE)
-
-#define PLAT_FW_CONFIG_MAX_SIZE			(ARM_FW_CONFIG_LIMIT - ARM_FW_CONFIG_BASE)
-#define PLAT_FW_CONFIG_BASE			ARM_FW_CONFIG_BASE
 
 /* RD1AE-specific memory mappings */
 #define RD1AE_EXTERNAL_FLASH	MAP_REGION_FLAT(V2M_FLASH0_BASE, \

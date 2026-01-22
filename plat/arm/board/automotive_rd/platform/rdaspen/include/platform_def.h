@@ -156,10 +156,6 @@
 #endif
 #define MAX_XLAT_TABLES				(U(10))
 
-#define PLAT_FW_CONFIG_MAX_SIZE			(ARM_FW_CONFIG_LIMIT - \
-						 ARM_FW_CONFIG_BASE)
-#define PLAT_FW_CONFIG_BASE			ARM_FW_CONFIG_BASE
-
 /*
  * Map peripherals till GIC regions and devices in Rest of System
  */

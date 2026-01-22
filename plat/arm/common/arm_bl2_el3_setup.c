@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2024, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2025, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -66,7 +66,7 @@ void bl2_el3_early_platform_setup(u_register_t arg0 __unused,
 	generic_delay_timer_init();
 }
 
-#if ARM_FW_CONFIG_LOAD_ENABLE
+#if ARM_FW_CONFIG_LOAD_ENABLE && !TRANSFER_LIST
 /*************************************************************************************
  * FW CONFIG load function for BL2 when RESET_TO_BL2=1 && ARM_FW_CONFIG_LOAD_ENABLE=1
  *************************************************************************************/
@@ -76,7 +76,7 @@ void arm_bl2_el3_plat_config_load(void)
 	const struct dyn_cfg_dtb_info_t *fw_config_info;
 
 	/* Set global DTB info for fixed fw_config information */
-	set_config_info(PLAT_FW_CONFIG_BASE, ~0UL, PLAT_FW_CONFIG_MAX_SIZE, FW_CONFIG_ID);
+	set_config_info(ARM_FW_CONFIG_BASE, ~0UL, ARM_FW_CONFIG_MAX_SIZE, FW_CONFIG_ID);
 
 	/* Fill the device tree information struct with the info from the config dtb */
 	ret = fconf_load_config(FW_CONFIG_ID);
@@ -101,7 +101,7 @@ void arm_bl2_el3_plat_config_load(void)
 		plat_error_handler(ret);
 	}
 }
-#endif /* ARM_FW_CONFIG_LOAD_ENABLE */
+#endif /* ARM_FW_CONFIG_LOAD_ENABLE && !TRANSFER_LIST */
 
 /*******************************************************************************
  * Perform the very early platform specific architectural setup here. At the
