@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2025, Arm Limited. All rights reserved.
+# Copyright (c) 2025-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -173,10 +173,10 @@ ifeq ($($(ARCH)-ld-id),arm-link)
 # LD = gcc or clang
 else
         ifeq ($($(ARCH)-ld-id),llvm-clang)
-                ldflags-common		+=	-fuse-ld=lld
+                ldflags-common	:=	-fuse-ld=lld
         endif
 
-        ldflags-common		:=	$(call ld_option,--no-warn-rwx-segments)
+        ldflags-common		+=	$(call ld_option,--no-warn-rwx-segments)
         # ld.lld reports section type mismatch warnings,
         # so don't add --fatal-warnings to it.
         ifneq ($($(ARCH)-ld-id),$(filter $($(ARCH)-ld-id),llvm-clang llvm-lld))
