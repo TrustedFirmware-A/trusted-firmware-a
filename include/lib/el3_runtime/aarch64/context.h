@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -190,7 +190,7 @@
 #define CTX_MPAM3_EL3			U(0x8)
 #if (ENABLE_FEAT_IDTE3 && IMAGE_BL31)
 #define CTX_IDREGS_EL3			U(0x10)
-#define CTX_PERWORLD_EL3STATE_END	U(0x78)
+#define CTX_PERWORLD_EL3STATE_END	U(0x80)
 #else
 #define CTX_PERWORLD_EL3STATE_END	U(0x10)
 #endif /* ENABLE_FEAT_IDTE3 && IMAGE_BL31 */
@@ -282,6 +282,7 @@ typedef struct perworld_idreg {
 	u_register_t id_aa64mmfr2_el1;
 	u_register_t id_aa64mmfr3_el1;
 	u_register_t id_aa64mmfr4_el1;
+	u_register_t id_aa64dfr2_el1;
 } perworld_idregs_t;
 #endif
 

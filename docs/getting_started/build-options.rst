@@ -539,6 +539,12 @@ Common build options
    This flag can take the values 0 to 2, to align  with the ``ENABLE_FEAT``
    mechanism. Default value is ``0``.
 
+-  ``ENABLE_FEAT_STEP2``: Numeric value that enables support for FEAT_STEP2 by
+   setting ``MDCR_EL3.EnSTEPOP`` so that lower ELs can access ``MDSTEPOP_EL1``.
+   This feature is optional from Armv9.4 implementations and is mandatory in
+   Armv9.5 implementations. This flag can take the values 0 to 2, to align  with
+   the ``ENABLE_FEAT`` mechanism Defaults value is ``0``.
+
 -  ``ENABLE_FEAT_D128``: Numeric value to enable support for FEAT_D128
    at EL2 and below, setting the bit SCT_EL3.D128En in EL3 to allow access to
    128 bit version of system registers like PAR_EL1, TTBR0_EL1, TTBR1_EL1,

@@ -325,6 +325,10 @@
 #define ID_AA64DFR1_BRP_SHIFT		U(8)
 #define ID_AA64DFR1_BRP_WIDTH		U(8)
 
+/* ID_AA64DFR2_EL1 definitions */
+#define ID_AA64DFR2_STEP_SHIFT		U(0)
+#define ID_AA64DFR2_STEP_MASK		ULL(0xf)
+
 #define ID_AA64ZFR0_EL1			S3_0_C0_C4_4
 #define ID_AA64FPFR0_EL1		S3_0_C0_C4_7
 #define ID_AA64DFR2_EL1			S3_0_C0_C5_2
@@ -778,6 +782,7 @@
 #define SCR_RESET_VAL		SCR_RES1_BITS
 
 /* MDCR_EL3 definitions */
+#define MDCR_EnSTEPOP_BIT	(ULL(1) << 50)
 #define MDCR_EBWE_BIT		(ULL(1) << 43)
 #define MDCR_EnPMS3_BIT		(ULL(1) << 42)
 #define MDCR_PMEE(x)		((x) << 40)
@@ -1700,6 +1705,11 @@
  ******************************************************************************/
 #define TRFCR_EL2		S3_4_C1_C2_1
 #define TRFCR_EL1		S3_0_C1_C2_1
+
+/*******************************************************************************
+ * FEAT_STEP2 - Step2 registers
+ ******************************************************************************/
+#define MDSTEPOP_EL1		S2_0_C0_C5_2
 
 /*******************************************************************************
  * FEAT_THE - Translation Hardening Extension Registers

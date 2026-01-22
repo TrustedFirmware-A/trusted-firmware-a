@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -124,6 +124,10 @@ typedef struct el1_ls64_regs {
 	uint64_t accdata_el1;
 } el1_ls64_regs_t;
 
+typedef struct el1_step2_regs {
+	uint64_t mdstepop_el1;
+} el1_step2_regs_t;
+
 typedef struct el1_sysregs {
 
 	el1_common_regs_t common;
@@ -180,6 +184,11 @@ typedef struct el1_sysregs {
 #if ENABLE_FEAT_LS64_ACCDATA
 	el1_ls64_regs_t ls64;
 #endif
+
+#if ENABLE_FEAT_STEP2
+	el1_step2_regs_t step2;
+#endif
+
 } el1_sysregs_t;
 
 
@@ -271,6 +280,15 @@ typedef struct el1_sysregs {
 #define read_el1_ctx_trf(ctx, reg)		ULL(0)
 #define write_el1_ctx_trf(ctx, reg, val)
 #endif /* ENABLE_TRF_FOR_NS */
+
+#if ENABLE_FEAT_STEP2
+#define read_el1_ctx_step2(ctx, reg)		(((ctx)->step2).reg)
+#define write_el1_ctx_step2(ctx, reg, val)	((((ctx)->step2).reg)	\
+							= (uint64_t) (val))
+#else
+#define read_el1_ctx_step2(ctx, reg)		ULL(0)
+#define write_el1_ctx_step2(ctx, reg, val)
+#endif /* ENABLE_FEAT_STEP2 */
 
 #if ENABLE_FEAT_CSV2_2
 #define read_el1_ctx_csv2_2(ctx, reg)		(((ctx)->csv2_2).reg)

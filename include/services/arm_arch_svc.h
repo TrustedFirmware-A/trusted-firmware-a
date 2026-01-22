@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2018-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -326,7 +326,14 @@ CASSERT((CPTR_EL3_FLIPPED & CPTR_EL3_FEATS) == CPTR_EL3_FLIPPED, cptr_flipped_no
 #define MDCR_FEAT_EBEP (0)
 #endif
 
+#if ENABLE_FEAT_STEP2
+#define MDCR_FEAT_STEP2 MDCR_EnSTEPOP_BIT
+#else
+#define MDCR_FEAT_STEP2 (0)
+#endif
+
 #define MDCR_EL3_FEATS (							\
+	MDCR_FEAT_STEP2		|						\
 	MDCR_DEBUGV8P9		|						\
 	MDCR_FEAT_BRBE		|						\
 	MDCR_FEAT_FGT		|						\

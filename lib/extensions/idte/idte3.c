@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -54,6 +54,7 @@ void idte3_init_cached_idregs_per_world(size_t security_state)
 	reg->id_aa64mmfr2_el1 = read_id_aa64mmfr2_el1();
 	reg->id_aa64mmfr3_el1 = read_id_aa64mmfr3_el1();
 	reg->id_aa64mmfr4_el1 = read_id_aa64mmfr4_el1();
+	reg->id_aa64dfr2_el1  = read_id_aa64dfr2_el1();
 
 	update_feat_pan_idreg_field(security_state);
 	update_feat_vhe_idreg_field(security_state);
@@ -100,6 +101,7 @@ void idte3_init_cached_idregs_per_world(size_t security_state)
 	update_feat_cpa2_idreg_field(security_state);
 	update_feat_idte3_idreg_field(security_state);
 	update_feat_uinj_idreg_field(security_state);
+	update_feat_step2_idreg_field(security_state);
 }
 
 int handle_idreg_trap(uint64_t esr_el3, cpu_context_t *ctx, u_register_t flags)
@@ -175,7 +177,7 @@ int handle_idreg_trap(uint64_t esr_el3, cpu_context_t *ctx, u_register_t flags)
 		value = read_id_aa64fpfr0_el1();
 		break;
 	case ESR_EL3_IDREG_ID_AA64DFR2_EL1:
-		value = read_id_aa64dfr2_el1();
+		value = perworld_reg->id_aa64dfr2_el1;
 		break;
 	case ESR_EL3_IDREG_ID_AA64AFR0_EL1:
 		value = read_id_aa64afr0_el1();

@@ -74,6 +74,7 @@ endif
       ENABLE_FEAT_MPAM_PE_BW_CTRL	:= 2
       ENABLE_FEAT_CPA2			:= 2
       ENABLE_FEAT_UINJ			:= 2
+      ENABLE_FEAT_STEP2			:= 2
 endif
 
 ENABLE_SYS_REG_TRACE_FOR_NS	:= 2
