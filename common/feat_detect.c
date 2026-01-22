@@ -403,7 +403,7 @@ void detect_arch_features(unsigned int core_pos)
 	tainted |= check_feature(ENABLE_SVE_FOR_NS, read_feat_sve_id_field(),
 				 "SVE", 1, 3);
 	tainted |= check_feature(ENABLE_FEAT_RAS, read_feat_ras_id_field(),
-				 "RAS", 1, 2);
+				 "RAS", 1, 3);
 
 	/* v8.3 features */
 	/* the PAuth fields are very complicated, no min/max is checked */

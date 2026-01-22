@@ -8,12 +8,11 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+#include <arch_features.h>
 #include <arch_helpers.h>
 #include <common/debug.h>
 #include <drivers/console.h>
-#if ENABLE_FEAT_RAS
 #include <lib/extensions/ras.h>
-#endif
 #include <lib/xlat_tables/xlat_mmu_helpers.h>
 #include <plat/common/platform.h>
 
@@ -135,12 +134,12 @@ const char *get_mode_str(unsigned int spsr_mode)
 void plat_default_ea_handler(unsigned int ea_reason, uint64_t syndrome, void *cookie,
 		void *handle, uint64_t flags)
 {
-#if ENABLE_FEAT_RAS
-	/* Call RAS EA handler */
-	int handled = ras_ea_handler(ea_reason, syndrome, cookie, handle, flags);
-	if (handled != 0)
-		return;
-#endif
+	if (is_feat_ras_supported()) {
+		/* Call RAS EA handler */
+		int handled = ras_ea_handler(ea_reason, syndrome, cookie, handle, flags);
+		if (handled != 0)
+			return;
+	}
 	unsigned int level = (unsigned int)GET_EL(read_spsr_el3());
 
 	ERROR_NL();

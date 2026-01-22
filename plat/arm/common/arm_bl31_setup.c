@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -454,8 +454,10 @@ void arm_bl31_platform_setup(void)
 	/* Initialize power controller before setting up topology */
 	plat_arm_pwrc_setup();
 
-#if ENABLE_FEAT_RAS && FFH_SUPPORT
-	ras_init();
+#if FFH_SUPPORT
+	if (is_feat_ras_supported()) {
+		ras_init();
+	}
 #endif
 
 #if USE_DEBUGFS

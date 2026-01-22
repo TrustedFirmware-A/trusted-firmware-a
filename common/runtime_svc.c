@@ -98,23 +98,25 @@ void handler_lower_el_async_ea(cpu_context_t *ctx)
 {
 	u_register_t esr_el3 = read_esr_el3();
 
-#if ENABLE_FEAT_RAS
-	/*  should only be invoked for SError */
-	assert(EXTRACT(ESR_EC, esr_el3) == EC_SERROR);
+	if (is_feat_ras_supported()) {
+		/*  should only be invoked for SError */
+		assert(EXTRACT(ESR_EC, esr_el3) == EC_SERROR);
 
-	/*
-	 * Check for Implementation Defined Syndrome. If so, skip checking
-	 * Uncontainable error type from the syndrome as the format is unknown.
-	 */
-	if ((esr_el3 & SERROR_IDS_BIT) != 0) {
-		/* AET only valid when DFSC is 0x11. Route to platform fatal
-		 * error handler if it is an uncontainable error type */
-		if (EXTRACT(EABORT_DFSC, esr_el3) == DFSC_SERROR &&
-		    EXTRACT(EABORT_AET, esr_el3) == ERROR_STATUS_UET_UC) {
-			return plat_handle_uncontainable_ea();
+		/*
+		 * Check for Implementation Defined Syndrome. If so, skip
+		 * checking Uncontainable error type from the syndrome as the
+		 * format is unknown.
+		 */
+		if ((esr_el3 & SERROR_IDS_BIT) != 0) {
+			/* AET only valid when DFSC is 0x11. Route to platform fatal
+			 * error handler if it is an uncontainable error type */
+			if (EXTRACT(EABORT_DFSC, esr_el3) == DFSC_SERROR &&
+			    EXTRACT(EABORT_AET, esr_el3) == ERROR_STATUS_UET_UC) {
+				return plat_handle_uncontainable_ea();
+			}
 		}
 	}
-#endif
+
 	return ea_proceed(ERROR_EA_ASYNC, esr_el3, ctx);
 }
 

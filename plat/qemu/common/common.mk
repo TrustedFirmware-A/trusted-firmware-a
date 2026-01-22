@@ -100,9 +100,7 @@ ENABLE_FEAT_PAN		:=	2
 ENABLE_FEAT_VHE		:=	2
 
 # 8.2
-# TF-A currently does not permit dynamic detection of FEAT_RAS
-# so this is the only safe setting
-ENABLE_FEAT_RAS		:=	0
+ENABLE_FEAT_RAS		:=	2
 
 # 8.4
 ENABLE_FEAT_SEL2	:=	2
@@ -111,9 +109,8 @@ ENABLE_TRF_FOR_NS	:=	2
 
 # 8.5
 ENABLE_FEAT_RNG		:=	2
-# TF-A currently does not do dynamic detection of FEAT_SB.
 # Compiler puts SB instruction when it is enabled.
-ENABLE_FEAT_SB		:=	0
+ENABLE_FEAT_SB		:=	2
 
 # 8.6
 ENABLE_FEAT_ECV		:=	2

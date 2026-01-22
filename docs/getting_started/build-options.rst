@@ -440,11 +440,12 @@ Common build options
    Default value is ``0``. ``FEAT_RNG_TRAP`` is an optional feature from
    Armv8.5 onwards.
 
--  ``ENABLE_FEAT_SB``: Boolean option to let the TF-A code use the ``FEAT_SB``
+-  ``ENABLE_FEAT_SB``: Numeric option to let the TF-A code use the ``FEAT_SB``
    (Speculation Barrier) instruction ``FEAT_SB`` is an optional feature and
    defaults to ``0`` for pre-Armv8.5 CPUs, but is mandatory for Armv8.5 or
    later CPUs. It is enabled from v8.5 and upwards and if needed can be
-   overidden from platforms explicitly.
+   overidden from platforms explicitly. This flag can take values 0 to 2, to
+   align with the ``ENABLE_FEAT`` mechanism.  Default value is ``0``.
 
 -  ``ENABLE_FEAT_SEL2``: Numeric value to enable the ``FEAT_SEL2`` (Secure EL2)
    extension. ``FEAT_SEL2`` is a mandatory feature available on Arm v8.4.
@@ -964,12 +965,13 @@ Common build options
    interacts with IMPDEF_SYSREG_TRAP and software emulation. This option
    defaults to 0.
 
--  ``ENABLE_FEAT_RAS``: Boolean flag to enable Armv8.2 RAS features. RAS features
-   are an optional extension for pre-Armv8.2 CPUs, but are mandatory for Armv8.2
-   or later CPUs. This flag can take the values 0 or 1. The default value is 0.
-   NOTE: This flag enables use of IESB capability to reduce entry latency into
-   EL3 even when RAS error handling is not performed on the platform. Hence this
-   flag is recommended to be turned on Armv8.2 and later CPUs.
+-  ``ENABLE_FEAT_RAS``: Numeric flag to enable Armv8.2 RAS features. RAS
+   features are an optional extension for pre-Armv8.2 CPUs, but are mandatory
+   for Armv8.2 or later CPUs. NOTE: This flag enables use of IESB capability to
+   reduce entry latency into EL3 even when RAS error handling is not performed
+   on the platform. Hence this flag is recommended to be turned on Armv8.2 and
+   later CPUs. This flag can take the values 0 to 2, to align with the
+   ``ENABLE_FEAT`` mechanism. The default is 0.
 
 -  ``RESET_TO_BL31``: Enable BL31 entrypoint as the CPU reset vector instead
    of the BL1 entrypoint. It can take the value 0 (CPU reset to BL1

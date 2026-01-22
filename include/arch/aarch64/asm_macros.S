@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -275,8 +275,8 @@
 	 * FEAT_SB, if it's enabled.
 	 */
 	.macro speculation_barrier
-#if ENABLE_FEAT_SB
-	// todo feat state
+	/* fallback to the old slower variant for FEAT_STATE_CHECKED */
+#if ENABLE_FEAT_SB == 1
 	sb_barrier_insn
 #else
 	dsb	sy
@@ -298,12 +298,7 @@
 	 */
 	.macro exception_return
 	eret
-#if ENABLE_FEAT_SB
-	sb_barrier_insn
-#else
-	dsb	nsh
-	isb
-#endif
+	speculation_barrier
 	.endm
 
 	/*
@@ -316,14 +311,19 @@
 	isb
 	.endm
 
-	/* Macro for error synchronization on exception boundries.
+	/*
+	 * Macro for error synchronization on exception boundaries.
 	 * With FEAT_RAS enabled, it is assumed that FEAT_IESB is also present
 	 * and enabled.
-	 * FEAT_IESB provides an implicit error synchronization event at exception
-	 * entry and exception return, so there is no need for any explicit instruction.
+	 * FEAT_IESB provides an implicit error synchronization event at
+	 * exception entry and exception return, so there is no need for any
+	 * explicit instruction. In the FEAT_STATE_CHECKED case the explicit
+	 * synchronisation will be done anyway because there isn't enough space
+	 * in the exception vectors to do the check. Any platform looking for
+	 * maximum performance should not use FEAT_STATE_CHECKED.
 	 */
 	.macro synchronize_errors
-#if !ENABLE_FEAT_RAS
+#if ENABLE_FEAT_RAS == 0 || ENABLE_FEAT_RAS == 2
 	/* Complete any stores that may return an abort */
 	dsb	sy
 	/* Synchronise the CPU context with the completion of the dsb */
