@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2025 NXP
+ * Copyright 2020-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,10 +25,18 @@
 #define DDRC_BASE                        0x403C0000U
 #define OFFSET_DDRC_SWCTL                0x320U
 #define OFFSET_DDRC_DFIMISC              0x1B0U
+#define OFFSET_DDRC_DFISTAT              0x1BCU
 #define OFFSET_DDRC_PWRCTL               0x30U
 #define OFFSET_DDRC_SWSTAT               0x324U
+#define OFFSET_DDRC_STAT                 0x04U
 #define OFFSET_DDRC_DFITMG0              0x190U
 #define OFFSET_DDRC_DBG1                 0x304U
+
+#define OFFSET_DDRC_DRAMTMG2             0x108U
+#define OFFSET_DDRC_INIT6                0xE8U
+#define OFFSET_DDRC_INIT7                0xECU
+#define OFFSET_DDRC_RANKCTL              0xF4U
+#define OFFSET_DDRC_DFITMG1              0x194U
 
 /* DDRC masks and values */
 #define MSTR_LPDDR4_VAL		0x20U
@@ -45,25 +53,56 @@
 #define MSTR_BURST_RDWR_MASK 0xFU
 #define DFITMG0_PHY_CLK_POS  15
 #define DFITMG0_PHY_CLK_MASK 0x1U
+#define DRAMTMG2_RD_WR_POS  8
+#define DRAMTMG2_RD_WR_MASK GENMASK_32(4U, 0U)
+#define DRAMTMG2_WR_RD_POS  0
+#define DRAMTMG2_WR_RD_MASK GENMASK_32(4U, 0U)
+#define INIT6_MR5_MASK      0xFFFFU
+#define INIT7_MR6_MASK      0xFFFFU
+#define DFITMG1_WRDATA_DELAY_POS 16
+#define DFITMG1_WRDATA_DELAY_MASK GENMASK_32(4U, 0U)
+#define RANKCTL_RD_GAP_POS 4
+#define RANKCTL_RD_GAP_MASK GENMASK_32(3U, 0U)
+#define RANKCTL_WR_GAP_POS 8
+#define RANKCTL_WR_GAP_MASK GENMASK_32(3U, 0U)
 
 #define DDR_SS_AXI_PARITY_ENABLE_MASK	GENMASK_32(12U, 4U)
 #define DDR_SS_AXI_PARITY_TYPE_MASK	GENMASK_32(24U, 16U)
 #define DDR_SS_DFI_1_ENABLED		0x1U
 #define DBG1_DISABLE_DE_QUEUEING	0x0U
 #define RFSHCTL3_DISABLE_AUTO_REFRESH	0x1U
+#define ENABLE_AXI_PORT				0x000000001
 
 #define PWRCTL_POWER_DOWN_ENABLE_MASK		BIT_32(1)
 #define PWRCTL_SELF_REFRESH_ENABLE_MASK		BIT_32(0)
 #define PWRCTL_EN_DFI_DRAM_CLOCK_DIS_MASK	BIT_32(3)
 #define DFIMISC_DFI_INIT_COMPLETE_EN_MASK	BIT_32(0)
 
+#define MASTER0_CAL_ACTIVE		0x1U
+#define MASTER0_CAL_DONE		0x0U
+#define	DFIMISC_DFI_INIT_START_MASK	BIT_32(5)
+#define	DFISTAT_DFI_INIT_DONE		0x1U
+#define	DFISTAT_DFI_INIT_INCOMPLETE	0x0U
+#define	PWRCTL_SELFREF_SW_MASK		BIT_32(5)
+#define	STAT_OPERATING_MODE_MASK	GENMASK_32(2U, 0U)
+#define	STAT_OPERATING_MODE_INIT	0x0U
+#define	RFSHCTL3_DIS_AUTO_REFRESH_MASK	BIT_32(0)
 #define	TRAINING_OK_MSG			0x07U
 #define	TRAINING_FAILED_MSG		0xFFU
 
 #define	APBONLY_DCTWRITEPROT_ACK_EN              0U
 #define	APBONLY_DCTWRITEPROT_ACK_DIS             1U
 
+#define ADJUST_DDRC_DISABLED            0x0U
+
+/* uMCTL2 Multi-Port Registers */
+#define DDRC_UMCTL2_MP_BASE             0x403C03F8U
+#define OFFSET_DDRC_PCTRL_0             0x98U
+#define OFFSET_DDRC_PCTRL_1             0x148U
+#define OFFSET_DDRC_PCTRL_2             0x1F8U
+
 /* PHY related */
+#define DDR_PHYA_MASTER0_CALBUSY            0x4038165CU
 #define DDR_PHYA_APBONLY_UCTSHADOWREGS      0x40380404U
 #define UCT_WRITE_PROT_SHADOW_MASK          0x1U
 #define DDR_PHYA_DCTWRITEPROT               0x4038040CU
@@ -141,11 +180,24 @@
 #define VREF_DQ_B0 0x403B0100U
 #define VREF_DQ_B1 0x403B0101U
 
+#define ADJUST_DDRC_MASK          BIT_32(2)
+#define SELFREF_TYPE_MASK         GENMASK_32(5U, 4U)
+
 /* DDR Subsystem */
 #define DDR_SS_REG                0x403D0000U
 
 /* Default timeout for DDR PHY operations */
 #define DEFAULT_TIMEOUT_US 1000000U
+
+/* Start addresses of IMEM and DMEM memory areas */
+#define IMEM_START_ADDR 0x403A0000U
+#define DMEM_START_ADDR 0x403B0000U
+
+#define OFFSET_DFIPHYMSTR   0x1C4U
+#define DFIPHYMSTR_ENABLE   0x1U
+#define DFIPHYMSTR_DISABLED 0x0U
+#define SELFREF_TYPE_POS    4
+#define PHY_MASTER_REQUEST  0x1U
 
 struct cdd_type {
 	uint8_t rr;
@@ -160,6 +212,13 @@ struct space_timing_params {
 	uint8_t vref_dq;
 	uint16_t tphy_wrdata_delay;
 };
+
+/*
+ * Post PHY train setup - complementary settings
+ * that needs to be performed after running the firmware.
+ * @param options - various flags controlling post training actions
+ */
+uint32_t post_train_setup(uint8_t options);
 
 /* Wait until firmware finishes execution and return training result */
 uint32_t wait_firmware_execution(void);
