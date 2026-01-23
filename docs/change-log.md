@@ -3,6 +3,159 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.10.28](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.27..refs/tags/lts-v2.10.28) (2026-01-23)
+
+### Performance Improvements
+
+- **Libraries**
+
+  - **MPMM**
+
+    - greatly simplify MPMM enablement ([40d4274](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/40d4274e61fd0e74067c17cb662ab2d6764d3fe7))
+
+  - **PSCI**
+
+    - pass my_core_pos around instead of calling it repeatedly ([3c709d4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3c709d45c371c8ba3398738a65eb4d84c46ead15))
+
+### Miscellaneous
+
+- **Platforms**
+
+  - **Arm**
+
+    - **TC**
+
+      - align core names to Arm Lumex ([7668035](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/76680356eaa5d3e8bb23f709d0a03dfb2f26a947))
+
+### Documentation
+
+- **Miscellaneous**
+
+  - **Security**
+
+    - add CVE-2024-5660 and CVE-2024-7881 reference links ([8fac8d7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8fac8d7a4861441054252d251bd8e7ad392b9938))
+    - update CVE-2024-7881 affected CPU revisions ([288ccf2](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/288ccf2d4d1d2f4d016957106f38e44c288d2b08))
+    - update CVE-2024-7881 affected CPUs list ([1d04018](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1d04018a6b9eb6bc27edbcfc843179865a6e6e48))
+
+### Code Refactoring
+
+- panic after calling psci_power_down_wfi() ([a2bcc97](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a2bcc9754865e881e1b5861b36056e5bf1f86c05))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - move CVE to the end of errata workaround ([31d69c7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/31d69c7f4081df111c588af17d0d74af8f3d9fb3))
+    - reorder the errratum build flag for Neoverse-N2 ([ccc8e89](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ccc8e89633e14d003af64a0c6cf77a502afeac42))
+
+  - **PSCI**
+
+    - don't use PSCI_INVALID_PWR_LVL to signal OFF state ([1cf2bf6](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1cf2bf6da71045abe25a7e14cda4ff74714c2f74))
+    - factor common code out of the standby finisher ([43ed1c9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/43ed1c94de4491fa78c4114cd4df3fb01823f5a6))
+    - move timestamp collection to psci_pwrdown_cpu ([14b29a9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/14b29a9ee8cc49223aa9c32def86db302b327f5d))
+
+### New Features
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add support for Neoverse-N2 prefetcher ([504ef25](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/504ef25e4e50b10bc1803e609bf2c08c6f84438e))
+    - fix external LLC presence bit in Neoverse N3 ([f60487b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f60487b17599339dec87df5003792e892208a206))
+    - support to update External LLC presence in Neoverse N3 ([6517bc1](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6517bc1b91f5b782fa82cbd653593e5e4f53cb4c))
+
+  - **PSCI**
+
+    - allow cores to wake up from powerdown ([c09f098](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c09f0986c8e17c14aabd2cef5e9830ab6b1c665f))
+
+### Resolved Issues
+
+- **Platforms**
+
+  - **Arm**
+
+    - **TC**
+
+      - fix c1_pro power down abandon ([77df5e2](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/77df5e208d0d3bee2f56c6a45d109fcfed9979a2))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - avoid SME related loss of context on powerdown ([8b666d1](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8b666d1d3396493958c484e604c55b2b4e7fa4d0))
+    - fix C1 Pro powerdown abandon behavior ([a82a7b6](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a82a7b69404105b1e96a5b1e137223aae4af0535))
+    - fix feature detection for C1-Pro erratum 3686597 ([3662586](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3662586d9fb5bfbbd90c96d4e7013ad72ef88e37))
+    - fix the ordering of errata for C1 Ultra ([83d503b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/83d503beabeb90e327afd832fe803c766996bcd6))
+    - register ARCH_WORKAROUND_3 for Neoverse V2 ([0ffe36d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0ffe36d6e6827e9b86ffee6890050238bfe416eb))
+    - workaround for C1-Nano erratum 3392149 ([b8bb4da](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b8bb4da069a5b3d8373a24ff92669174433ab6cc))
+    - workaround for C1-Nano erratum 3419531 ([d6a9405](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d6a9405fa5a94451f4a50937ede15f2f7e13c927))
+    - workaround for C1-Nano erratum 3437202 ([bc72d7f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/bc72d7ffc11a7348c4cc053209bdc66924c05ca9))
+    - workaround for C1-Nano erratum 3516455 ([e05e2f3](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e05e2f3b8b706e5a6f986ada0e965c3c736cb8d0))
+    - workaround for C1-Nano erratum 3616450 ([6971381](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6971381ce40ea70db5ec0262d5e6b4af793a6836))
+    - workaround for C1-Nano erratum 3630925 ([e861120](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e861120e67cf9084430456e9213436938fd13495))
+    - workaround for C1-Nano erratum 3754876 ([b40e8ae](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b40e8ae18b50e7d6fd462c2e9bb990ea08b898d2))
+    - workaround for C1-Pro erratum 3300099 ([54f4add](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/54f4addefa00347bff35e1d23137f2a744d1e5f1))
+    - workaround for C1-Pro erratum 3338470 ([edaeccb](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/edaeccbdeb313c20deb0a31d9b3c005b778154c9))
+    - workaround for C1-Pro erratum 3362007 ([66f9ea7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/66f9ea736cb27192c128f963259fbde607479ff4))
+    - workaround for C1-Pro erratum 3619847 ([ed90664](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ed90664cbda9d3bb67d70c8a68d5ece017ff0124))
+    - workaround for C1-Pro erratum 3684268 ([03858cd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/03858cd787ebb4534769eb7b26af7a0c524a8861))
+    - workaround for C1-Pro erratum 3686597 ([73eb6ad](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/73eb6ad45f0fb07d0a2d25cdbb019d8e85942734))
+    - workaround for C1-Pro erratum 3694158 ([56b6be2](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/56b6be2c57636d88d12ecec71ada77daf54fe681))
+    - workaround for C1-Pro erratum 3706576 ([f253a96](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f253a96008f8442f85174046dbe9c3f72c1175d9))
+    - workaround for C1-Ultra erratum 3324333 ([a5b318c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a5b318c87a4ca193f4fac480176aec8970f6d5b5))
+    - workaround for C1-Ultra erratum 3502731 ([118060e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/118060eda1500ce164f93e503e7d2e2ba0a8aa13))
+    - workaround for C1-Ultra erratum 3651221 ([e89c1ca](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e89c1ca569f3ac54f5f9ceebcca27f9fc326fc27))
+    - workaround for C1-Ultra erratum 3658374 ([9ef4c05](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9ef4c057490d02de3dfaa66c6081f2bb04f01899))
+    - workaround for C1-Ultra erratum 3684152 ([0fa9f24](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0fa9f24fe529295f41d99a7727805f83a5d7531f))
+    - workaround for C1-Ultra erratum 3705939 ([55fc5d1](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/55fc5d11ed5543b8e459e6c00b3cf83db4ce910e))
+    - workaround for C1-Ultra erratum 3815514 ([09740e1](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/09740e1108894a54c06934416d222ad57ccd6eff))
+    - workaround for C1-Ultra erratum 3865171 ([80f1d12](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/80f1d1219561013e50b59428fca8ba80c08082f5))
+    - workaround for C1-Ultra erratum 3926381 ([6c16aac](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6c16aac25706fd33178d3c9fb0ee509f3ea35699))
+    - workaround for C1-Ultra erratum 4102704 ([aa2f25e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/aa2f25ec141abcc6aa4751f607d41a39d71e4b72))
+    - workaround for Cortex-A710 erratum 3324338 ([b91eefa](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b91eefacb40643dea2a006bdb8d51dd133c3efc9))
+    - workaround for Cortex-A715 erratum 3456084 ([e915c1e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e915c1e6c62fb1ec43c817c3d53797bbda29657c))
+    - workaround for Cortex-A720 erratum 3456091 ([24b0ab9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/24b0ab9417eb4e6542282cc0eb80f21eb31fdcf8))
+    - workaround for Cortex-A76AE erratum 2753838 ([1f6f446](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1f6f446845115a820faa2059c0ea2444aed4b17e))
+    - workaround for Cortex-X2 erratum 3324338 ([d9fbf86](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d9fbf86eccdcfc71f46844ebbf9c0228fdaac06f))
+    - workaround for Cortex-X2 erratum 3888122 ([b61482b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b61482bf06b018977050c72ce5fbec3f843e60cc))
+    - workaround for Cortex-X2 erratum 4302969 ([5ebfd47](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5ebfd47f41870914eab1e520d68ce84d0b5a7072))
+    - workaround for Cortex-X3 erratum 3888125 ([9ef36d0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9ef36d072cb505f620ccb0a9a8fb7c0dacfb4006))
+    - workaround for Cortex-X3 erratum 4302966 ([7dc2927](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7dc2927fe1002d05bcef0bb6ed3d90e364ca0cfd))
+    - workaround for Cortex-X925 erratum 2921199 ([0d4a987](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0d4a987767e783049e7b9b0688556e1774b75bff))
+    - workaround for Cortex-X925 erratum 2922378 ([077e213](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/077e213932d9125725edd6b324c3f5c778804851))
+    - workaround for Cortex-X925 erratum 2933290 ([19394a0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/19394a0b54617c71a8d07fec1a4e955f150c1346))
+    - workaround for Cortex-X925 erratum 3324334 ([e86fa43](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e86fa4366cd8b0fd8ea639e1e17d3f5d34c83c9d))
+    - workaround for Cortex-X925 erratum 3692980 ([5a9da6e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5a9da6e3b76857cb5f49a6faf8d358b86562c4ec))
+    - workaround for Cortex-X925 erratum 3730893 ([b6f44de](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b6f44deff6bfa573e99dc35573aa92dd0baafb7d))
+    - workaround for Cortex-X925 erratum 3865185 ([7f953df](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7f953df9c2e0261b5247d789ad3b5c2883042d11))
+    - workaround for Neoverse V3 erratum 3696307 ([ee26c2f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ee26c2ff7241081a7bc1b266099789fe0e8c232b))
+    - workaround for Neoverse V3 erratum 3734562 ([456ffac](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/456ffac0a9efada140a8ec8849e14361582ecb4b))
+    - workaround for Neoverse V3 erratum 3782181 ([1aaea2d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1aaea2dd32580ded9568c927108a0573964cf61c))
+    - workaround for Neoverse V3 erratum 3864536 ([3781d79](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3781d797e6547f8a2be3348b1f85e3bb2ae7a7a8))
+    - workaround for Neoverse V3 erratum 3878291 ([f991550](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f9915508ac850eec970f8ab8a1b8f6620cae85cf))
+    - workaround for Neoverse-N1 erratum 3324349 ([9e3f034](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9e3f0349ce826f780d69a2eebc412fd71b37547d))
+    - workaround for Neoverse-N2 erratum 2138953 ([affc47b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/affc47b2731255566e634c7411ef02d2469adbf7))
+    - workaround for Neoverse-N2 erratum 3324339 ([4dbea4a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4dbea4a63b87537574812c7b771a166ec889c156))
+    - workaround for Neoverse-N2 erratum 3888123 ([2cd1dbc](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2cd1dbc87ef662fe26479561e1cf8380ffd1a219))
+    - workaround for Neoverse-N2 erratum 4302970 ([9e8afb0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9e8afb0a0c01eadc7ee8d6f50e79c36636a08f13))
+    - workaround for Neoverse-N3 erratum 3456111 ([635f35c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/635f35ce618920377be63cb159c0cb18c233f364))
+    - workaround for Neoverse-V2 erratum 3442699 ([1172841](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/11728415bac8ba957c5cf9cab6114439ad17d9f2))
+    - workaround for Neoverse-V2 erratum 3888126 ([bdfe1d2](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/bdfe1d245074abdb0fa2519dd251d83b89c7c78e))
+    - workaround for Neoverse-V2 erratum 4302968 ([8d22042](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8d22042148f841cd38d3babb5dbaf5bc753fec8c))
+    - workaround for Neoverse-V3 erratum 3312417 ([38aff6e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/38aff6e97643249d5fdb0adb29c45843dab8aca4))
+
+- **Miscellaneous**
+
+  - **Security**
+
+    - add CVE-2024-7881 mitigation to C1-Pro CPU ([3266eee](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3266eeeeb602dae1b6c6c76a29934b6d67b6283d))
+    - add CVE-2024-7881 mitigation to C1-Ultra CPU ([d355587](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d35558756972a9961d23ab17a299e57c35012c07))
+    - update Cortex-X3 fix version for CVE-2024-7881 ([4545f66](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4545f66a451c67068b96c52b2bddfe2d22350ea2))
+    - update Cortex-X4 fix version for CVE-2024-7881 ([0b87b4c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0b87b4c61a9c3df1d4480408c98dba4ce58b0dff))
+    - update Cortex-X925 fix version for CVE-2024-7881 ([0eb47ec](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0eb47ecdda8c1e610e67cd8a782db634588b9f52))
+    - update Neoverse-V2 fix version for CVE-2024-7881 ([1cf0b2d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1cf0b2d0cff7359ac072fa62aea01d616646d235))
+    - update Neoverse-V3/V3AE fix version for CVE-2024-7881 ([76e5c0d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/76e5c0d9d093ede5066d1818785ef32863903da3))
+
 ## [lts-2.10.27](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.26..refs/tags/lts-v2.10.27) (2026-01-13)
 
 ### Build System
