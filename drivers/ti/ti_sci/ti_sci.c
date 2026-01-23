@@ -242,6 +242,9 @@ int ti_sci_query_fw_caps(uint64_t *fw_caps)
 	struct ti_sci_xfer xfer;
 	int ret;
 
+	if (!fw_caps)
+		return -EINVAL;
+
 	ret = ti_sci_setup_one_xfer(TI_SCI_MSG_QUERY_FW_CAPS, 0,
 				    &req, sizeof(req),
 				    &resp, sizeof(resp),
@@ -257,8 +260,7 @@ int ti_sci_query_fw_caps(uint64_t *fw_caps)
 		return ret;
 	}
 
-	if (fw_caps)
-		*fw_caps = resp.fw_caps;
+	*fw_caps = resp.fw_caps;
 
 	return 0;
 }
