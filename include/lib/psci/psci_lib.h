@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -89,11 +89,14 @@ void psci_warmboot_entrypoint(void);
 void psci_register_spd_pm_hook(const spd_pm_ops_t *pm);
 void psci_prepare_next_non_secure_ctx(
 			  entry_point_info_t *next_image_info);
-int psci_stop_other_cores(unsigned int wait_ms,
+int psci_stop_other_cores(unsigned int this_cpu_idx, unsigned int wait_ms,
 			  void (*stop_func)(u_register_t mpidr));
-bool psci_is_last_on_cpu_safe(void);
-bool psci_are_all_cpus_on_safe(void);
+bool psci_is_last_on_cpu_safe(unsigned int this_core);
+bool psci_are_all_cpus_on_safe(unsigned int this_core);
 void psci_pwrdown_cpu(unsigned int power_level);
+void psci_pwrdown_cpu_start(unsigned int power_level);
+void __dead2 psci_pwrdown_cpu_end_terminal(void);
+void psci_pwrdown_cpu_end_wakeup(unsigned int power_level);
 
 #endif /* __ASSEMBLER__ */
 

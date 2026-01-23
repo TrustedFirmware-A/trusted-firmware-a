@@ -146,4 +146,3 @@ Properties binding information
 
   fconf_properties
   amu-bindings
-  mpmm-bindings

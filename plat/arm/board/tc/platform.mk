@@ -163,7 +163,6 @@ override ENABLE_AMU_AUXILIARY_COUNTERS := 1
 override ENABLE_AMU_FCONF := 1
 
 override ENABLE_MPMM := 1
-override ENABLE_MPMM_FCONF := 1
 
 # Include Measured Boot makefile before any Crypto library makefile.
 # Crypto library makefile may need default definitions of Measured Boot build

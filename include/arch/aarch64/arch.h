@@ -1061,6 +1061,7 @@
  ******************************************************************************/
 #define ID_AA64SMFR0_EL1		S3_0_C0_C4_5
 #define SMCR_EL3			S3_6_C1_C2_6
+#define SVCR				S3_3_C4_C2_2
 
 /* ID_AA64SMFR0_EL1 definitions */
 #define ID_AA64SMFR0_EL1_SME_FA64_SHIFT		U(63)
@@ -1432,12 +1433,10 @@
  ******************************************************************************/
 
 #define CPUPPMCR_EL3			S3_6_C15_C2_0
-#define CPUPPMCR_EL3_MPMMPINCTL_SHIFT	UINT64_C(0)
-#define CPUPPMCR_EL3_MPMMPINCTL_MASK	UINT64_C(0x1)
+#define CPUPPMCR_EL3_MPMMPINCTL_BIT	BIT(0)
 
 #define CPUMPMMCR_EL3			S3_6_C15_C2_1
-#define CPUMPMMCR_EL3_MPMM_EN_SHIFT	UINT64_C(0)
-#define CPUMPMMCR_EL3_MPMM_EN_MASK	UINT64_C(0x1)
+#define CPUMPMMCR_EL3_MPMM_EN_BIT	BIT(0)
 
 /* alternative system register encoding for the "sb" speculation barrier */
 #define SYSREG_SB			S0_3_C3_C0_7

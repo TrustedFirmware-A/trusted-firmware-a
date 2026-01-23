@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -118,6 +118,18 @@ workaround_reset_end cortex_x3, ERRATUM(3827463)
 
 check_erratum_ls cortex_x3, ERRATUM(3827463), CPU_REV(1, 1)
 
+workaround_reset_start cortex_x3, ERRATUM(3888125), ERRATA_X3_3888125
+	sysreg_bit_set	CORTEX_X3_CPUACTLR2_EL1, BIT(22)
+workaround_reset_end cortex_x3, ERRATUM(3888125)
+
+check_erratum_ls cortex_x3, ERRATUM(3888125), CPU_REV(1, 2)
+
+workaround_reset_start cortex_x3, ERRATUM(4302966), ERRATA_X3_4302966
+	sysreg_bit_set	CORTEX_X3_CPUACTLR5_EL1, BIT(50)
+workaround_reset_end cortex_x3, ERRATUM(4302966)
+
+check_erratum_ls cortex_x3, ERRATUM(4302966), CPU_REV(1, 2)
+
 workaround_reset_start cortex_x3, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	override_vector_table wa_cve_vbar_cortex_x3
@@ -133,20 +145,22 @@ workaround_reset_end cortex_x3, CVE(2024, 5660)
 
 check_erratum_ls cortex_x3, CVE(2024, 5660), CPU_REV(1, 2)
 
-workaround_reset_start cortex_x3, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
-	/* ---------------------------------
-	 * Sets BIT41 of CPUACTLR6_EL1 which
-	 * disables L1 Data cache prefetcher
-	 * ---------------------------------
+	/* --------------------------------------------------------------
+	 * CVE-2024-7881 is mitigated for Cortex-X3 using erratum 3692984
+	 * workaround by disabling the affected prefetcher setting
+	 * CPUACTLR6_EL1[41].
+	 * --------------------------------------------------------------
 	 */
+workaround_reset_start cortex_x3, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
 	sysreg_bit_set CORTEX_X3_CPUACTLR6_EL1, BIT(41)
 workaround_reset_end cortex_x3, CVE(2024, 7881)
 
-check_erratum_chosen cortex_x3, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
+check_erratum_ls cortex_x3, CVE(2024, 7881), CPU_REV(1, 2)
 
 cpu_reset_func_start cortex_x3
 	/* Disable speculative loads */
 	msr	SSBS, xzr
+	enable_mpmm
 cpu_reset_func_end cortex_x3
 
 	/* ----------------------------------------------------

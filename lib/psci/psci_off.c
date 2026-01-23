@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2019, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2024, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2023, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -93,7 +93,7 @@ int psci_do_cpu_off(unsigned int end_pwrlvl)
 	 */
 	if ((psci_spd_pm != NULL) && (psci_spd_pm->svc_off != NULL)) {
 		rc = psci_spd_pm->svc_off(0);
-		if (rc != 0)
+		if (rc != PSCI_E_SUCCESS)
 			goto exit;
 	}
 
@@ -102,37 +102,20 @@ int psci_do_cpu_off(unsigned int end_pwrlvl)
 	 * it returns the negotiated state info for each power level upto
 	 * the end level specified.
 	 */
-	psci_do_state_coordination(end_pwrlvl, &state_info);
+	psci_do_state_coordination(idx, end_pwrlvl, &state_info);
 
 	/* Update the target state in the power domain nodes */
-	psci_set_target_local_pwr_states(end_pwrlvl, &state_info);
+	psci_set_target_local_pwr_states(idx, end_pwrlvl, &state_info);
 
 #if ENABLE_PSCI_STAT
 	/* Update the last cpu for each level till end_pwrlvl */
-	psci_stats_update_pwr_down(end_pwrlvl, &state_info);
-#endif
-
-#if ENABLE_RUNTIME_INSTRUMENTATION
-
-	/*
-	 * Flush cache line so that even if CPU power down happens
-	 * the timestamp update is reflected in memory.
-	 */
-	PMF_CAPTURE_TIMESTAMP(rt_instr_svc,
-		RT_INSTR_ENTER_CFLUSH,
-		PMF_CACHE_MAINT);
+	psci_stats_update_pwr_down(idx, end_pwrlvl, &state_info);
 #endif
 
 	/*
 	 * Arch. management. Initiate power down sequence.
 	 */
-	psci_pwrdown_cpu(psci_find_max_off_lvl(&state_info));
-
-#if ENABLE_RUNTIME_INSTRUMENTATION
-	PMF_CAPTURE_TIMESTAMP(rt_instr_svc,
-		RT_INSTR_EXIT_CFLUSH,
-		PMF_NO_CACHE_MAINT);
-#endif
+	psci_pwrdown_cpu_start(psci_find_max_off_lvl(&state_info));
 
 	/*
 	 * Plat. management: Perform platform specific actions to turn this
@@ -170,7 +153,6 @@ exit:
 		psci_inv_cpu_data(psci_svc_cpu_data.aff_info_state);
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
-
 		/*
 		 * Update the timestamp with cache off.  We assume this
 		 * timestamp can only be read from the current CPU and the
@@ -181,17 +163,12 @@ exit:
 		    RT_INSTR_ENTER_HW_LOW_PWR,
 		    PMF_NO_CACHE_MAINT);
 #endif
-
 		if (psci_plat_pm_ops->pwr_domain_pwr_down_wfi != NULL) {
-			/* This function must not return */
+			/* This function may not return */
 			psci_plat_pm_ops->pwr_domain_pwr_down_wfi(&state_info);
-		} else {
-			/*
-			 * Enter a wfi loop which will allow the power
-			 * controller to physically power down this cpu.
-			 */
-			psci_power_down_wfi();
 		}
+
+		psci_pwrdown_cpu_end_terminal();
 	}
 
 	return rc;

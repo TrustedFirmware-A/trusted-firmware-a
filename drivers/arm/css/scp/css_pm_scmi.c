@@ -312,7 +312,7 @@ void __dead2 css_scp_system_off(int state)
 	/*
 	 * Send powerdown request to online secondary core(s)
 	 */
-	ret = psci_stop_other_cores(0, css_raise_pwr_down_interrupt);
+	ret = psci_stop_other_cores(plat_my_core_pos(), 0, css_raise_pwr_down_interrupt);
 	if (ret != PSCI_E_SUCCESS) {
 		ERROR("Failed to powerdown secondary core(s)\n");
 	}
@@ -339,7 +339,7 @@ void __dead2 css_scp_system_off(int state)
 	}
 
 	/* Powerdown of primary core */
-	psci_pwrdown_cpu(PLAT_MAX_PWR_LVL);
+	psci_pwrdown_cpu_start(PLAT_MAX_PWR_LVL);
 	wfi();
 	ERROR("CSS set power state: operation not handled.\n");
 	panic();

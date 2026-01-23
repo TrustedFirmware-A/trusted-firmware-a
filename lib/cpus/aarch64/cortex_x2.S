@@ -223,9 +223,27 @@ workaround_reset_end cortex_x2, ERRATUM(2778471)
 
 check_erratum_ls cortex_x2, ERRATUM(2778471), CPU_REV(2, 1)
 
+workaround_runtime_start cortex_x2, ERRATUM(3324338), ERRATA_X2_3324338
+	speculation_barrier
+workaround_runtime_end cortex_x2, ERRATUM(3324338)
+
+check_erratum_ls cortex_x2, ERRATUM(3324338), CPU_REV(2, 1)
+
 add_erratum_entry cortex_x2, ERRATUM(3701772), ERRATA_X2_3701772
 
 check_erratum_ls cortex_x2, ERRATUM(3701772), CPU_REV(2, 1)
+
+workaround_reset_start cortex_x2, ERRATUM(3888122), ERRATA_X2_3888122
+	sysreg_bit_set CORTEX_X2_CPUACTLR2_EL1, BIT(22)
+workaround_reset_end cortex_x2, ERRATUM(3888122)
+
+check_erratum_ls cortex_x2, ERRATUM(3888122), CPU_REV(2, 1)
+
+workaround_reset_start cortex_x2, ERRATUM(4302969), ERRATA_X2_4302969
+	sysreg_bit_set CORTEX_X2_CPUACTLR5_EL1, BIT(50)
+workaround_reset_end cortex_x2, ERRATUM(4302969)
+
+check_erratum_ls cortex_x2, ERRATUM(4302969), CPU_REV(2, 1)
 
 workaround_reset_start cortex_x2, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
@@ -267,6 +285,9 @@ endfunc cortex_x2_core_pwr_dwn
 cpu_reset_func_start cortex_x2
 	/* Disable speculative loads */
 	msr	SSBS, xzr
+	apply_erratum cortex_x2, ERRATUM(3324338), ERRATA_X2_3324338
+
+	enable_mpmm
 cpu_reset_func_end cortex_x2
 
 	/* ---------------------------------------------
