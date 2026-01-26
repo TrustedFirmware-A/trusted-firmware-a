@@ -25,19 +25,19 @@ static inline void scif_clrbits_16(uintptr_t addr, uint32_t clear)
 	mmio_write_16(addr, mmio_read_16(addr) & ~clear);
 }
 
-static void scif_console_trans_end_poll(uint32_t reg)
+static void scif_console_trans_end_poll(uint32_t reg, uint32_t mask)
 {
 	/* Check that transfer of SCIF is completed */
-	while ((mmio_read_16(reg) & TRANS_END_CHECK) != TRANS_END_CHECK)
+	while ((mmio_read_16(reg) & mask) != mask)
 		;
 }
 
 static void scif_console_putc_common(uint8_t chr)
 {
-	scif_console_trans_end_poll(rcar_putc_fsr);
+	scif_console_trans_end_poll(rcar_putc_fsr, SCIF_SCFSR_TDFE);
 	mmio_write_8(rcar_putc_tdr, chr);	/* Transfer one character */
 	scif_clrbits_16(rcar_putc_fsr, TRANS_END_CHECK); /* TEND,TDFE clear */
-	scif_console_trans_end_poll(rcar_putc_fsr);
+	scif_console_trans_end_poll(rcar_putc_fsr, TRANS_END_CHECK);
 }
 
 void scif_console_set_regs(uint32_t fsr, uint32_t tdr)
