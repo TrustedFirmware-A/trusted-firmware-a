@@ -21,10 +21,10 @@ static uint32_t adjust_ddrc_config(void);
 static bool is_lpddr4(void);
 
 static struct space_timing_params tr_res = {
-		.cdd = {.rr = 0, .rw = 0, .wr = 0, .ww = 0},
-		.vref_ca = 0,
-		.vref_dq = 0,
-		.tphy_wrdata_delay = 0
+	.cdd = {.rr = 0, .rw = 0, .wr = 0, .ww = 0},
+	.vref_ca = 0,
+	.vref_dq = 0,
+	.tphy_wrdata_delay = 0
 };
 
 /* Modify bitfield value with delta, given bitfield position and mask */
@@ -36,7 +36,7 @@ bool update_bf(uint32_t *v, uint8_t pos, uint32_t mask, int32_t delta)
 	bf_val = (*v >> pos) & mask;
 	new_val = (int64_t)bf_val + delta;
 
-    /* Check if new value is within valid range [0, mask] */
+	/* Check if new value is within valid range [0, mask] */
 	if ((new_val < 0) || (new_val > (int64_t)mask)) {
 		return false;
 	}
