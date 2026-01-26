@@ -1413,10 +1413,6 @@ CPU_FLAG_LIST += ERRATA_C1PREMIUM_3324333
 # to revision r0p0 of C1-Premium cpu and is fixed in r1p0.
 CPU_FLAG_LIST += ERRATA_C1PREMIUM_3502731
 
-# Flag to apply erratum 3651221 workaround during reset. This erratum applies
-# to revision r0p0 of C1-Premium cpu and is fixed in r1p0.
-CPU_FLAG_LIST += ERRATA_C1PREMIUM_3651221
-
 # Flag to apply erratum 3684152 workaround during reset. This erratum applies
 # to revision r0p0 of C1-Premium cpu and is fixed in r1p0.
 CPU_FLAG_LIST += ERRATA_C1PREMIUM_3684152
