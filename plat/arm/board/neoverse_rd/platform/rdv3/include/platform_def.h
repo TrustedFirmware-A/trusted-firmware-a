@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -39,6 +39,11 @@
 
 /* Address bits */
 #define NRD_ADDR_BITS_PER_CHIP		U(36)  /* 64GB */
+
+/* The number of nodes in the SFCP system. This must be kept
+ * up to date with the value in other nodes
+ */
+#define SFCP_NUMBER_NODES (3)
 
 /*
  * In the current implementation, the RoT Service request that requires the

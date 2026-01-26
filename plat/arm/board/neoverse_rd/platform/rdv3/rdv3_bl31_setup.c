@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <common/debug.h>
 #include <drivers/arm/gic600_multichip.h>
-#include <drivers/arm/rse_comms.h>
+#include <drivers/arm/sfcp.h>
 #include <drivers/arm/smmu_v3.h>
 #include <lib/per_cpu/per_cpu.h>
 #include <plat/arm/common/plat_arm.h>
@@ -15,7 +15,6 @@
 #include <nrd_css_fw_def3.h>
 #include <nrd_plat.h>
 #include <nrd_variant.h>
-#include <rdv3_rse_comms.h>
 
 #define RT_OWNER 0
 
@@ -177,6 +176,8 @@ void __init bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
+	enum sfcp_error_t sfcp_err;
+
 	/*
 	 * Perform SMMUv3 GPT configuration for the GPC SMMU present in system
 	 * control block on RD-V3 platforms. This SMMUv3 initialization is
@@ -222,7 +223,9 @@ void bl31_platform_setup(void)
 	gic_set_gicr_frames(
 		rdv3mc_multichip_gicr_frames);
 
-	if (plat_rse_comms_init() != 0) {
+	/* Initialize SFCP for communications between AP and RSE */
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
 		WARN("Failed initializing AP-RSE comms.\n");
 	}
 }

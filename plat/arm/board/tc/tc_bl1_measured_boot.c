@@ -1,18 +1,19 @@
 /*
- * Copyright (c) 2022-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <stdint.h>
 
+#include <common/debug.h>
+#include <drivers/arm/sfcp.h>
 #include <drivers/measured_boot/metadata.h>
 #include <drivers/measured_boot/rse/rse_measured_boot.h>
 #include <tools_share/zero_oid.h>
 
 #include <plat/arm/common/plat_arm.h>
 #include <platform_def.h>
-#include <tc_rse_comms.h>
 
 /* Table with platform specific image IDs and metadata. Intentionally not a
  * const struct, some members might set by bootloaders during trusted boot.
@@ -46,8 +47,14 @@ struct rse_mboot_metadata tc_rse_mboot_metadata[] = {
 
 void bl1_plat_mboot_init(void)
 {
-	/* Initialize the communication channel between AP and RSE */
-	(void)plat_rse_comms_init();
+	enum sfcp_error_t sfcp_err;
+
+	/* Initialize SFCP for communications between AP and RSE */
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		ERROR("Unable to initialize SFCP\n");
+		plat_panic_handler();
+	}
 
 	rse_measured_boot_init(tc_rse_mboot_metadata);
 }

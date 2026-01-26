@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2021-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -210,15 +210,15 @@ $(eval TC_HW_CONFIG	:=	${BUILD_PLAT}/$(patsubst %.dts,%.dtb,$(TC_HW_CONFIG_DTS))
 # Add the HW_CONFIG to FIP and specify the same to certtool
 $(eval $(call TOOL_ADD_PAYLOAD,${TC_HW_CONFIG},--hw-config,${TC_HW_CONFIG}))
 
-$(info Including rse_comms.mk)
-include drivers/arm/rse/rse_comms.mk
+$(info Including sfcp.mk)
+include drivers/arm/sfcp/sfcp.mk
 
-BL1_SOURCES	+=	${RSE_COMMS_SOURCES} \
-			plat/arm/board/tc/tc_rse_comms.c
-BL2_SOURCES	+=	${RSE_COMMS_SOURCES} \
-			plat/arm/board/tc/tc_rse_comms.c
-BL31_SOURCES	+=	${RSE_COMMS_SOURCES} \
-			plat/arm/board/tc/tc_rse_comms.c \
+BL1_SOURCES	+=	${SFCP_SOURCES} \
+			plat/arm/board/tc/tc_sfcp.c
+BL2_SOURCES	+=	${SFCP_SOURCES} \
+			plat/arm/board/tc/tc_sfcp.c
+BL31_SOURCES	+=	${SFCP_SOURCES} \
+			plat/arm/board/tc/tc_sfcp.c \
 			lib/psa/rse_platform.c
 
 # Include Measured Boot makefile before any Crypto library makefile.

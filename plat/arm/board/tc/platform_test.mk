@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2022-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -6,21 +6,20 @@
 $(eval $(call add_define,PLATFORM_TESTS))
 
 ifeq (${PLATFORM_TEST},rse-nv-counters)
-    include drivers/arm/rse/rse_comms.mk
+    include drivers/arm/sfcp/sfcp.mk
 
     # Test code.
-    BL31_SOURCES	+=	plat/arm/board/tc/nv_counter_test.c \
-				plat/arm/board/tc/tc_rse_comms.c
+    BL31_SOURCES	+=	plat/arm/board/tc/nv_counter_test.c
 
     # Code under testing.
     BL31_SOURCES	+=	lib/psa/rse_platform.c \
-				${RSE_COMMS_SOURCES}
+				${SFCP_SOURCES}
 
     PLAT_INCLUDES	+=	-Iinclude/lib/psa
 
     $(eval $(call add_define,PLATFORM_TEST_NV_COUNTERS))
 else ifeq (${PLATFORM_TEST},tfm-testsuite)
-    include drivers/arm/rse/rse_comms.mk
+    include drivers/arm/sfcp/sfcp.mk
     include drivers/measured_boot/rse/qcbor.mk
 
     # The variables need to be set to compile the platform test:
@@ -58,12 +57,11 @@ else ifeq (${PLATFORM_TEST},tfm-testsuite)
 					psa_util.c				\
 					)
 
-    BL31_SOURCES	+=	${RSE_COMMS_SOURCES}				\
+    BL31_SOURCES	+=	${SFCP_SOURCES}				\
 				plat/arm/common/arm_dyn_cfg.c			\
 				${TC_BASE}/rse_ap_tests.c			\
 				${TC_BASE}/rse_ap_testsuites.c			\
 				${TC_BASE}/rse_ap_test_stubs.c			\
-				${TC_BASE}/tc_rse_comms.c			\
 				$(TF_M_TESTS_PATH)/tests_reg/test/framework/test_framework.c \
 				$(MEASURED_BOOT_TESTS_PATH)/measured_boot_common.c \
 				$(MEASURED_BOOT_TESTS_PATH)/measured_boot_tests_common.c \

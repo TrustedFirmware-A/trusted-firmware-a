@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,12 +7,13 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include <drivers/arm/sfcp.h>
 #include <mbedtls_common.h>
 #include <plat/common/platform.h>
 #include <psa/crypto.h>
 
 #include "rse_ap_testsuites.h"
-#include <tc_rse_comms.h>
+
 
 static struct test_suite_t test_suites[] = {
 	{.freg = register_testsuite_delegated_attest},
@@ -28,11 +29,17 @@ static struct test_suite_t test_suites[] = {
 static int run_tests(void)
 {
 	enum test_suite_err_t ret;
+	enum sfcp_error_t sfcp_err;
 	psa_status_t status;
 	size_t i;
 
 	/* Initialize test environment. */
-	plat_rse_comms_init();
+	sfcp_err = sfcp_init();
+	if (sfcp_err != SFCP_ERROR_SUCCESS) {
+		printf("Unable to initialize SFCP\n");
+		return -1;
+	}
+
 	mbedtls_init();
 	status = psa_crypto_init();
 	if (status != PSA_SUCCESS) {
