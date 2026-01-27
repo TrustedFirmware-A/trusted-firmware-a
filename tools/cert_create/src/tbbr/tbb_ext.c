@@ -128,7 +128,8 @@ static ext_t tbb_ext[] = {
 		.sn = "SoCAPFirmwareHash",
 		.ln = "SoC AP Firmware hash (SHA256)",
 		.asn1_type = V_ASN1_OCTET_STRING,
-		.type = EXT_TYPE_HASH
+		.type = EXT_TYPE_HASH,
+		.optional = 1
 	},
 	[SOC_FW_CONFIG_HASH_EXT] = {
 		.oid = SOC_FW_CONFIG_HASH_OID,
