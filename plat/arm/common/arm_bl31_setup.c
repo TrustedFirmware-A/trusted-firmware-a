@@ -405,16 +405,8 @@ void arm_bl31_platform_setup(void)
 	te = transfer_list_find(secure_tl, TL_TAG_FDT);
 	assert(te != NULL);
 
-	/*
-	 * A pre-existing assumption is that FCONF is unsupported w/ RESET_TO_BL2 and
-	 * RESET_TO_BL31. In the case of RESET_TO_BL31 this makes sense because there
-	 * isn't a prior stage to load the device tree, but the reasoning for RESET_TO_BL2 is
-	 * less clear. For the moment hardware properties that would normally be
-	 * derived from the DT are statically defined.
-	 */
-#if !RESET_TO_BL2
+	/* Populate HW_CONFIG device tree from transfer list entry */
 	fconf_populate("HW_CONFIG", (uintptr_t)transfer_list_entry_data(te));
-#endif
 
 	te = transfer_list_add(ns_tl, TL_TAG_FDT, te->data_size,
 			       transfer_list_entry_data(te));

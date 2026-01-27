@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -644,7 +645,7 @@ static void bl2_advertise_dram_size(uint32_t product)
 	bl2_advertise_dram_entries(dram_config);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	uint32_t reg, midr, boot_dev, boot_cpu, type, rev;
@@ -967,7 +968,7 @@ lcm_state:
 	}
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 #if RCAR_BL2_DCACHE == 1
 	NOTICE("BL2: D-Cache enable\n");

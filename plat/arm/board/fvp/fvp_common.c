@@ -928,8 +928,6 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
 
 	/* Set number of device non-coherent address ranges based on DT */
 	num_ncoh_regions = FCONF_GET_PROPERTY(hw_config, pci_props, num_ncoh_regions);
-	/* At least 1 PCIe region need to be described in DT */
-	assert((num_ncoh_regions > 0) && (num_ncoh_regions <= 2));
 
 	for (unsigned long i = 0UL; i < num_ncoh_regions; i++) {
 		ncoh_region_ptr[i].base =

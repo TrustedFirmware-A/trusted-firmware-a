@@ -1,5 +1,6 @@
 /*
  * Copyright 2024-2025 NXP
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -96,7 +97,7 @@ static void plat_s32_mmc_setup(void)
 	init_s32g_usdhc();
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
+void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				  u_register_t arg2, u_register_t arg3)
 {
 	int ret;
@@ -144,7 +145,7 @@ void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
 	plat_s32g2_io_setup();
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 }
 

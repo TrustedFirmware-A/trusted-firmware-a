@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018-2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -1019,7 +1020,7 @@ static void bl2_advertise_dram_size(uint32_t product)
 	bl2_advertise_dram_entries(dram_config);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	uint32_t reg, midr, lcs, boot_dev, boot_cpu, sscg, type, rev;
@@ -1344,7 +1345,7 @@ lcm_state:
 		rcar_io_setup();
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	rcar_configure_mmu_el3(BL2_BASE,
 			       BL2_END - BL2_BASE,
@@ -1355,7 +1356,7 @@ void bl2_el3_plat_arch_setup(void)
 	    );
 }
 
-void bl2_el3_plat_prepare_exit(void)
+void bl2_plat_prepare_exit(void)
 {
 	bl2_ram_security_setting_finish();
 }

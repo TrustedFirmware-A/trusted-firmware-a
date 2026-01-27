@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2022, Socionext Inc. All rights reserved.
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,7 +21,7 @@
 
 static console_t console;
 
-void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
+void bl2_early_platform_setup2(u_register_t x0, u_register_t x1,
 				  u_register_t x2, u_register_t x3)
 {
 	/* Initialize the console to provide early debug support */
@@ -30,7 +31,7 @@ void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 	console_set_scope(&console, CONSOLE_FLAG_BOOT);
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	int ret;
 

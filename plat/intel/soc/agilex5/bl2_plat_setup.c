@@ -70,7 +70,7 @@ const mmap_region_t agilex_plat_mmap[] = {
 
 boot_source_type boot_source = BOOT_SOURCE;
 
-void bl2_el3_early_platform_setup(u_register_t x0 __unused,
+void bl2_early_platform_setup2(u_register_t x0 __unused,
 				  u_register_t x1 __unused,
 				  u_register_t x2 __unused,
 				  u_register_t x3 __unused)
@@ -167,7 +167,7 @@ void bl2_el3_early_platform_setup(u_register_t x0 __unused,
 	VERBOSE("USB3_MISC_CTRL_REG0 = 0x%X\n", mmio_read_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0)));
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	unsigned long offset = 0;
 

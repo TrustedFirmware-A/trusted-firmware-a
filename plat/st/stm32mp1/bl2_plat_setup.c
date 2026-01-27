@@ -140,7 +140,7 @@ static void print_reset_reason(void)
 	ERROR("  Unidentified reset reason\n");
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg0,
+void bl2_early_platform_setup2(u_register_t arg0,
 				  u_register_t arg1 __unused,
 				  u_register_t arg2 __unused,
 				  u_register_t arg3 __unused)
@@ -203,7 +203,7 @@ static void update_monotonic_counter(void)
 }
 #endif
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	const char *board_model;
 	boot_api_context_t *boot_context =
@@ -562,7 +562,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	return err;
 }
 
-void bl2_el3_plat_prepare_exit(void)
+void bl2_plat_prepare_exit(void)
 {
 #if STM32MP_UART_PROGRAMMER || STM32MP_USB_PROGRAMMER
 	uint16_t boot_itf = stm32mp_get_boot_itf_selected();

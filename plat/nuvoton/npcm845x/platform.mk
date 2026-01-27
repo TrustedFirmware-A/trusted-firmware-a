@@ -265,7 +265,7 @@ BL1_SOURCES	+=	${DYN_CFG_SOURCES}
 BL2_SOURCES	+=	${DYN_CFG_SOURCES}
 
 ifeq (${RESET_TO_BL2},1)
-BL2_SOURCES	+=	plat/arm/common/arm_bl2_el3_setup.c
+BL2_SOURCES	+=	plat/arm/common/arm_bl2_setup.c
 endif
 
 # Because BL1/BL2 execute in AArch64 mode but BL32 in AArch32 we need to use

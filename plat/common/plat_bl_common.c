@@ -22,7 +22,7 @@
  * The following platform functions are weakly defined. The Platforms
  * may redefine with strong definition.
  */
-#pragma weak bl2_el3_plat_prepare_exit
+#pragma weak bl2_plat_prepare_exit
 #pragma weak plat_error_handler
 #pragma weak bl2_plat_preload_setup
 #pragma weak bl2_plat_handle_pre_image_load
@@ -62,7 +62,7 @@ int32_t plat_is_smccc_feature_available(u_register_t fid __unused)
 	return SMC_ARCH_CALL_NOT_SUPPORTED;
 }
 
-void bl2_el3_plat_prepare_exit(void)
+void bl2_plat_prepare_exit(void)
 {
 }
 

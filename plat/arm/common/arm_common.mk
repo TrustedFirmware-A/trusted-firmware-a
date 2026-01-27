@@ -290,10 +290,6 @@ DYN_CFG_SOURCES		+=	${FDT_WRAPPERS_SOURCES}
 BL1_SOURCES		+=	${DYN_CFG_SOURCES}
 BL2_SOURCES		+=	${DYN_CFG_SOURCES}
 
-ifeq (${RESET_TO_BL2},1)
-BL2_SOURCES		+=	plat/arm/common/arm_bl2_el3_setup.c
-endif
-
 # The Arm platforms use the default BL2 mem params desc.
 ARM_PLAT_PROVIDES_BL2_MEM_PARAMS	:=  0
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2025, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -34,7 +34,7 @@
 /* BL2 platform parameters passed to BL31 */
 static plat_params_from_bl2_t plat_params_from_bl2;
 
-static meminfo_t bl2_el3_tzram_layout;
+static meminfo_t bl2_tzram_layout;
 static console_t console;
 extern int load_lpm3(void);
 
@@ -282,7 +282,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	return hikey960_bl2_handle_post_image_load(image_id);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	unsigned int id, uart_base;
@@ -299,14 +299,14 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/*
 	 * Allow BL2 to see the whole Trusted RAM.
 	 */
-	bl2_el3_tzram_layout.total_base = BL2_RW_BASE;
-	bl2_el3_tzram_layout.total_size = BL31_LIMIT - BL2_RW_BASE;
+	bl2_tzram_layout.total_base = BL2_RW_BASE;
+	bl2_tzram_layout.total_size = BL31_LIMIT - BL2_RW_BASE;
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
-	hikey960_init_mmu_el3(bl2_el3_tzram_layout.total_base,
-			      bl2_el3_tzram_layout.total_size,
+	hikey960_init_mmu_el3(bl2_tzram_layout.total_base,
+			      bl2_tzram_layout.total_size,
 			      BL_CODE_BASE,
 			      BL_CODE_END,
 			      BL_COHERENT_RAM_BASE,

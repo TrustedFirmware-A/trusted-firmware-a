@@ -1,6 +1,6 @@
 /*
  * Copyright 2017-2021 NXP
- * Copyright 2021 Arm
+ * Copyright (c) 2021-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -63,7 +63,7 @@ static void imx8mm_usdhc_setup(void)
 	imx_usdhc_init(&params, &info);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	int i;
@@ -91,7 +91,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	plat_imx_io_setup();
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 }
 

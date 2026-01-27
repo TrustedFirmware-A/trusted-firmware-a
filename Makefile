@@ -375,13 +375,7 @@ endif
 # 4 world system running BL2 at EL3 and two world system without BL1 running
 # BL2 in EL3
 
-ifeq (${RESET_TO_BL2},1)
-	BL2_RUNS_AT_EL3	:=	1
-	ifeq (${ENABLE_RME},1)
-                $(error RESET_TO_BL2=1 and ENABLE_RME=1 configuration is not \
-                supported at the moment.)
-	endif
-else ifeq (${ENABLE_RME},1)
+ifneq ($(filter 1,${RESET_TO_BL2} ${ENABLE_RME}),)
 	BL2_RUNS_AT_EL3	:=	1
 else
 	BL2_RUNS_AT_EL3	:=	0

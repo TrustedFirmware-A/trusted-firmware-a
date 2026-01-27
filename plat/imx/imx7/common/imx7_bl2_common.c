@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2018-2025, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -114,7 +114,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	return err;
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	/* Setup the MMU here */
 }
@@ -144,10 +144,10 @@ static void imx7_setup_wdog_clocks(void)
 
 
 /*
- * bl2_el3_early_platform_setup()
+ * bl2_early_platform_setup2()
  * MMU off
  */
-void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+void bl2_early_platform_setup2(u_register_t arg1, u_register_t arg2,
 				  u_register_t arg3, u_register_t arg4)
 {
 	static console_t console;
@@ -191,7 +191,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 /*
  * bl2_platform_setup()
- * MMU on - enabled by bl2_el3_plat_arch_setup()
+ * MMU on - enabled by bl2_plat_arch_setup()
  */
 void bl2_platform_setup(void)
 {

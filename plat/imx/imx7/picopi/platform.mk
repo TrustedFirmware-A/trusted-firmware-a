@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018-2023, ARM Limited and Contributors. All rights reserved.
+# Copyright (c) 2018-2025, ARM Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -11,7 +11,7 @@ include plat/imx/imx7/common/imx7.mk
 PLAT_INCLUDES		+=	-Iplat/imx/imx7/picopi/include		    \
 
 BL2_SOURCES		+=	drivers/imx/usdhc/imx_usdhc.c		    \
-				plat/imx/imx7/picopi/picopi_bl2_el3_setup.c \
+				plat/imx/imx7/picopi/picopi_bl2_setup.c \
 
 # Build config flags
 # ------------------

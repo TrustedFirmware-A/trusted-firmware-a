@@ -61,7 +61,7 @@ BL2_SOURCES		+=	common/desc_image_load.c			\
 				common/fdt_wrappers.c				\
 				plat/imx/common/imx8_helpers.S			\
 				plat/imx/common/imx_uart_console.S		\
-				plat/imx/imx8m/imx8mm/imx8mm_bl2_el3_setup.c	\
+				plat/imx/imx8m/imx8mm/imx8mm_bl2_setup.c	\
 				plat/imx/imx8m/imx8mm/gpc.c			\
 				plat/imx/imx8m/imx_aipstz.c			\
 				plat/common/plat_psci_common.c			\

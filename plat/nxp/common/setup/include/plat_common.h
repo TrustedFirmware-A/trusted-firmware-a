@@ -1,5 +1,6 @@
 /*
  * Copyright 2018-2021 NXP
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -75,7 +76,6 @@ int plat_io_setup(void);
 int open_backend(const uintptr_t spec);
 
 void ls_bl2_plat_arch_setup(void);
-void ls_bl2_el3_plat_arch_setup(void);
 
 enum boot_device {
 	BOOT_DEVICE_IFC_NOR,

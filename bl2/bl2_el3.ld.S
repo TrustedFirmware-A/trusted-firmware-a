@@ -54,6 +54,12 @@ SECTIONS {
 #endif
 
 #if SEPARATE_CODE_AND_RODATA
+
+/* If platform didn't override BL2_TEXT_RESIDENT_LIMIT then set to 4K */
+#ifndef BL2_TEXT_RESIDENT_LIMIT
+#define BL2_TEXT_RESIDENT_LIMIT		U(0x1000)
+#endif
+
     .text . : {
         ASSERT(. == ALIGN(PAGE_SIZE),
         ".text address is not aligned on a page boundary.");
@@ -88,7 +94,8 @@ SECTIONS {
         __RODATA_END__ = .;
     } >ROM
 
-    ASSERT(__TEXT_RESIDENT_END__ - __TEXT_RESIDENT_START__ <= PAGE_SIZE,
+    ASSERT(__TEXT_RESIDENT_END__ - __TEXT_RESIDENT_START__ <=
+	BL2_TEXT_RESIDENT_LIMIT,
         "Resident part of BL2 has exceeded its limit.")
 #else /* SEPARATE_CODE_AND_RODATA */
     .ro . : {

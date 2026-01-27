@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2025, Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,8 +21,8 @@
 
 static console_t g_qti_console_uart;
 
-void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
-				  u_register_t x2, u_register_t x3)
+void bl2_early_platform_setup2(u_register_t x0, u_register_t x1,
+			       u_register_t x2, u_register_t x3)
 {
 	qti_console_uart_register(&g_qti_console_uart,
 				  PLAT_QTI_UART_BASE);
@@ -29,7 +30,7 @@ void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 			  CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	int ret;
 

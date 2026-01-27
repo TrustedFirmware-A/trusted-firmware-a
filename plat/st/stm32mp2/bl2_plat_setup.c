@@ -79,7 +79,7 @@ static void print_reset_reason(void)
 	INFO("Reset reason: %s (0x%x)\n", reason_str, rstsr);
 }
 
-void bl2_el3_early_platform_setup(u_register_t arg0 __unused,
+void bl2_early_platform_setup2(u_register_t arg0 __unused,
 				  u_register_t arg1 __unused,
 				  u_register_t arg2 __unused,
 				  u_register_t arg3 __unused)
@@ -146,7 +146,7 @@ static void reset_backup_domain(void)
 	}
 }
 
-void bl2_el3_plat_arch_setup(void)
+void bl2_plat_arch_setup(void)
 {
 	const char *board_model;
 	boot_api_context_t *boot_context =
