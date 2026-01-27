@@ -13,6 +13,7 @@
 #include <tools_share/tbbr_oid.h>
 
 #include <plat/common/common_def.h>
+#include <plat/common/platform.h>
 #include <platform_def.h>
 
 /* TC specific table with image IDs and metadata. Intentionally not a
