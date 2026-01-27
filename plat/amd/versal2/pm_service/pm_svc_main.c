@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -300,7 +300,7 @@ int32_t pm_setup(void)
 
 	/* Register for idle callback during force power down/restart */
 	ret = (int32_t)pm_register_notifier(primary_proc->node_id, EVENT_CPU_PWRDWN,
-					    0x0U, 0x1U, SECURE);
+					    0x0U, 0x1U, (uint32_t)SECURE);
 	if (ret != 0) {
 		WARN("BL31: registering idle callback for restart/force power down failed\n");
 	}
@@ -329,9 +329,9 @@ static uintptr_t eemi_psci_debugfs_handler(uint32_t api_id, uint32_t *pm_arg,
 					   void *handle, uint32_t security_flag)
 {
 	enum pm_ret_status ret;
-	uint32_t pm_api_id = api_id & API_ID_MASK;
+	uint32_t api_val = api_id & API_ID_MASK;
 
-	switch (pm_api_id) {
+	switch (api_val) {
 
 	case (uint32_t)PM_SELF_SUSPEND:
 		ret = pm_self_suspend(pm_arg[0], pm_arg[1], pm_arg[2],
@@ -480,7 +480,7 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 {
 	uintptr_t ret;
 	uint32_t pm_arg[PAYLOAD_ARG_CNT] = {0};
-	uint32_t security_flag = NON_SECURE;
+	uint32_t security_flag = (uint32_t)NON_SECURE;
 	uint32_t api_id;
 	bool status = false, status_tmp = false;
 	uint64_t x[4] = {x1, x2, x3, x4};
@@ -498,7 +498,7 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 	 */
 	SECURE_REDUNDANT_CALL(status, status_tmp, is_caller_secure, flags);
 	if ((status != false) && (status_tmp != false)) {
-		security_flag = SECURE;
+		security_flag = (uint32_t)SECURE;
 	}
 
 	if ((smc_fid & FUNCID_NUM_MASK) == PASS_THROUGH_FW_CMD_ID) {
