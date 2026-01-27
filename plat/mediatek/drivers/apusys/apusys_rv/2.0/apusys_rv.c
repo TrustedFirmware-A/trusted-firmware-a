@@ -484,7 +484,8 @@ int apusys_rv_setup_ce_bin(void)
 			}
 		}
 
-		if (ce_sub_hdr->hw_entry) {
+		if (ce_sub_hdr->hw_entry >= APUSYS_ACE_HW_CONFG_BASE &&
+		    ce_sub_hdr->hw_entry < (APUSYS_ACE_HW_CONFG_BASE + APUSYS_ACE_HW_CONFG_SIZE)) {
 			mmio_clrsetbits_32(ce_sub_hdr->hw_entry,
 					   ce_sub_hdr->hw_entry_mask << ce_sub_hdr->hw_entry_bit,
 					   (ce_sub_hdr->hw_entry_val & ce_sub_hdr->hw_entry_mask)
