@@ -31,57 +31,57 @@ versions (8.X, 9.X) to which they apply can be found in `Feature_description`_
 +-------------------------+--------+
 | Feature                 | Status |
 +=========================+========+
-| FEAT_GCIE               |        |
+| FEAT_GCIE               |   OK   |
 +-------------------------+--------+
-| FEAT_GCIE_LEGACY        |        |
+| FEAT_GCIE_LEGACY        |   NA   |
 +-------------------------+--------+
-| FEAT_F16F32DOT          |        |
+| FEAT_F16F32DOT          |   NA   |
 +-------------------------+--------+
-| FEAT_F16F32MM           |        |
+| FEAT_F16F32MM           |   NA   |
 +-------------------------+--------+
-| FEAT_F16MM              |        |
+| FEAT_F16MM              |   NA   |
 +-------------------------+--------+
-| FEAT_SVE_B16MM          |        |
+| FEAT_SVE_B16MM          |   NA   |
 +-------------------------+--------+
-| FEAT_SME2p3             |        |
+| FEAT_SME2p3             |   NA   |
 +-------------------------+--------+
-| FEAT_MTE_EIRG           |  NA    |
+| FEAT_MTE_EIRG           |   NA   |
 +-------------------------+--------+
-| FEAT_MTETC              |        |
+| FEAT_MTETC              |   NA   |
 +-------------------------+--------+
-| FEAT_SVE2p3             |        |
+| FEAT_SVE2p3             |   NA   |
 +-------------------------+--------+
 | FEAT_SCR2               |        |
 +-------------------------+--------+
-| FEAT_LSCP               |        |
+| FEAT_LSCP               |   NA   |
 +-------------------------+--------+
-| FEAT_MPAMv2_VID         |        |
+| FEAT_MPAMv2_VID         |   NA   |
 +-------------------------+--------+
-| FEAT_MPAMv2_MSC         |        |
+| FEAT_MPAMv2_MSC         |   NA   |
 +-------------------------+--------+
-| FEAT_MPAMv2_MSC_MON_SEC |        |
+| FEAT_MPAMv2_MSC_MON_SEC |   NA   |
 +-------------------------+--------+
-| FEAT_MPAMv2_ALT_ID      |        |
+| FEAT_MPAMv2_ALT_ID      |   NA   |
 +-------------------------+--------+
 | FEAT_MPAMv2             |        |
 +-------------------------+--------+
 | FEAT_FDIT               |        |
 +-------------------------+--------+
-| FEAT_CMH                |        |
+| FEAT_CMH                |   NA   |
 +-------------------------+--------+
-| FEAT_EAESR              |        |
+| FEAT_EAESR              |   NA   |
 +-------------------------+--------+
-| FEAT_TLBID              |        |
+| FEAT_TLBID              |   NA   |
 +-------------------------+--------+
 | FEAT_SRMASK2            |        |
 +-------------------------+--------+
-| FEAT_BBML3              |        |
+| FEAT_BBML3              |   NA   |
 +-------------------------+--------+
 | FEAT_NV3                |        |
 +-------------------------+--------+
 | FEAT_PAuth_EnhCtl       |        |
 +-------------------------+--------+
-| FEAT_LORRL              |        |
+| FEAT_LORRL              |   NA   |
 +-------------------------+--------+
 
 2024 Extensions
