@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2019-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,6 +24,11 @@
 #endif
 
 cpu_reset_prologue cortex_a65ae
+
+/* Due to the nature of the errata it is applied unconditionally when chosen */
+check_erratum_chosen cortex_a65ae, ERRATUM(1638571), ERRATA_A65AE_1638571
+/* erratum workaround is interleaved with generic code */
+add_erratum_entry cortex_a65ae, ERRATUM(1638571), ERRATA_A65AE_1638571
 
 workaround_reset_start cortex_a65ae, ERRATUM(936184), ERRATA_DSU_936184
 	errata_dsu_936184_wa_impl
