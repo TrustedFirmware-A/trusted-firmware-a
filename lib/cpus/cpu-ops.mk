@@ -217,6 +217,10 @@ CPU_FLAG_LIST += ERRATA_A65_1227419
 # to r0p0, r1p0, r1p1, r1p2 revisions of the CPU and is still open.
 CPU_FLAG_LIST += ERRATA_A65_1541130
 
+# Flag to apply erratum 1638571 workaround during runtime. This erratum applies
+# to r0p0, r1p0, r1p1 revisions of the CPU and is still open.
+CPU_FLAG_LIST += ERRATA_A65AE_1638571
+
 # Flag to apply erratum 855971 workaround during reset. This erratum applies
 # only to revision <= r0p3 of the Cortex A72 cpu.
 CPU_FLAG_LIST += ERRATA_A72_859971
