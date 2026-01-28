@@ -46,13 +46,6 @@ workaround_reset_end c1_pro, ERRATUM(3619847)
 
 check_erratum_ls c1_pro, ERRATUM(3619847), CPU_REV(0, 0)
 
-workaround_reset_start c1_pro, ERRATUM(3684268), ERRATA_C1PRO_3684268
-	sysreg_bit_set C1_PRO_IMP_CPUECTLR2_EL1, BIT(49)
-	dsb sy
-workaround_reset_end c1_pro, ERRATUM(3684268)
-
-check_erratum_ls c1_pro, ERRATUM(3684268), CPU_REV(1, 0)
-
 workaround_runtime_start c1_pro, ERRATUM(3686597), ERRATA_C1PRO_3686597
 #if ENABLE_SME_FOR_NS
 #if ENABLE_SME_FOR_NS == 2
@@ -105,7 +98,7 @@ check_erratum_ls c1_pro, ERRATUM(3300099), CPU_REV(1, 0)
 	 * -----------------------------------------------------------
 	 */
 workaround_reset_start c1_pro, CVE(2024, 7881), WORKAROUND_CVE_2024_7881
-	sysreg_bit_set C1_PRO_IMP_CPUECTLR_EL1, BIT(49)
+	sysreg_bit_set C1_PRO_IMP_CPUECTLR2_EL1, BIT(49)
 	dsb	sy
 workaround_reset_end c1_pro, CVE(2024, 7881)
 
