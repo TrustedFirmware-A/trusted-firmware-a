@@ -26,6 +26,7 @@
 #include <common/fdt_wrappers.h>
 #include <drivers/console.h>
 #include <lib/psci/psci.h>
+#include <lib/utils_def.h>
 #include <plat/common/platform.h>
 
 
@@ -71,25 +72,34 @@ int dt_add_psci_node(void *fdt)
 	}
 
 	offs = fdt_path_offset(fdt, "/");
-	if (offs < 0)
+	if (offs < 0) {
 		return -1;
+	}
 	offs = fdt_add_subnode(fdt, offs, "psci");
-	if (offs < 0)
+	if (offs < 0) {
 		return -1;
-	if (append_psci_compatible(fdt, offs, "arm,psci-1.0"))
+	}
+	if (append_psci_compatible(fdt, offs, "arm,psci-1.0") != 0) {
 		return -1;
-	if (append_psci_compatible(fdt, offs, "arm,psci-0.2"))
+	}
+	if (append_psci_compatible(fdt, offs, "arm,psci-0.2") != 0) {
 		return -1;
-	if (append_psci_compatible(fdt, offs, "arm,psci"))
+	}
+	if (append_psci_compatible(fdt, offs, "arm,psci") != 0) {
 		return -1;
-	if (fdt_setprop_string(fdt, offs, "method", "smc"))
+	}
+	if (fdt_setprop_string(fdt, offs, "method", "smc") != 0) {
 		return -1;
-	if (fdt_setprop_u32(fdt, offs, "cpu_suspend", PSCI_CPU_SUSPEND_FNID))
+	}
+	if (fdt_setprop_u32(fdt, offs, "cpu_suspend", PSCI_CPU_SUSPEND_FNID) != 0) {
 		return -1;
-	if (fdt_setprop_u32(fdt, offs, "cpu_off", PSCI_CPU_OFF))
+	}
+	if (fdt_setprop_u32(fdt, offs, "cpu_off", PSCI_CPU_OFF) != 0) {
 		return -1;
-	if (fdt_setprop_u32(fdt, offs, "cpu_on", PSCI_CPU_ON_FNID))
+	}
+	if (fdt_setprop_u32(fdt, offs, "cpu_on", PSCI_CPU_ON_FNID) != 0) {
 		return -1;
+	}
 	return 0;
 }
 
@@ -161,8 +171,9 @@ int dt_add_psci_cpu_enable_methods(void *fdt)
 
 	do {
 		offs = fdt_path_offset(fdt, "/cpus");
-		if (offs < 0)
+		if (offs < 0) {
 			return offs;
+		}
 
 		ret = dt_update_one_cpu_node(fdt, offs);
 	} while (ret > 0);
@@ -170,7 +181,7 @@ int dt_add_psci_cpu_enable_methods(void *fdt)
 	return ret;
 }
 
-#define HIGH_BITS(x) ((sizeof(x) > 4) ? ((x) >> 32) : (typeof(x))0)
+#define HIGH_BITS_U32(x)		((sizeof(x) > 4U) ? (uint32_t)((x) >> 32) : (uint32_t)0)
 
 /*******************************************************************************
  * fdt_add_reserved_memory() - reserve (secure) memory regions in DT
@@ -204,13 +215,16 @@ int fdt_add_reserved_memory(void *dtb, const char *node_name,
 
 	ac = fdt_address_cells(dtb, 0);
 	sc = fdt_size_cells(dtb, 0);
+	if (ac < 0 || sc < 0) {
+		return -EINVAL;
+	}
 	if (offs < 0) {			/* create if not existing yet */
 		offs = fdt_add_subnode(dtb, 0, "reserved-memory");
 		if (offs < 0) {
 			return offs;
 		}
-		fdt_setprop_u32(dtb, offs, "#address-cells", ac);
-		fdt_setprop_u32(dtb, offs, "#size-cells", sc);
+		fdt_setprop_u32(dtb, offs, "#address-cells", (uint32_t)ac);
+		fdt_setprop_u32(dtb, offs, "#size-cells", (uint32_t)sc);
 		fdt_setprop(dtb, offs, "ranges", NULL, 0);
 	}
 
@@ -233,16 +247,16 @@ int fdt_add_reserved_memory(void *dtb, const char *node_name,
 	}
 
 	if (ac > 1) {
-		addresses[idx] = cpu_to_fdt32(HIGH_BITS(base));
+		addresses[idx] = cpu_to_fdt32(HIGH_BITS_U32(base));
 		idx++;
 	}
-	addresses[idx] = cpu_to_fdt32(base & 0xffffffff);
+	addresses[idx] = cpu_to_fdt32(LO(base));
 	idx++;
 	if (sc > 1) {
-		addresses[idx] = cpu_to_fdt32(HIGH_BITS(size));
+		addresses[idx] = cpu_to_fdt32(HIGH_BITS_U32(size));
 		idx++;
 	}
-	addresses[idx] = cpu_to_fdt32(size & 0xffffffff);
+	addresses[idx] = cpu_to_fdt32(LO(size));
 	idx++;
 	offs = fdt_add_subnode(dtb, offs, node_name);
 	fdt_setprop(dtb, offs, "no-map", NULL, 0);
