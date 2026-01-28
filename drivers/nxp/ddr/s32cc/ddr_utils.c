@@ -9,6 +9,7 @@
 #include <common/debug.h>
 #include <ddr_utils.h>
 #include <mmio_poll.h>
+#include <s32cc-clk-drv.h>
 
 static uint32_t enable_axi_ports(void);
 static uint32_t get_mail(uint32_t *mail);
@@ -59,6 +60,10 @@ uint32_t set_axi_parity(void)
 	/* For LPDDR4 Set DFI1_ENABLED to 0x1 */
 	if (is_lpddr4()) {
 		mmio_setbits_32(DDR_SS_REG, DDR_SS_DFI_1_ENABLED);
+	}
+
+	if (plat_deassert_ddr_reset() != 0) {
+		return DEASSERT_FAILED;
 	}
 
 	/* Enable HIF, CAM Queueing */
