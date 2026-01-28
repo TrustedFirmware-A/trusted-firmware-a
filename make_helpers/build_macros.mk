@@ -356,7 +356,7 @@ $(eval $(foreach src,$(SRCS),$(call MAKE_TOOL_C,$(1),$(src),$(2),$(3))))
 
 $(DST): $(OBJS) $(filter-out %.d,$(MAKEFILE_LIST)) | $(1)
 	$$(s)echo "  HOSTLD  $$@"
-	$$(q)$(host-cc) $${OBJS} -o $$@ $($(3)_LDFLAGS)
+	$$(q)$(host-ld) $$(OBJS) -o $$@ $$(HOSTLDFLAGS) $($(3)_LDFLAGS)
 	$$(s)echo
 	$$(s)echo "Built $$@ successfully"
 	$$(s)echo
