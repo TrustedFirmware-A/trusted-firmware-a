@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
 
+#include <arch.h>
+#include <arch_helpers.h>
 #include <common/bl_common.h>
 #include <drivers/arm/pl061_gpio.h>
 #include <lib/gpt_rme/gpt_rme.h>
@@ -96,6 +98,13 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 {
 	bool __maybe_unused is64 = false;
 	uint64_t __maybe_unused hval;
+
+	/*
+	 * There's a crash on QEMU when initializing SVE in BL31 if FP
+	 * traps is enabled in EL3. So disable it until we have permenant
+	 * fix for the QEMU platform.
+	 */
+	disable_fpregs_traps_el3();
 
 	/* Initialize the console to provide early debug support */
 	qemu_console_init();
