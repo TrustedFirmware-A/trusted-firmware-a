@@ -25,6 +25,7 @@
  ******************************************************************************/
 #define C1_PRO_IMP_CPUECTLR_EL1			S3_0_C15_C1_4
 #define C1_PRO_CPUECTLR2_EL1_EXTLLC_BIT		U(10)
+#define C1_PRO_IMP_CPUECTLR2_EL1			S3_0_C15_C1_5
 
 /*******************************************************************************
  * CPU Power Control register specific definitions
@@ -37,5 +38,9 @@
  ******************************************************************************/
 #define C1_PRO_SVCRSM				S0_3_C4_C2_3
 #define C1_PRO_SVCRZA				S0_3_C4_C4_3
+
+#ifndef __ASSEMBLER__
+long check_erratum_c1_pro_3300099(long cpu_rev);
+#endif /* __ASSEMBLER__ */
 
 #endif /* C1_PRO_H */
