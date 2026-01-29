@@ -14,6 +14,7 @@ PLAT_INCLUDES +=	\
 			-I${PLAT_PATH}/board/${TARGET_BOARD}/include	\
 			-I${PLAT_PATH}					\
 			-Iplat/ti/common/include			\
+			-I${PLAT_PATH}/common/drivers/firewall		\
 
 K3_PSCI_SOURCES		+=	\
 				${PLAT_PATH}/common/am62l_psci.c	\
@@ -28,3 +29,4 @@ BL31_SOURCES		+=	\
 				${K3_TI_SCI_TRANSPORT}				\
 				${PLAT_PATH}/common/am62l_bl31_setup.c		\
 				${PLAT_PATH}/common/am62l_topology.c		\
+				${PLAT_PATH}/common/drivers/firewall/firewall_config.c	\
