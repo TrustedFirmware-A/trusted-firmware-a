@@ -853,6 +853,26 @@ static inline uint64_t el_implemented(unsigned int el)
 }
 
 /*
+ * Read number of break points available.
+ */
+static inline unsigned int read_brps_id_field(void)
+{
+	return EXTRACT(ID_AA64DFR1_BRP, read_id_aa64dfr1_el1());
+}
+
+static inline void enable_fpregs_traps_el3(void)
+{
+	write_cptr_el3(read_cptr_el3() | TFP_BIT);
+	isb();
+}
+
+static inline void disable_fpregs_traps_el3(void)
+{
+	write_cptr_el3(read_cptr_el3() & ~(TFP_BIT));
+	isb();
+}
+
+/*
  * TLBI PAALLOS instruction
  * (TLB Invalidate GPT Information by PA, All Entries, Outer Shareable)
  */

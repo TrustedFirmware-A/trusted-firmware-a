@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2024, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2016-2026, ARM Limited and Contributors. All rights reserved.
  * Portions copyright (c) 2021-2022, ProvenRun S.A.S. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -514,5 +514,14 @@ static inline void disable_fiq(void)
 	__asm__ volatile ("cpsid	f");
 	isb();
 }
+
+static inline void enable_fpregs_traps_el3(void)
+{
+}
+
+static inline void disable_fpregs_traps_el3(void)
+{
+}
+
 
 #endif /* ARCH_HELPERS_H */

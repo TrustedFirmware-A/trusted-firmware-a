@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2019-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -330,6 +330,22 @@ static inline bool is_feat_pauth_present(void)
 }
 CREATE_FEATURE_SUPPORTED(feat_pauth, is_feat_pauth_present, ENABLE_PAUTH)
 CREATE_FEATURE_SUPPORTED(ctx_pauth, is_feat_pauth_present, CTX_INCLUDE_PAUTH_REGS)
+
+/* FEAT_CRYPTO: SIMD Crypto Extensions */
+__attribute__((always_inline))
+static inline bool is_feat_crypto_present(void)
+{
+	uint64_t mask_id_aa64isar0 =
+		(ID_AA64ISAR0_AES_MASK << ID_AA64ISAR0_AES_SHIFT) |
+		(ID_AA64ISAR0_SHA1_MASK << ID_AA64ISAR0_SHA1_SHIFT) |
+		(ID_AA64ISAR0_SHA2_MASK << ID_AA64ISAR0_SHA2_SHIFT);
+
+	/*
+	 * Check if AES, SHA1, SHA2 extension presents.
+	*/
+	return ((read_id_aa64isar0_el1() & mask_id_aa64isar0) != 0U);
+}
+CREATE_FEATURE_SUPPORTED(feat_crypto, is_feat_crypto_present, ENABLE_FEAT_CRYPTO)
 
 #if (ENABLE_FEAT_IDTE3 && IMAGE_BL31)
 __attribute__((always_inline))

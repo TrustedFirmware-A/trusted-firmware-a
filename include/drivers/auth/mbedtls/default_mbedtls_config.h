@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -81,14 +81,24 @@
 /* Enable hash algorithms based on TBB or Measured Boot */
 #if MEASURED_BOOT || (TF_MBEDTLS_HASH_ALG_ID == TF_MBEDTLS_SHA256)
     #define MBEDTLS_SHA256_C
+    #if (ENABLE_FEAT_CRYPTO == 1)
+    #define MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY
+    #endif
 #endif
 
 #if MEASURED_BOOT || (TF_MBEDTLS_HASH_ALG_ID == TF_MBEDTLS_SHA384)
     #define MBEDTLS_SHA384_C
+    #if (ENABLE_FEAT_CRYPTO_SHA3 == 1)
+    #define MBEDTLS_SHA512_C
+    #define MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY
+    #endif
 #endif
 
 #if MEASURED_BOOT || (TF_MBEDTLS_HASH_ALG_ID == TF_MBEDTLS_SHA512)
     #define MBEDTLS_SHA512_C
+    #if (ENABLE_FEAT_CRYPTO_SHA3 == 1)
+    #define MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY
+    #endif
 #endif
 
 #define MBEDTLS_VERSION_C

@@ -336,6 +336,13 @@
 #define ID_AA64ISAR0_RNDR_SHIFT		U(60)
 #define ID_AA64ISAR0_RNDR_MASK		ULL(0xf)
 
+#define ID_AA64ISAR0_AES_SHIFT		U(0x4)
+#define ID_AA64ISAR0_AES_MASK		ULL(0xf)
+#define ID_AA64ISAR0_SHA1_SHIFT		U(0x8)
+#define ID_AA64ISAR0_SHA1_MASK		ULL(0xf)
+#define ID_AA64ISAR0_SHA2_SHIFT		U(0xc)
+#define ID_AA64ISAR0_SHA2_MASK		ULL(0xf)
+
 /* ID_AA64ISAR1_EL1 definitions */
 #define ID_AA64ISAR1_EL1		S3_0_C0_C6_1
 
@@ -902,11 +909,11 @@
  * is reserved in Morello it should not have any effect anyways.
  */
 #define CPTR_EL3_RESET_VAL	((TAM_BIT | TTA_BIT | EC_BIT) & \
-				~(CPTR_EZ_BIT | ESM_BIT | TFP_BIT | TCPAC_BIT))
+				~(CPTR_EZ_BIT | ESM_BIT | TCPAC_BIT))
 #else
 /* TCPAC is always set by default as the register is always present */
 #define CPTR_EL3_RESET_VAL	((TAM_BIT | TTA_BIT) & \
-				~(CPTR_EZ_BIT | ESM_BIT | TFP_BIT | TCPAC_BIT))
+				~(CPTR_EZ_BIT | ESM_BIT | TCPAC_BIT))
 #endif
 
 /* CPTR_EL2 definitions */

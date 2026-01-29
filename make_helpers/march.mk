@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2023-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -98,6 +98,14 @@ ifneq ($(ENABLE_FEAT_PAUTH_LR), 0)
     else
             $(error Error: ENABLE_FEAT_PAUTH_LR not supported for GCC compiler)
     endif
+endif
+
+ifneq ($(ENABLE_FEAT_CRYPTO), 0)
+    arch-features	:= $(arch-features)+crypto
+endif
+
+ifneq ($(ENABLE_FEAT_CRYPTO_SHA3), 0)
+    arch-features	:= $(arch-features)+sha3
 endif
 
 # Set the compiler's architecture feature modifiers

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2022, Google LLC. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include <arch_helpers.h>
 #include <common/debug.h>
 #include <lib/el3_runtime/aarch64/context.h>
 #include <lib/el3_runtime/context_mgmt.h>
@@ -39,6 +40,7 @@ void simd_ctx_save(uint32_t security_state, bool hint_sve)
 
 	regs = &simd_context[security_state][plat_my_core_pos()];
 
+	disable_fpregs_traps_el3();
 #if CTX_INCLUDE_SVE_REGS
 	regs->hint = hint_sve;
 
@@ -54,6 +56,7 @@ void simd_ctx_save(uint32_t security_state, bool hint_sve)
 #elif CTX_INCLUDE_FPREGS
 	fpregs_context_save(regs);
 #endif
+	enable_fpregs_traps_el3();
 }
 
 void simd_ctx_restore(uint32_t security_state)
@@ -68,6 +71,7 @@ void simd_ctx_restore(uint32_t security_state)
 
 	regs = &simd_context[security_state][plat_my_core_pos()];
 
+	disable_fpregs_traps_el3();
 #if CTX_INCLUDE_SVE_REGS
 	if (regs->hint) {
 		fpregs_context_restore(regs);
@@ -77,5 +81,6 @@ void simd_ctx_restore(uint32_t security_state)
 #elif CTX_INCLUDE_FPREGS
 	fpregs_context_restore(regs);
 #endif
+	enable_fpregs_traps_el3();
 }
 #endif /* CTX_INCLUDE_FPREGS || CTX_INCLUDE_SVE_REGS */

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
 
+#include <arch.h>
 #include <arch_helpers.h>
 #include <arch_features.h>
 #include <bl1/bl1.h>
@@ -86,8 +87,29 @@ void __no_pauth bl2_main(u_register_t arg0, u_register_t arg1, u_register_t arg2
 	/* Initialize boot source */
 	bl2_plat_preload_setup();
 
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_AUTH_START, PMF_CACHE_MAINT);
+#endif
+
+	if (is_feat_crypto_supported()) {
+#if BL2_RUNS_AT_EL3
+		disable_fpregs_traps_el3();
+#endif
+	}
+
 	/* Load the subsequent bootloader images. */
 	next_bl_ep_info = bl2_load_images();
+
+	if (is_feat_crypto_supported()) {
+#if BL2_RUNS_AT_EL3
+		enable_fpregs_traps_el3();
+#endif
+	}
+
+#if ENABLE_RUNTIME_INSTRUMENTATION
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_AUTH_END, PMF_CACHE_MAINT);
+#endif
+
 
 	/* Teardown the Measured Boot backend */
 	bl2_plat_mboot_finish();
