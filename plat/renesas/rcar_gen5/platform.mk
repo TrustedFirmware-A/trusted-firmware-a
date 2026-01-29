@@ -116,7 +116,6 @@ BL31_SOURCES	+=	${RCAR_GIC_SOURCES}				\
 			drivers/delay_timer/delay_timer.c		\
 			drivers/delay_timer/generic_delay_timer.c	\
 			drivers/renesas/common/scif/scif-common.c	\
-			drivers/renesas/common/scif/scif_helpers.S	\
 			drivers/renesas/common/timer/timer.c		\
 			drivers/renesas/rcar_gen5/pwrc/pwrc.c		\
 			drivers/renesas/rcar_gen5/scif/scif.c		\

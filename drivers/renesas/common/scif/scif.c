@@ -32,8 +32,6 @@
 #define SCIF_SCFSR		0x10
 #define SCIF_SCFCR		0x18
 #define SCIF_SCLSR		0x24
-#define SCIF_DL			0x30
-#define SCIF_CKS		0x34
 
 /* MODE pin */
 #define MODEMR_MD12		BIT(12)
@@ -46,14 +44,12 @@
 #define SCSCR_TE_EN		BIT(5)
 #define SCSCR_RE_EN		BIT(4)
 #define SCSCR_CKE_MASK		3
-#define SCFSR_TEND_MASK		BIT(6)
-#define SCFSR_TEND_TRANS_END	BIT(6)
 #define SCSCR_CKE_INT_CLK	0
 #define SCFCR_TFRST_EN		BIT(2)
 #define SCFCR_RFRS_EN		BIT(1)
 
-int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
-		      uint32_t baud_rate)
+void console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
+			  uint32_t baud_rate)
 {
 	uint32_t prr = mmio_read_32(PRR);
 	uint32_t base;
@@ -123,6 +119,4 @@ int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
 	/* Set bits TE and RE in SCSCR to 1 */
 	mmio_clrsetbits_16(base + SCIF_SCSCR, SCSCR_TE_EN | SCSCR_RE_EN,
 			   SCSCR_TE_EN | SCSCR_RE_EN);
-
-	return 1;
 }

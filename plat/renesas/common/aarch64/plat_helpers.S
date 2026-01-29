@@ -30,7 +30,6 @@
 
 	.extern console_renesas_init
 	.extern console_renesas_putc
-	.extern console_renesas_flush
 
 #if IMAGE_BL2
 	#define	INT_ID_MASK	(0x3ff)
@@ -273,6 +272,7 @@ func plat_crash_console_init
 	bl	console_renesas_init
 	ldr	x30, [sp], #16
 	ldr	x1, [sp], #16
+	mov	x0, #1
 	mov	sp, x1
 #endif
 	ret
@@ -311,7 +311,7 @@ endfunc plat_crash_console_putc
 	 * ---------------------------------------------
 	 */
 func plat_crash_console_flush
-	b	console_renesas_flush
+	ret
 endfunc plat_crash_console_flush
 
 	/* --------------------------------------------------------------------

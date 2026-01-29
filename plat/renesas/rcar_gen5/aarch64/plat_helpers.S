@@ -180,6 +180,7 @@ func plat_crash_console_init
 	ldr	x30, [sp], #16
 	ldr	x1, [sp], #16
 	mov	sp, x1
+	mov	x0, #1
 	ret
 endfunc plat_crash_console_init
 
@@ -216,7 +217,7 @@ endfunc plat_crash_console_putc
 	 * ---------------------------------------------
 	 */
 func plat_crash_console_flush
-	b	console_renesas_flush
+	ret
 endfunc plat_crash_console_flush
 
 	/* ---------------------------------------------

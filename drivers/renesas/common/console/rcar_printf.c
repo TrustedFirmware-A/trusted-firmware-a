@@ -107,14 +107,25 @@ int32_t renesas_log_init(void)
 	return 1;
 }
 
-int console_renesas_flush(console_t *pconsole)
+void console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
+			  uint32_t baud_rate)
 {
-	/* Nothing to do */
-	return 0;
+	/*
+	 * Compatibility with SCIF console only, may be
+	 * invoked from R-Car Gen3 plat_crash_console_init()
+	 */
 }
 
-int console_renesas_init(uintptr_t base_addr, uint32_t uart_clk,
-		      uint32_t baud_rate)
+static console_t console_renesas_console = {
+	.flags = CONSOLE_FLAG_BOOT,
+	.putc = console_renesas_putc,
+};
+
+void console_renesas_register(uintptr_t baseaddr, uint32_t clock,
+			      uint32_t baud, uint32_t flags)
 {
-	return 1;
+	console_renesas_console.base = baseaddr;
+	console_renesas_console.flags = flags;
+
+	console_register(&console_renesas_console);
 }
