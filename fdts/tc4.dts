@@ -13,9 +13,9 @@
 #define MHU_TX_ADDR			46240000 /* hex */
 #define MHU_RX_ADDR			46250000 /* hex */
 
-#define LIT_CPU_PMU_COMPATIBLE		"arm,armv8-pmuv3"
-#define MID_CPU_PMU_COMPATIBLE		"arm,armv8-pmuv3"
-#define BIG_CPU_PMU_COMPATIBLE		"arm,armv8-pmuv3"
+#define LIT_CPU_PMU_COMPATIBLE		"arm,c1-nano-pmu"
+#define MID_CPU_PMU_COMPATIBLE		"arm,c1-pro-pmu"
+#define BIG_CPU_PMU_COMPATIBLE		"arm,c1-ultra-pmu"
 
 #define ETHERNET_ADDR			64000000
 #define ETHERNET_INT			799
@@ -63,5 +63,9 @@
 		interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH 0>;
 		interrupt-names = "IRQAW";
 		iommus = <&smmu_700 0x200>;
+	};
+
+	dsu-pmu {
+		interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH 0>;
 	};
 };

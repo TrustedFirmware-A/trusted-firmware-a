@@ -137,9 +137,9 @@ endif
 
 # CPU libraries for TARGET_PLATFORM=4
 ifeq (${TARGET_PLATFORM}, 4)
-TC_CPU_SOURCES	+=	lib/cpus/aarch64/cortex_gelas.S \
-			lib/cpus/aarch64/nevis.S \
-			lib/cpus/aarch64/travis.S
+TC_CPU_SOURCES	+=	lib/cpus/aarch64/c1_pro.S \
+			lib/cpus/aarch64/c1_nano.S \
+			lib/cpus/aarch64/c1_ultra.S
 endif
 
 INTERCONNECT_SOURCES	:=	${TC_BASE}/tc_interconnect.c \
