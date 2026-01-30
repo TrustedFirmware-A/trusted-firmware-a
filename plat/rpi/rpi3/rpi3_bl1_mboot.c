@@ -56,7 +56,7 @@ static void rpi3_bl1_tpm_early_interface_setup(void)
 {
 #if TPM_INTERFACE_FIFO_SPI
 	int rc;
-	struct spi_plat *spidev;
+	struct tpm_spi_plat *spidev;
 	const struct tpm_timeout_ops timeout_ops = {
 		.timeout_init_us = timeout_init_us,
 		.timeout_elapsed = timeout_elapsed

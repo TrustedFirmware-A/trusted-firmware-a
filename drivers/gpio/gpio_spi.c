@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,7 +15,7 @@
 
 static struct gpio_spi_config config;
 
-static struct spi_plat gpio_spidev;
+static struct tpm_spi_plat gpio_spidev;
 
 static uint32_t gpio_spi_get_delay_us(void)
 {
@@ -45,29 +45,30 @@ static void gpio_spi_cs(int bit)
 	gpio_set_value(config.cs_gpio, bit);
 }
 
-static void gpio_spi_start(struct spi_priv *context)
+static void gpio_spi_start(struct tpm_spi_priv *context)
 {
 	gpio_spi_cs(1);
 	gpio_spi_sclk(0);
 	gpio_spi_cs(0);
 }
 
-static void gpio_spi_stop(struct spi_priv *context)
+static void gpio_spi_stop(struct tpm_spi_priv *context)
 {
 	gpio_spi_cs(1);
 }
 
 /* set sclk to a known state (0) before performing any further action */
-static int gpio_spi_get_access(struct spi_priv *context)
+static int gpio_spi_get_access(struct tpm_spi_priv *context)
 {
 	gpio_spi_sclk(0);
 	return 0;
 }
 
-static void gpio_spi_release_access(struct spi_priv *context)
+static void gpio_spi_release_access(struct tpm_spi_priv *context)
 {
 	/* No locking in this driver */
 }
+
 static void xfer(unsigned int bytes, const void *out, void *in, int cpol, int cpha)
 {
 	uint32_t delay_us = gpio_spi_get_delay_us();
@@ -99,8 +100,8 @@ static void xfer(unsigned int bytes, const void *out, void *in, int cpol, int cp
 	}
 }
 
-static int gpio_spi_xfer(struct spi_priv *context, unsigned int bytes,
-			 const void *out, void *in)
+static int gpio_spi_xfer(struct tpm_spi_priv *context, unsigned int bytes,
+			 const uint8_t *out, uint8_t *in)
 {
 	if ((out == NULL) && (in == NULL)) {
 		return -1;
@@ -126,7 +127,7 @@ static int gpio_spi_xfer(struct spi_priv *context, unsigned int bytes,
 	return 0;
 }
 
-struct spi_ops gpio_spidev_ops = {
+struct tpm_spi_ops gpio_spidev_ops = {
 	.get_access = gpio_spi_get_access,
 	.release_access = gpio_spi_release_access,
 	.start = gpio_spi_start,
@@ -134,7 +135,7 @@ struct spi_ops gpio_spidev_ops = {
 	.xfer = gpio_spi_xfer,
 };
 
-struct spi_plat *gpio_spi_init(const struct gpio_spi_config *gpio_spi_data)
+struct tpm_spi_plat *gpio_spi_init(const struct gpio_spi_config *gpio_spi_data)
 {
 	gpio_spidev.priv = NULL; // No context, only one device supported
 	config = *gpio_spi_data;
