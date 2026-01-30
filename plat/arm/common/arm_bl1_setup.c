@@ -77,8 +77,11 @@ struct meminfo *bl1_plat_sec_mem_layout(void)
 void arm_bl1_early_platform_setup(void)
 {
 
-#if !ARM_DISABLE_TRUSTED_WDOG
-	/* Enable watchdog */
+	/*
+	 * If BL2 is compiled to run at EL3, then it boots BL31, never returning
+	 * control to BL1, so the watchdog is not enabled.
+	 */
+#if !ARM_DISABLE_TRUSTED_WDOG && !BL2_RUNS_AT_EL3
 	plat_arm_secure_wdt_start();
 #endif
 
@@ -274,7 +277,7 @@ void arm_bl1_platform_setup(void)
 
 void bl1_plat_prepare_exit(entry_point_info_t *ep_info)
 {
-#if !ARM_DISABLE_TRUSTED_WDOG
+#if !ARM_DISABLE_TRUSTED_WDOG && !BL2_RUNS_AT_EL3
 	/* Disable watchdog before leaving BL1 */
 	plat_arm_secure_wdt_stop();
 #endif
