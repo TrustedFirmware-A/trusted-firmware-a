@@ -3,6 +3,60 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.10.29](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.28..refs/tags/lts-v2.10.29) (2026-01-30)
+
+### Performance Improvements
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - reduce the footprint of errata reporting ([d70578f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d70578f820c74e26dfd5a9c017d5a5c52cafe0aa))
+
+### New Features
+
+- **Libraries**
+
+  - **Locks**
+
+    - add bitlock ([0876588](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0876588cd309eb6fb944ea4a21da29f5de0a345b))
+    - add non-blocking spinlock_try() API ([ee14acb](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ee14acb1444bd4c791451f99d50ffb51d956ac09))
+
+### Code Refactoring
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - make errata reporting more generic ([528516d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/528516d6e66ed57ab25539bd154d379532843d4b))
+
+### Resolved Issues
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - enable Neoverse-V2 external LLC support ([3eb1d91](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3eb1d91fcfc2ef40b55e317af1feb304b2afc17d))
+
+  - **Locks**
+
+    - mark spin_trylock as a public function ([7f53a3b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7f53a3bcfafaeae465a1176b436d2fb4ccba0069))
+
+- **Miscellaneous**
+
+  - **Security**
+
+    - add CVE-2025-0647 for C1-Ultra ([387e7e4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/387e7e470d6b350ac9f540c94d0af381fcf07180))
+    - add CVE-2025-0647 for Cortex-A710 ([cc3fb61](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/cc3fb61cf3ef1a9cd58253b92a0123677bd89419))
+    - add CVE-2025-0647 for Cortex-X2 ([ca45737](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ca457379932b19bf08c953afd54ff1bb5de41340))
+    - add CVE-2025-0647 for Cortex-X3 ([b5c1f67](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b5c1f67ad44c65dd9f9a7239f252c8eb05a066f6))
+    - add CVE-2025-0647 for Cortex-X4 ([c29605d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c29605d74dec160994b3cddd717ed4a5f8b79475))
+    - add CVE-2025-0647 for Cortex-X925 ([0231076](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/023107645e4cb119010aba602a489cc9bfb5fd0c))
+    - add CVE-2025-0647 for Neoverse-N2 ([79cc92f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/79cc92f6fe31fce01a749bbfd7bc03d33dbc022a))
+    - add CVE-2025-0647 for Neoverse-V2 ([5573859](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5573859bc6a7b908fb00ad65cac461bab23aabc2))
+    - add CVE-2025-0647 for Neoverse-V3 ([722fa1e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/722fa1ee23321a971006224df580214bf4da6f7f))
+    - add workaround for CVE-2025-0647 ([3759bec](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3759bec840316fbd951e9eb33d1800d9d033bd16))
+
 ## [lts-2.10.28](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.27..refs/tags/lts-v2.10.28) (2026-01-23)
 
 ### Performance Improvements
