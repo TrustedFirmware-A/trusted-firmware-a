@@ -3,6 +3,65 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.8.42](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.41..refs/tags/lts-v2.8.42) (2026-01-30)
+
+### Performance Improvements
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - reduce the footprint of errata reporting ([5f0cdb5](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5f0cdb5e7af24cbe78f0e2ca48c8f2a8ec74a0f2))
+
+### New Features
+
+- **Libraries**
+
+  - **Locks**
+
+    - add bitlock ([38aefbb](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/38aefbb6c74f4fc4ee725414def42f4d0b492e79))
+    - add non-blocking spinlock_try() API ([9c3e7f5](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9c3e7f5e5701e673e05f247158742ea8dc7267f0))
+
+### Code Refactoring
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - make errata reporting more generic ([2de362c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2de362cd8edb0916d20b75573a45505adcd79dea))
+    - reorder the errratum build flag for Neoverse-N2 ([23b9d97](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/23b9d970703cb0fcaa4f5a29bee60fbfa9c72c35))
+
+### Resolved Issues
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - enable Neoverse-V2 external LLC support ([429e67f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/429e67fb5c31e1f97fec851bf97bd00797958bd4))
+    - workaround for Cortex-A76AE erratum 2753838 ([ca19e6c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ca19e6c6b2a2bfc720d855c044fc7c78326062e1))
+    - workaround for Cortex-X2 erratum 3888122 ([d2df71a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d2df71a298e2b54f5c49236420b5ad4ec8d234bf))
+    - workaround for Cortex-X2 erratum 4302969 ([4560e91](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4560e91742d3c9754509730bd39dd5b4ca3a6b69))
+    - workaround for Cortex-X3 erratum 3888125 ([c8394c4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c8394c43ff9efa57ad4d529767984f85be045d0f))
+    - workaround for Cortex-X3 erratum 4302966 ([54d8e46](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/54d8e4697fb5809a9944d5570cda3f5c62d3da0c))
+    - workaround for Neoverse V3 erratum 3696307 ([4e6f896](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4e6f896905fda980a0d832d52305c7afe27fe778))
+    - workaround for Neoverse V3 erratum 3734562 ([25e5b1c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/25e5b1c1d29a3141ecde2e6f605214f87ad4d6ca))
+    - workaround for Neoverse V3 erratum 3782181 ([c6faff4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c6faff4a8e4f16b52781bbf27c9dcfd16099bec1))
+    - workaround for Neoverse V3 erratum 3864536 ([30bb3c9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/30bb3c97f8489d7dbc6e773deb8ce1d5d67c7938))
+    - workaround for Neoverse V3 erratum 3878291 ([53ff1c6](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/53ff1c60da9760dc670a96fce891254a56f9c839))
+    - workaround for Neoverse-N1 erratum 3324349 ([31dea33](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/31dea33cdc2576682c7bd626e2ede985807bf0c0))
+    - workaround for Neoverse-N2 erratum 2138953 ([510a6e7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/510a6e75977de93382f85f0a1393e34cc3c98259))
+    - workaround for Neoverse-N2 erratum 3324339 ([7f7fd03](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7f7fd0315add383912f3216c82548267615ce560))
+    - workaround for Neoverse-N2 erratum 3888123 ([587401f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/587401fa7e32b9dad9d7acd792e751fbe47554a5))
+    - workaround for Neoverse-N2 erratum 4302970 ([4079faf](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4079faf67a0405f4ff1fbe69d9ba17784663e6d7))
+    - workaround for Neoverse-V2 erratum 3442699 ([0faa929](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0faa929e7345046accb1c779d910256f472cf74a))
+    - workaround for Neoverse-V2 erratum 3888126 ([68235dd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/68235dd1a4b0abbce554ef6f2d1f95e907985b70))
+    - workaround for Neoverse-V2 erratum 4302968 ([90cca31](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/90cca314579213ee8a5e3a951fc0e589dd148b61))
+    - workaround for Neoverse-V3 erratum 3312417 ([2e49a84](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2e49a84e16d36ef21687f611b7ca3487a8cc23c5))
+
+  - **Locks**
+
+    - mark spin_trylock as a public function ([8f53c38](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8f53c3813d65427bf4c5784b3afd2d0fca0e6214))
+
 ## [lts-2.8.41](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.40..refs/tags/lts-v2.8.41) (2026-01-09)
 
 ### Documentation
