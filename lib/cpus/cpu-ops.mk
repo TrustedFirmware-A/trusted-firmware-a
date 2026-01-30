@@ -7,11 +7,6 @@
 
 include ${MAKE_HELPERS_DIRECTORY}$/build_macros.mk
 
-# Flag to disable Hardware page aggregation(HPA).
-# This flag is enabled by default.
-WORKAROUND_CVE_2024_5660		?=1
-CPU_FLAG_LIST += WORKAROUND_CVE_2024_5660
-
 # Cortex A57 specific optimisation to skip L1 cache flush when
 # cluster is powered down.
 CPU_FLAG_LIST += SKIP_A57_L1_FLUSH_PWR_DWN
@@ -41,9 +36,25 @@ CPU_FLAG_LIST += WORKAROUND_CVE_2022_23960
 WORKAROUND_CVE_2024_7881		?=1
 CPU_FLAG_LIST += WORKAROUND_CVE_2024_7881
 
+# Flag to disable Hardware page aggregation(HPA).
+# This flag is enabled by default.
+WORKAROUND_CVE_2024_5660		?=1
+CPU_FLAG_LIST += WORKAROUND_CVE_2024_5660
+
+# Flag to enable the CVE-2025-0647 workaround for CPP RCTX instructions. This
+# workaround requires Arm arch v8.5 or greater, so only enable by default for
+# v8.5+.
+ifeq "8.5" "$(word 1, $(sort 8.5 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
+ifeq (${ARCH},aarch64)
+        WORKAROUND_CVE_2025_0647		?=1
+endif
+endif
+CPU_FLAG_LIST += WORKAROUND_CVE_2025_0647
+
 # Flags to indicate internal or external Last level cache
 # By default internal
 CPU_FLAG_LIST += NEOVERSE_Nx_EXTERNAL_LLC
+CPU_FLAG_LIST += NEOVERSE_Vx_EXTERNAL_LLC
 
 # Flag to enable or disable hardware prefetcher for Neoverse N2 CPU
 # By default enabled
