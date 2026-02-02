@@ -222,6 +222,12 @@ For Cortex-A65, the following errata build flags are defined :
 -  ``ERRATA_A65_1541130``: This applies errata 1541130 workaround to r0p0, r1p0,
    r1p1, r1p2 revisions of the CPU and is still open.
 
+For Cortex-A65AE, the following errata build flags are defined :
+
+-  ``ERRATA_A65AE_1638571``: This applies errata 1638571 workaround to Cortex-A65AE
+   CPU. This needs to be enabled r0p0, r1p0, r1p1 revisions of the CPU and is still
+   open.
+
 For Cortex-A72, the following errata build flags are defined :
 
 -  ``ERRATA_A72_859971``: This applies errata 859971 workaround to Cortex-A72
@@ -1303,10 +1309,6 @@ For C1-Ultra, the following errata build flags are defined :
    C1-Ultra CPU. This needs to be enabled for revision r0p0 and is
    fixed in r1p0.
 
--  ``ERRATA_C1ULTRA_3651221``: This applies erratum 3651221 workaround to
-   C1-Ultra CPU. This needs to be enabled for revision r0p0 and is
-   fixed in r1p0.
-
 -  ``ERRATA_C1ULTRA_3658374``: This applies erratum 3658374 workaround to
    C1-Ultra CPU. This needs to be enabled for revisions r0p0 and r1p0 and
    is still open.
@@ -1345,10 +1347,6 @@ For C1-Pro, the following errata build flags are defined :
 
 -  ``ERRATA_C1PRO_3362007``: This applies errata 3362007 workaround to C1-Pro
    CPU. This needs to be enabled only for revision r0p0 and is fixed in r1p0.
-
--  ``ERRATA_C1PRO_3684268``: This applies errata 3684268 workaround to C1-Pro
-   CPU. This needs to be enabled for revisions r0p0, r1p0 and is fixed in
-   r1p1.
 
 -  ``ERRATA_C1PRO_3686597``: This applies errata 3686597 workaround to C1-Pro
    CPU. This needs to be enabled for revisions r0p0 and r1p0 of the CPU, it

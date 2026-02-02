@@ -217,6 +217,10 @@ CPU_FLAG_LIST += ERRATA_A65_1227419
 # to r0p0, r1p0, r1p1, r1p2 revisions of the CPU and is still open.
 CPU_FLAG_LIST += ERRATA_A65_1541130
 
+# Flag to apply erratum 1638571 workaround during runtime. This erratum applies
+# to r0p0, r1p0, r1p1 revisions of the CPU and is still open.
+CPU_FLAG_LIST += ERRATA_A65AE_1638571
+
 # Flag to apply erratum 855971 workaround during reset. This erratum applies
 # only to revision <= r0p3 of the Cortex A72 cpu.
 CPU_FLAG_LIST += ERRATA_A72_859971
@@ -1365,10 +1369,6 @@ CPU_FLAG_LIST += ERRATA_C1ULTRA_3502731
 # applies to revision r0p0 of C1-Ultra cpu and is fixed in r1p0.
 CPU_FLAG_LIST += ERRATA_C1ULTRA_3324333
 
-# Flag to apply erratum 3651221 workaround during reset. This erratum
-# applies to revision r0p0 of C1-Ultra cpu and is fixed in r1p0.
-CPU_FLAG_LIST += ERRATA_C1ULTRA_3651221
-
 # Flag to apply erratum 3658374 workaround during reset. This erratum
 # applies to revisions r0p0, r1p0 of C1-Ultra cpu and is still open.
 CPU_FLAG_LIST += ERRATA_C1ULTRA_3658374
@@ -1408,10 +1408,6 @@ CPU_FLAG_LIST += ERRATA_C1PRO_3362007
 # Flag to apply erratum 3619847 workaround during reset. This erratum applies
 # to revision r0p0 of the C1-Pro cpu and is fixed in r1p0.
 CPU_FLAG_LIST += ERRATA_C1PRO_3619847
-
-# Flag to apply erratum 3684268 workaround during reset. This erratum applies
-# to revisions r0p0, r1p0 of the C1-Pro cpu and is fixed in r1p1.
-CPU_FLAG_LIST += ERRATA_C1PRO_3684268
 
 # Flag to apply erratum 3686597 workaround during runtime. This erratum applies
 # to revisions r0p0, r1p0 of the C1-Pro cpu and is fixed in r1p1.
