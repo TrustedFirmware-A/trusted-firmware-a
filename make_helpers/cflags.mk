@@ -140,12 +140,6 @@ ifneq ($(PIE_FOUND),)
         cflags-common	+=	-fno-PIE
 endif
 
-ifeq ($(ENABLE_LTO),1)
-ifeq ($($(ARCH)-ld-id),gnu-gcc)
-        cflags-common	+=	-flto-partition=one
-endif
-endif
-
 cflags-common		+=	$(TF_CFLAGS_$(ARCH))
 cflags-common		+=	$(CPPFLAGS) $(CFLAGS) # some platforms set these
 TF_CFLAGS		+=	$(cflags-common)
@@ -174,6 +168,12 @@ ifeq ($($(ARCH)-ld-id),arm-link)
 else
         ifeq ($($(ARCH)-ld-id),llvm-clang)
                 ldflags-common	:=	-fuse-ld=lld
+        endif
+
+        ifeq ($(ENABLE_LTO),1)
+        ifeq ($($(ARCH)-ld-id),gnu-gcc)
+                ldflags-common	+=	-flto-partition=one
+        endif
         endif
 
         ldflags-common		+=	$(call ld_option,--no-warn-rwx-segments)
