@@ -378,6 +378,11 @@
 	ands	\reg, \reg, #(ID_AA64PFR0_AMU_MASK << ID_AA64PFR0_AMU_SHIFT)
 	.endm
 
+	.macro is_feat_morello_present_asm reg:req
+	mrs	\reg, id_aa64pfr1_el1
+	ands	\reg, \reg, #(ID_AA64PFR1_EL1_CE_MASK << ID_AA64PFR1_EL1_CE_SHIFT)
+	.endm
+
 	/*
 	 * There are various places where Morello requires simple switchovers for
 	 * system registers. For eg morello uses celr_el3 vs elr_el3, cvbar_el3 vs
