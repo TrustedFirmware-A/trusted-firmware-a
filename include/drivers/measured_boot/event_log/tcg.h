@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -59,9 +59,9 @@
  * Ref. Table 9 - Definition of (UINT16) TPM_ALG_ID Constants
  * Trusted Platform Module Library. Part 2: Structures
  */
-#define TPM_ALG_SHA256		0x000B
-#define TPM_ALG_SHA384		0x000C
-#define TPM_ALG_SHA512		0x000D
+#define EVLOG_TPM_ALG_SHA256		0x000B
+#define EVLOG_TPM_ALG_SHA384		0x000C
+#define EVLOG_TPM_ALG_SHA512		0x000D
 
 /* TCG Platform Type */
 #define PLATFORM_CLASS_CLIENT   0

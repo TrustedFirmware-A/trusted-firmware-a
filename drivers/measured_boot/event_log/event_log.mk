@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2020-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -43,11 +43,11 @@ ifdef MBOOT_EL_HASH_ALG
 $(warning MBOOT_EL_HASH_ALG is supported solely for backward compatibility. \
 Please configure the hash algorithm at runtime instead.)
 ifeq ($(MBOOT_EL_HASH_ALG),sha256)
-    TPM_ALG_ID					:= TPM_ALG_SHA256
+    TPM_ALG_ID					:= EVLOG_TPM_ALG_SHA256
 else ifeq ($(MBOOT_EL_HASH_ALG),sha384)
-    TPM_ALG_ID					:= TPM_ALG_SHA384
+    TPM_ALG_ID					:= EVLOG_TPM_ALG_SHA384
 else ifeq ($(MBOOT_EL_HASH_ALG),sha512)
-    TPM_ALG_ID					:= TPM_ALG_SHA512
+    TPM_ALG_ID					:= EVLOG_TPM_ALG_SHA512
 else
     $(error Unsupported legacy MBOOT_EL_HASH_ALG '$(MBOOT_EL_HASH_ALG)'. Expected: sha256, sha384, sha512)
 endif

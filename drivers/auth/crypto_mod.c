@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -152,13 +152,13 @@ int crypto_mod_tcg_hash(uint32_t alg_id, void *data_ptr, unsigned int data_len,
 	assert(digest != NULL);
 
 	switch (alg_id) {
-	case TPM_ALG_SHA256:
+	case EVLOG_TPM_ALG_SHA256:
 		crypto_alg_id = CRYPTO_MD_SHA256;
 		break;
-	case TPM_ALG_SHA384:
+	case EVLOG_TPM_ALG_SHA384:
 		crypto_alg_id = CRYPTO_MD_SHA384;
 		break;
-	case TPM_ALG_SHA512:
+	case EVLOG_TPM_ALG_SHA512:
 		crypto_alg_id = CRYPTO_MD_SHA512;
 		break;
 	default:
