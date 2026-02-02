@@ -49,3 +49,6 @@ endif
 ifeq (${CONFIG_ARCH_ARM_V9},y)
 ARCH_VERSION := armv9
 endif
+
+# Disable LTO for mt8188, mt8189 and mt8196
+ENABLE_LTO := 0
