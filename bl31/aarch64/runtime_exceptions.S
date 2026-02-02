@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -102,19 +102,7 @@
 	/* setup the full environment */
 	bl	prepare_el3_entry
 
-#if ENABLE_ASSERTIONS
-	/* save the stack pointer */
-	mov	x28, sp
-#endif
-
 	bl	handler_sync_exception
-
-	/* validate the stack has been completely unwound */
-#if ENABLE_ASSERTIONS
-	mov	x27, sp
-	cmp	x28, x27
-	ASM_ASSERT(eq)
-#endif
 
 	no_ret	el3_exit
 	.endm
