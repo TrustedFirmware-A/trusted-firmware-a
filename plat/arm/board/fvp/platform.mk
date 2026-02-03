@@ -658,3 +658,7 @@ $(eval $(call TOOL_ADD_PAYLOAD,${FVP_FW_CONFIG},--fw-config,${FVP_FW_CONFIG}))
 $(eval $(call TOOL_ADD_PAYLOAD,${FVP_TB_FW_CONFIG},--tb-fw-config,${FVP_TB_FW_CONFIG}))
 endif
 endif
+
+ifeq ($(ARM_FW_CONFIG_LOAD_ENABLE)-$(TRUSTED_BOARD_BOOT),1-1)
+$(eval $(call TOOL_ADD_PAYLOAD,${BUILD_PLAT}/tb_fw.crt,--tb-fw-cert))
+endif
