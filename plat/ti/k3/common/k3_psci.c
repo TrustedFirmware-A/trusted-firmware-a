@@ -16,6 +16,7 @@
 #include <ti_sci_protocol.h>
 #include <k3_gicv3.h>
 #include <ti_sci.h>
+#include <soc.h>
 
 #define CORE_PWR_STATE(state) ((state)->pwr_domain_state[MPIDR_AFFLVL0])
 #define CLUSTER_PWR_STATE(state) ((state)->pwr_domain_state[MPIDR_AFFLVL1])
@@ -97,7 +98,7 @@ void k3_pwr_domain_off(const psci_power_state_t *target_state)
 	cluster = MPIDR_AFFLVL1_VAL(read_mpidr_el1());
 	proc_id = PLAT_PROC_START_ID + core;
 	device_id = PLAT_PROC_DEVICE_START_ID + core;
-	cluster_id = PLAT_CLUSTER_DEVICE_START_ID + (cluster * 2);
+	cluster_id = get_plat_cluster_start_id() + (cluster * 2);
 
 	/*
 	 * If we are the last core in the cluster then we take a reference to
@@ -251,6 +252,14 @@ static int k3_validate_power_state(unsigned int power_state, psci_power_state_t 
 static void k3_pwr_domain_suspend_to_mode(const psci_power_state_t *target_state, uint8_t mode)
 {
 	unsigned int core, proc_id;
+	uint64_t fw_caps = 0;
+	int ret = 0;
+
+	ret = ti_sci_query_fw_caps(&fw_caps);
+	if (ret) {
+		ERROR("Sending query firmware caps failed (%d)\n", ret);
+		return;
+	}
 
 	core = plat_my_core_pos();
 	proc_id = PLAT_PROC_START_ID + core;
@@ -258,6 +267,14 @@ static void k3_pwr_domain_suspend_to_mode(const psci_power_state_t *target_state
 	/* Prevent interrupts from spuriously waking up this cpu */
 	k3_gic_cpuif_disable();
 	k3_gic_save_context();
+
+	if (fw_caps & MSG_FLAG_CAPS_LPM_ENCRYPT_IMAGE) {
+		ret = ti_sci_encrypt_tfa((uint64_t)__TEXT_START__, BL31_SIZE);
+		if (ret) {
+			ERROR("Sending encrypt tfa failed (%d)\n", ret);
+			return;
+		}
+	}
 
 	k3_pwr_domain_off(target_state);
 
@@ -324,17 +341,24 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 		ERROR("Unable to query firmware capabilities (%d)\n", ret);
 	}
 
-	/* If firmware does not support any known suspend mode */
+	/* If firmware manages the low power modes */
+	if (fw_caps & (MSG_FLAG_CAPS_LPM_DM_MANAGED |
+		       MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED)) {
+		k3_plat_psci_ops.pwr_domain_suspend = k3_pwr_domain_suspend_dm_managed;
+	}
+
+	/*
+	 * If firmware does not support any known suspend mode,
+	 * disable PSCI suspend support
+	 */
 	if (!(fw_caps & (MSG_FLAG_CAPS_LPM_DEEP_SLEEP |
 			 MSG_FLAG_CAPS_LPM_MCU_ONLY |
 			 MSG_FLAG_CAPS_LPM_STANDBY |
-			 MSG_FLAG_CAPS_LPM_PARTIAL_IO))) {
-		/* Disable PSCI suspend support */
+			 MSG_FLAG_CAPS_LPM_PARTIAL_IO |
+			 MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED))) {
 		k3_plat_psci_ops.pwr_domain_suspend = NULL;
 		k3_plat_psci_ops.pwr_domain_suspend_finish = NULL;
 		k3_plat_psci_ops.get_sys_suspend_power_state = NULL;
-	} else if (fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
-		k3_plat_psci_ops.pwr_domain_suspend = k3_pwr_domain_suspend_dm_managed;
 	}
 
 	*psci_ops = &k3_plat_psci_ops;

@@ -187,6 +187,24 @@ unlock:
 }
 
 /**
+ * copy_revision_resp() - Copy the FW revision response into an internal struct
+ *
+ * @version: Structure containing the version info
+ * @rev_info: Response for firmware version information message
+ */
+static void copy_revision_resp(struct ti_sci_msg_version *version,
+			  struct ti_sci_msg_resp_version *rev_info)
+{
+	memcpy(version->firmware_description, rev_info->firmware_description,
+		sizeof(rev_info->firmware_description));
+	version->abi_major = rev_info->abi_major;
+	version->abi_minor = rev_info->abi_minor;
+	version->firmware_revision = rev_info->firmware_revision;
+	version->sub_version = rev_info->sub_version;
+	version->patch_version = rev_info->patch_version;
+}
+
+/**
  * ti_sci_get_revision() - Get the revision of the SCI entity
  *
  * Updates the SCI information in the internal data structure.
@@ -197,10 +215,16 @@ unlock:
  */
 int ti_sci_get_revision(struct ti_sci_msg_version *version)
 {
-	struct ti_sci_msg_resp_version rev_info;
+	static struct ti_sci_msg_resp_version rev_info __aligned(4);
 	struct ti_sci_msg_hdr hdr;
 	struct ti_sci_xfer xfer;
+	static bool revision_cached;
 	int ret;
+
+	if (revision_cached) {
+		copy_revision_resp(version, &rev_info);
+		return 0;
+	}
 
 	ret = ti_sci_setup_one_xfer(TI_SCI_MSG_VERSION, 0x0,
 				    &hdr, sizeof(hdr),
@@ -217,20 +241,14 @@ int ti_sci_get_revision(struct ti_sci_msg_version *version)
 		return ret;
 	}
 
-	memcpy(version->firmware_description, rev_info.firmware_description,
-		sizeof(rev_info.firmware_description));
-	version->abi_major = rev_info.abi_major;
-	version->abi_minor = rev_info.abi_minor;
-	version->firmware_revision = rev_info.firmware_revision;
-	version->sub_version = rev_info.sub_version;
-	version->patch_version = rev_info.patch_version;
+	revision_cached = true;
+	copy_revision_resp(version, &rev_info);
 
 	return 0;
 }
 
 /**
  * ti_sci_query_fw_caps() - Get the FW/SoC capabilities
- * @handle:		Pointer to TI SCI handle
  * @fw_caps:		Each bit in fw_caps indicating one FW/SOC capability
  *
  * Return: 0 if all went well, else returns appropriate error value.
@@ -238,10 +256,18 @@ int ti_sci_get_revision(struct ti_sci_msg_version *version)
 int ti_sci_query_fw_caps(uint64_t *fw_caps)
 {
 	struct ti_sci_msg_hdr req;
-	struct ti_sci_msg_resp_query_fw_caps resp;
-
+	static struct ti_sci_msg_resp_query_fw_caps resp __aligned(4);
 	struct ti_sci_xfer xfer;
-	int ret;
+	static bool caps_cached;
+	int ret = 0;
+
+	if (!fw_caps)
+		return -EINVAL;
+
+	if (caps_cached) {
+		*fw_caps = resp.fw_caps;
+		return 0;
+	}
 
 	ret = ti_sci_setup_one_xfer(TI_SCI_MSG_QUERY_FW_CAPS, 0,
 				    &req, sizeof(req),
@@ -258,8 +284,8 @@ int ti_sci_query_fw_caps(uint64_t *fw_caps)
 		return ret;
 	}
 
-	if (fw_caps)
-		*fw_caps = resp.fw_caps;
+	caps_cached = true;
+	*fw_caps = resp.fw_caps;
 
 	return 0;
 }
@@ -1809,6 +1835,42 @@ int ti_sci_boot_notification(void)
 		return -EINVAL;
 	}
 	VERBOSE("%s: boot notification received from TIFS\n", __func__);
+
+	return 0;
+}
+
+/*
+ * ti_sci_encrypt_tfa - Ask TIFS to encrypt TFA at a specific address
+ *
+ * @src_tfa_addr: Address where the TFA lies unencrypted
+ * @src_tfa_len: Size of the TFA unencrypted
+ *
+ * Return: 0 if all goes well, else appropriate error message
+ */
+int ti_sci_encrypt_tfa(uint64_t src_tfa_addr, size_t src_tfa_len)
+{
+	struct ti_sci_msg_req_encrypt_tfa req;
+	struct ti_sci_msg_resp_encrypt_tfa resp;
+	struct ti_sci_xfer xfer;
+	int ret;
+
+	ret = ti_sci_setup_one_xfer(TISCI_MSG_LPM_ENCRYPT_TFA, 0,
+				    &req, sizeof(req),
+				    &resp, sizeof(resp),
+				    &xfer);
+	if (ret) {
+		ERROR("Message alloc failed (%d)\n", ret);
+		return ret;
+	}
+
+	req.src_tfa_addr = src_tfa_addr;
+	req.src_tfa_len = src_tfa_len;
+
+	ret = ti_sci_do_xfer(&xfer);
+	if (ret) {
+		ERROR("Transfer send failed (%d)\n", ret);
+		return ret;
+	}
 
 	return 0;
 }
