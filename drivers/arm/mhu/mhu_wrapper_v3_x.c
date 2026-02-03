@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -293,6 +293,8 @@ enum mhu_error_t mhu_send_data(const uint8_t *send_buffer, size_t size)
 	uint8_t num_channels;
 	uint8_t chan;
 	uint32_t *buffer;
+	uint32_t t_buffer;
+	size_t bytes_left;
 	struct mhu_v3_x_dev_t *dev;
 
 	if (size == 0) {
@@ -325,8 +327,19 @@ enum mhu_error_t mhu_send_data(const uint8_t *send_buffer, size_t size)
 	chan++;
 
 	buffer = (uint32_t *)send_buffer;
-	for (size_t i = 0; i < size; i += 4) {
-		mhu_v3_err = mhu_v3_x_doorbell_write(dev, chan, *buffer++);
+	bytes_left = size;
+	while (bytes_left > 0) {
+		if (bytes_left >= 4) {
+			t_buffer = *buffer++;
+			bytes_left -= 4;
+		} else {
+			/* a few bytes still to send, pad the remaining bytes */
+			t_buffer = 0;
+			memcpy(&t_buffer, (uint32_t *)buffer, bytes_left);
+
+			bytes_left = 0;
+		}
+		mhu_v3_err = mhu_v3_x_doorbell_write(dev, chan, t_buffer);
 		if (mhu_v3_err != MHU_V_3_X_ERR_NONE) {
 			return error_mapping_to_mhu_error_t(mhu_v3_err);
 		}
@@ -376,6 +389,8 @@ enum mhu_error_t mhu_receive_data(uint8_t *receive_buffer, size_t *size)
 	uint8_t num_channels;
 	uint8_t chan;
 	uint32_t *buffer;
+	uint32_t t_buffer;
+	size_t bytes_left;
 	struct mhu_v3_x_dev_t *dev;
 
 	dev = (struct mhu_v3_x_dev_t *)&mhu_seh_dev;
@@ -412,14 +427,25 @@ enum mhu_error_t mhu_receive_data(uint8_t *receive_buffer, size_t *size)
 	}
 
 	buffer = (uint32_t *)receive_buffer;
-	for (size_t i = 0; i < msg_len; i += 4) {
-		mhu_v3_err = mhu_v3_x_doorbell_read(dev, chan, buffer++);
+	bytes_left = msg_len;
+	while (bytes_left > 0) {
+		if (bytes_left >= 4) {
+			mhu_v3_err = mhu_v3_x_doorbell_read(dev, chan, buffer++);
+			bytes_left -= 4;
+		} else {
+			/* a few bytes still to receive, pad the remaining bytes */
+			t_buffer = 0;
+			mhu_v3_err = mhu_v3_x_doorbell_read(dev, chan, &t_buffer);
+
+			memcpy((uint32_t *)buffer, &t_buffer, bytes_left);
+			bytes_left = 0;
+		}
 		if (mhu_v3_err != MHU_V_3_X_ERR_NONE) {
 			return error_mapping_to_mhu_error_t(mhu_v3_err);
 		}
 
 		/* Only wait for next transfer if still missing data. */
-		if (++chan == (num_channels - 1) && (msg_len - i) > 4) {
+		if ((++chan == (num_channels - 1)) && (bytes_left > 0)) {
 			/* Busy wait for next transfer */
 			mhu_err = clear_and_wait_for_signal(
 				dev, MHU_NOTIFY_VALUE);
