@@ -35,23 +35,35 @@ static uint32_t stxr_32(uint32_t src, volatile uint32_t *dst)
 	return ret;
 }
 
-static void spin_lock_atomic(volatile uint32_t *dst)
+static uint32_t casa_32(uint32_t src, volatile uint32_t *dst)
 {
-	uint32_t src = 1;
-	uint32_t tmp;
+	uint32_t ret = 0;
 
 	__asm__ volatile (
 	".arch_extension lse\n"
-	"1:	mov	%w[tmp], wzr\n"
-	"2:	casa	%w[tmp], %w[src], [%[dst]]\n"
-	"	cbz	%w[tmp], 3f\n"
-	"	ldxr	%w[tmp], [%[dst]]\n"
-	"	cbz	%w[tmp], 2b\n"
-	"	wfe\n"
-	"	b	1b\n"
-	"3:\n"
-	: "+m" (*dst), [tmp] "=&r" (tmp), [src] "+r" (src)
-	: [dst] "r" (dst));
+	"	casa	%w[ret], %w[src], [%[dst]]\n"
+	: "+m" (*dst), [ret] "+r" (ret)
+	: [src] "r" (src), [dst] "r" (dst));
+
+	return ret;
+}
+
+/*
+ * Check that the lock isn't held. Tries to compare-and-swap (CAS) it if not.
+ * Uses WFE to efficiently wait.
+ */
+static void spin_lock_atomic(volatile uint32_t *dst)
+{
+	for (; 1; wfe()) {
+		/* 1 means lock is held */
+		if (ldaxr_32(dst) != 0) {
+			continue;
+		}
+
+		if (casa_32(1, dst) == 0) {
+			return;
+		}
+	}
 }
 
 /*
@@ -84,19 +96,23 @@ void spin_lock(spinlock_t *lock)
 	}
 }
 
-/*
- * Use store-release to unconditionally clear the spinlock variable. Store
- * operation generates an event to all cores waiting in WFE when address is
- * monitored by the global monitor.
- */
 void spin_unlock(spinlock_t *lock)
 {
 	volatile uint32_t *dst = &(lock->lock);
 
+	/*
+	 * Plain store operations generate an event to other cores waiting in
+	 * WFE when address is monitored by the global monitor.
+	 */
 	__asm__ volatile (
 	"stlr	wzr, [%[dst]]"
 	: "=m" (dst)
 	: [dst] "r" (dst));
+
+	/* atomics don't generate events so wake others manually */
+	if (is_feat_lse_supported()) {
+		sev();
+	}
 }
 
 static bool spin_trylock_atomic(volatile uint32_t *dst)
