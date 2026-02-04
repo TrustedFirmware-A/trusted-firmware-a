@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024, STMicroelectronics - All Rights Reserved
+ * Copyright (C) 2024-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -39,6 +39,14 @@ static int dt_get_pmic_node(void *fdt)
 
 	if (node == -FDT_ERR_BADOFFSET) {
 		node = fdt_node_offset_by_compatible(fdt, -1, "st,stpmic2");
+		if (node < 0) {
+			node = fdt_node_offset_by_compatible(fdt, -1,
+							     "st,stpmic2l");
+		}
+		if (node < 0) {
+			node = fdt_node_offset_by_compatible(fdt, -1,
+							     "st,stpmic1l");
+		}
 	}
 
 	return node;
@@ -123,6 +131,7 @@ static int dt_pmic2_i2c_config(struct dt_node_info *i2c_info,
 bool initialize_pmic_i2c(void)
 {
 	int ret;
+	uint8_t val;
 	struct dt_node_info i2c_info;
 	struct i2c_handle_s *i2c = &i2c_handle;
 	uint32_t i2c_addr = 0U;
@@ -170,7 +179,28 @@ bool initialize_pmic_i2c(void)
 	pmic2->i2c_handle = &i2c_handle;
 	pmic2->i2c_addr = i2c_addr;
 
+	if (stpmic2_get_product_id(pmic2, &val) != 0) {
+		ERROR("Failed to access PMIC\n");
+		panic();
+	}
+	pmic2->ref_id = ((val & PMIC_REF_ID_MASK) >> PMIC_REF_ID_SHIFT);
+
 	return true;
+}
+
+void pmic_switch_off(void)
+{
+	if (stpmic2_switch_off(pmic2) == 0) {
+		udelay(100);
+	}
+
+	/* Shouldn't be reached */
+	panic();
+}
+
+int pmic_voltages_init(void)
+{
+	return 0;
 }
 
 static int pmic2_set_state(const struct regul_description *desc, bool enable)
@@ -327,12 +357,18 @@ int stpmic2_set_prop(const struct regul_description *desc, uint16_t prop, uint32
 	return 0;
 }
 
-static struct regul_ops pmic2_ops = {
+static const struct regul_ops pmic2_ops = {
 	.set_state = pmic2_set_state,
 	.get_state = pmic2_get_state,
 	.set_voltage = pmic2_set_voltage,
 	.get_voltage = pmic2_get_voltage,
 	.list_voltages = pmic2_list_voltages,
+	.set_flag = pmic2_set_flag,
+};
+
+static const struct regul_ops pmic2_gpo_ops = {
+	.set_state = pmic2_set_state,
+	.get_state = pmic2_get_state,
 	.set_flag = pmic2_set_flag,
 };
 
@@ -343,6 +379,7 @@ static struct regul_ops pmic2_ops = {
 
 static struct regul_handle_s pmic2_regul_handles[STPMIC2_NB_REG] = {
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_BUCK1),
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_BUCK1H),
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_BUCK2),
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_BUCK3),
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_BUCK4),
@@ -360,6 +397,12 @@ static struct regul_handle_s pmic2_regul_handles[STPMIC2_NB_REG] = {
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_LDO8),
 
 	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_REFDDR),
+
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_GPO1),
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_GPO2),
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_GPO3),
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_GPO4),
+	DEFINE_PMIC_REGUL_HANDLE(STPMIC2_GPO5),
 };
 
 #define DEFINE_REGUL(rid, name) \
@@ -367,10 +410,19 @@ static struct regul_handle_s pmic2_regul_handles[STPMIC2_NB_REG] = {
 	.node_name = name, \
 	.ops = &pmic2_ops, \
 	.driver_data = &pmic2_regul_handles[rid], \
+	.enable_ramp_delay = 1000, \
+}
+
+#define DEFINE_GPO(rid, name) \
+[rid] = { \
+	.node_name = name, \
+	.ops = &pmic2_gpo_ops, \
+	.driver_data = &pmic2_regul_handles[rid], \
 }
 
 static const struct regul_description pmic2_descs[STPMIC2_NB_REG] = {
 	DEFINE_REGUL(STPMIC2_BUCK1, "buck1"),
+	DEFINE_REGUL(STPMIC2_BUCK1H, "buck1h"),
 	DEFINE_REGUL(STPMIC2_BUCK2, "buck2"),
 	DEFINE_REGUL(STPMIC2_BUCK3, "buck3"),
 	DEFINE_REGUL(STPMIC2_BUCK4, "buck4"),
@@ -388,6 +440,12 @@ static const struct regul_description pmic2_descs[STPMIC2_NB_REG] = {
 	DEFINE_REGUL(STPMIC2_LDO8, "ldo8"),
 
 	DEFINE_REGUL(STPMIC2_REFDDR, "refddr"),
+
+	DEFINE_GPO(STPMIC2_GPO1, "gpo1"),
+	DEFINE_GPO(STPMIC2_GPO2, "gpo2"),
+	DEFINE_GPO(STPMIC2_GPO3, "gpo3"),
+	DEFINE_GPO(STPMIC2_GPO4, "gpo4"),
+	DEFINE_GPO(STPMIC2_GPO5, "gpo5"),
 };
 
 static int register_pmic2(void)
@@ -417,6 +475,15 @@ static int register_pmic2(void)
 		unsigned int i;
 		int ret;
 		const fdt32_t *cuint;
+
+		if (strcmp(reg_name, "buck1") == 0) {
+			bool high;
+
+			ret = stpmic2_is_buck1_high_voltage(pmic2, &high);
+			if (high) {
+				reg_name = "buck1h";
+			}
+		}
 
 		for (i = 0; i < STPMIC2_NB_REG; i++) {
 			desc = &pmic2_descs[i];
@@ -467,7 +534,7 @@ static int register_pmic2(void)
 void initialize_pmic(void)
 {
 	int ret;
-	uint8_t val;
+	uint8_t val __maybe_unused;
 
 	ret = initialize_pmic_i2c();
 	if (!ret) {
@@ -475,6 +542,8 @@ void initialize_pmic(void)
 		return;
 	}
 
+#if IMAGE_BL2
+#if LOG_LEVEL >= LOG_LEVEL_INFO
 	if (stpmic2_get_version(pmic2, &val) != 0) {
 		ERROR("Failed to access PMIC\n");
 		panic();
@@ -486,6 +555,8 @@ void initialize_pmic(void)
 		panic();
 	}
 	INFO("PMIC2 product ID = 0x%02x\n", val);
+#endif
+#endif
 
 	ret = register_pmic2();
 	if (ret < 0) {

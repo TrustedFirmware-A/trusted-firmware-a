@@ -100,6 +100,8 @@ Dedicated STM32MP1 flags:
   | Default: 0
 - | ``STM32MP15``: to select STM32MP15 variant configuration.
   | Default: 1
+- | ``STM32MP_STPMIC1L``: to select STPMIC1L variant configuration.
+  | Default: 0
 
 
 Boot with FIP
@@ -219,4 +221,4 @@ __________________
 .. _STM32MP1 Series: https://www.st.com/en/microcontrollers-microprocessors/stm32mp1-series.html
 .. _STM32MP1 part number codification: https://wiki.st.com/stm32mpu/wiki/STM32MP15_microprocessor#Part_number_codification
 
-*Copyright (c) 2023-2024, STMicroelectronics - All Rights Reserved*
+*Copyright (c) 2023-2026, STMicroelectronics - All Rights Reserved*
