@@ -94,7 +94,7 @@ static u_register_t mtk_vcorefs_bl_handler(u_register_t x1,
 					   void *handle,
 					   struct smccc_res *smccc_ret)
 {
-	uint64_t = VCOREFS_E_NOT_SUPPORTED;
+	uint64_t ret = VCOREFS_E_NOT_SUPPORTED;
 	uint32_t val = 0;
 
 	switch (x1) {
