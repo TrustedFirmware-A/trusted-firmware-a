@@ -42,6 +42,7 @@ ENABLE_FEAT_HCX			:= 2
 ENABLE_FEAT_RNG			:= 2
 ENABLE_FEAT_TWED		:= 2
 ENABLE_FEAT_GCS			:= 2
+ENABLE_FEAT_SB			:= 2
 
 ifeq (${ARCH}, aarch64)
 

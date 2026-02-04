@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,9 +9,12 @@
 #include <common/bl_common.h>
 #include <cortex_a710.h>
 #include <cpu_macros.S>
-#include <dsu_macros.S>
-#include <plat_macros.S>
 #include "wa_cve_2022_23960_bhb_vector.S"
+
+#include <dsu_macros.S>
+#include <wa_cve_2025_0647_cpprctx.h>
+
+#include <plat_macros.S>
 
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
@@ -277,6 +280,29 @@ workaround_reset_end cortex_a710,  CVE(2024, 5660)
 
 check_erratum_ls cortex_a710, CVE(2024, 5660), CPU_REV(2, 1)
 
+	/*
+	 * Instruction patch sequence to trap 'cpp rctx' instructions to EL3.
+	 * Enables mitigation for CVE-2025-0647.
+	 */
+workaround_reset_start cortex_a710, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+	mov	x0, #(WA_USE_T32_OPCODE | WA_PATCH_SLOT(0))
+	bl	wa_cve_2025_0647_instruction_patch
+workaround_reset_end cortex_a710, CVE(2025, 647)
+
+check_erratum_chosen cortex_a710, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+
+#if WORKAROUND_CVE_2025_0647
+func cortex_a710_impl_defined_el3_handler
+	mov	x0, #WA_LS_RCG_EN
+
+	/* See if this call came from trap handler. */
+	cmp	x1, #EC_IMP_DEF_EL3
+	bne	wa_cve_2025_0647_do_cpp_wa
+	orr	x0, x0, #WA_IS_TRAP_HANDLER
+	b	wa_cve_2025_0647_do_cpp_wa
+endfunc cortex_a710_impl_defined_el3_handler
+#endif
+
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
 	 * ----------------------------------------------------
@@ -322,6 +348,13 @@ func cortex_a710_cpu_reg_dump
 	ret
 endfunc cortex_a710_cpu_reg_dump
 
+#if WORKAROUND_CVE_2025_0647
+declare_cpu_ops_eh cortex_a710, CORTEX_A710_MIDR, \
+	cortex_a710_reset_func, \
+	cortex_a710_impl_defined_el3_handler, \
+	cortex_a710_core_pwr_dwn
+#else
 declare_cpu_ops cortex_a710, CORTEX_A710_MIDR, \
 	cortex_a710_reset_func, \
 	cortex_a710_core_pwr_dwn
+#endif

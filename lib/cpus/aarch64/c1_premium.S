@@ -9,6 +9,7 @@
 #include <c1_premium.h>
 #include <common/bl_common.h>
 #include <cpu_macros.S>
+#include <wa_cve_2025_0647_cpprctx.h>
 
 #include <plat_macros.S>
 
@@ -39,12 +40,6 @@ workaround_reset_start c1_premium, ERRATUM(3502731), ERRATA_C1PREMIUM_3502731
 workaround_reset_end c1_premium, ERRATUM(3502731)
 
 check_erratum_ls c1_premium, ERRATUM(3502731), CPU_REV(0, 0)
-
-workaround_reset_start c1_premium, ERRATUM(3651221), ERRATA_C1PREMIUM_3651221
-	sysreg_bit_set C1_PREMIUM_CPUACTLR6_EL1, BIT(41)
-workaround_reset_end c1_premium, ERRATUM(3651221)
-
-check_erratum_ls c1_premium, ERRATUM(3651221), CPU_REV(0, 0)
 
 workaround_reset_start c1_premium, ERRATUM(3684152), ERRATA_C1PREMIUM_3684152
 	sysreg_bitfield_insert C1_PREMIUM_IMP_CPUACTLR_EL1, C1_PREMIUM_IMP_CPUACTLR_EL1_LOAD_BIT, \
@@ -114,6 +109,29 @@ workaround_reset_end c1_premium, CVE(2024, 7881)
 
 check_erratum_ls c1_premium, CVE(2024, 7881), CPU_REV(0, 0)
 
+	/*
+	 * Instruction patch sequence to trap 'cpp rctx' instructions to EL3.
+	 * Enables mitigation for CVE-2025-0647.
+	 */
+workaround_reset_start c1_premium, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+	mov	x0, #WA_PATCH_SLOT(3)
+	bl	wa_cve_2025_0647_instruction_patch
+workaround_reset_end c1_premium, CVE(2025, 647)
+
+check_erratum_chosen c1_premium, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+
+#if WORKAROUND_CVE_2025_0647
+func c1_premium_impl_defined_el3_handler
+	mov	x0, #WA_LS_RCG_EN
+
+	/* See if this call came from trap handler. */
+	cmp	x1, #EC_IMP_DEF_EL3
+	bne	wa_cve_2025_0647_do_cpp_wa
+	orr	x0, x0, #WA_IS_TRAP_HANDLER
+	b	wa_cve_2025_0647_do_cpp_wa
+endfunc c1_premium_impl_defined_el3_handler
+#endif
+
 cpu_reset_func_start c1_premium
 	/* Disable speculative loads */
 	msr	SSBS, xzr
@@ -144,6 +162,14 @@ func c1_premium_cpu_reg_dump
 	ret
 endfunc c1_premium_cpu_reg_dump
 
+#if WORKAROUND_CVE_2025_0647
+declare_cpu_ops_eh c1_premium, C1_PREMIUM_MIDR, \
+	c1_premium_reset_func, \
+	c1_premium_impl_defined_el3_handler, \
+	c1_premium_core_pwr_dwn
+#else
 declare_cpu_ops c1_premium, C1_PREMIUM_MIDR, \
 	c1_premium_reset_func, \
 	c1_premium_core_pwr_dwn
+#endif
+

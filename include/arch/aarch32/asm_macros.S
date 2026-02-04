@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2016-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -111,7 +111,8 @@
 	 */
 	.macro exception_return
 	eret
-#if ENABLE_FEAT_SB
+	/* fallback to the old slower variant for FEAT_STATE_CHECKED */
+#if ENABLE_FEAT_SB == 1
 	sb
 #else
 	dsb	nsh
