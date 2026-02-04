@@ -132,6 +132,7 @@
 	 * exception vector then an error is emitted.
 	 */
 	.macro end_vector_entry label
+	.size	\label, . - \label
 	.cfi_endproc
 	.iflt \label + (32 * 4) - .
 		.error "\label won't fit in exception vector"
