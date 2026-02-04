@@ -174,11 +174,11 @@
 /*
  * PLAT_ARM_FW_HANDOFF_SIZE should be page-aligned to ensure proper xlat mapping.
  * If it is not, generating the page table mapping for FW_HANDOFF will fail.
- * Because PLAT_ARM_EVENT_LOG_MAX_SIZE is not guaranteed to be aligned,
+ * Because EVENT_LOG_ENTRY_SIZE is not guaranteed to be aligned,
  * PLAT_ARM_FW_HANDOFF_SIZE must be explicitly aligned.
  */
 #define PLAT_ARM_FW_HANDOFF_SIZE	((((PLAT_ARM_HW_CONFIG_SIZE +		\
-					    PLAT_ARM_EVENT_LOG_MAX_SIZE +	\
+					    EVENT_LOG_ENTRY_SIZE +		\
 					    PLAT_ARM_TB_FW_CONFIG_SIZE +	\
 					    PLAT_ARM_SPMC_SP_MANIFEST_SIZE) +	\
 					    PAGE_SIZE_MASK) >>			\
@@ -190,6 +190,13 @@
 
 #if RESET_TO_BL31
 #define PLAT_ARM_TRANSFER_LIST_DTB_OFFSET	FW_NS_HANDOFF_BASE + TRANSFER_LIST_DTB_OFFSET
+#define EVENT_LOG_ENTRY_SIZE			PLAT_ARM_EVENT_LOG_MAX_SIZE
+#else
+/*
+ * The maximum PLAT_ARM_EVENT_LOG_MAX_SIZE for BL2 is SZ_4K
+ * SZ_512 is maximum event log size for BL1.
+ */
+#define EVENT_LOG_ENTRY_SIZE			(SZ_512 + SZ_4K)
 #endif
 
 #else

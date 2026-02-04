@@ -261,7 +261,7 @@
 #  define PLATFORM_STACK_SIZE		UL(0x440)
 # endif
 #elif defined(IMAGE_BL2)
-# if TRUSTED_BOARD_BOOT
+# if TRUSTED_BOARD_BOOT || MEASURED_BOOT
 #  define PLATFORM_STACK_SIZE		UL(0x1000)
 # else
 #  define PLATFORM_STACK_SIZE		UL(0x400)
@@ -402,7 +402,7 @@
 #if defined(IMAGE_BL1) && TRANSFER_LIST
 #define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x200)
 #else
-#define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x400)
+#define PLAT_ARM_EVENT_LOG_MAX_SIZE		SZ_2K
 #endif
 
 /* Number of SCMI channels on the platform */
