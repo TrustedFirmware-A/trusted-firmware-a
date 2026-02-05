@@ -132,6 +132,12 @@ LIB_QTI_PATH	:=	${QTI_PLAT_PATH}/qtiseclib/lib/${CHIPSET}
 # will be available in coreboot.org
 QTISECLIB_PATH ?=
 
+# QTISECLIB drivers
+BL31_SOURCES	+=		drivers/qti/accesscontrol/access_control_stub.c \
+				drivers/qti/sec_core/sec_core_stub.c \
+				drivers/qti/qtimer/qtimer_stub.c \
+				drivers/qti/watchdog/watchdog_stub.c
+
 ifeq ($(QTISECLIB_PATH),)
 # if No lib then use stub implementation for qtiseclib interface
 $(warning QTISECLIB_PATH is not provided while building, using stub implementation. \

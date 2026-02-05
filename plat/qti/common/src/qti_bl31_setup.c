@@ -12,7 +12,11 @@
 #include <common/desc_image_load.h>
 #include <drivers/console.h>
 #include <drivers/generic_delay_timer.h>
+#include <drivers/qti/accesscontrol/accesscontrol.h>
 #include <drivers/qti/accesscontrol/xpu.h>
+#include <drivers/qti/qtimer/qtimer.h>
+#include <drivers/qti/sec_core/sec_core.h>
+#include <drivers/qti/watchdog/watchdog.h>
 #include <lib/bl_aux_params/bl_aux_params.h>
 #include <lib/coreboot.h>
 #include <lib/spinlock.h>
@@ -90,15 +94,21 @@ void bl31_plat_arch_setup(void)
  ******************************************************************************/
 void bl31_platform_setup(void)
 {
-#ifdef QTI_MSM_XPU_BYPASS
+#if QTI_MSM_XPU_BYPASS
 	INFO("Bypassing QTI MSM XPU...\n");
 	qti_msm_xpu_bypass();
 #endif
 	generic_delay_timer_init();
+
 	/* Initialize the GIC driver, CPU and distributor interfaces */
 	plat_qti_gic_driver_init();
 	plat_qti_gic_init();
 	qti_interrupt_svc_init(bl32_image_ep_info.pc != 0);
+	qti_sec_core_init();
+	qti_qtimer_init();
+	if (qti_watchdog_init())
+		ERROR("Watchdog initialization error\n");
+	qti_accesscontrol_init();
 	qtiseclib_bl31_platform_setup();
 
 	/* set boot state to cold boot complete. */

@@ -9,14 +9,110 @@
 
 #include <arch_helpers.h>
 #include <bl31/interrupt_mgmt.h>
+#include <common/debug.h>
 #include <drivers/arm/gic_common.h>
 #include <lib/el3_runtime/context_mgmt.h>
+#include <lib/spinlock.h>
+#include <lib/utils_def.h>
 
 #include <platform.h>
 #include <qti_interrupt_svc.h>
 #include <qtiseclib_interface.h>
 
 #define QTI_INTR_INVALID_INT_NUM		0xFFFFFFFFU
+#define ISR_TABLE_LEN				20
+
+static struct qti_isr_table {
+	struct qti_isr {
+		qti_int_svc_isr_t func;
+		uint32_t id;
+		void *ctx;
+	} entry[ISR_TABLE_LEN];
+
+	spinlock_t lock;
+	uint8_t cnt;
+} isr_table = {
+	.entry[0 ... ISR_TABLE_LEN - 1] = { .id = QTI_INTR_INVALID_INT_NUM },
+};
+
+int qti_interrupt_svc_register(uint32_t id, qti_int_svc_isr_t func, void *ctx)
+{
+	struct qti_isr *p = isr_table.entry;
+
+	spin_lock(&isr_table.lock);
+	if (isr_table.cnt >= ISR_TABLE_LEN)
+		goto error;
+
+	for (size_t i = 0; i < ISR_TABLE_LEN; i++, p++) {
+		if (p->id != QTI_INTR_INVALID_INT_NUM) {
+			continue;
+		}
+
+		p->func = func;
+		p->ctx = ctx;
+		p->id = id;
+		isr_table.cnt++;
+		spin_unlock(&isr_table.lock);
+
+		return 0;
+	}
+error:
+	spin_unlock(&isr_table.lock);
+
+	return -ENOTCAPABLE;
+}
+
+int qti_interrupt_svc_unregister(uint32_t id)
+{
+	struct qti_isr *p = isr_table.entry;
+
+	spin_lock(&isr_table.lock);
+	if (!isr_table.cnt)
+		goto error;
+
+	for (size_t i = 0; i < ISR_TABLE_LEN; i++, p++) {
+		if (p->id != id) {
+			continue;
+		}
+
+		memset(p, 0, sizeof(*p));
+		p->id = QTI_INTR_INVALID_INT_NUM;
+		isr_table.cnt--;
+		spin_unlock(&isr_table.lock);
+
+		return 0;
+	}
+error:
+	spin_unlock(&isr_table.lock);
+
+	return -ENOENT;
+}
+
+static void interrupt_svc_invoke_isr(uint32_t id, void *handle)
+{
+	struct qti_isr *p = isr_table.entry;
+	qti_int_svc_isr_t invoke_isr = NULL;
+
+	spin_lock(&isr_table.lock);
+	if (!isr_table.cnt)
+		goto qtiseclib_dispatch;
+
+	for (size_t i = 0; i < ISR_TABLE_LEN; i++, p++) {
+		if (p->id != id) {
+			continue;
+		}
+
+		invoke_isr = p->func;
+		spin_unlock(&isr_table.lock);
+		p->ctx = invoke_isr(id, p->ctx);
+
+		return;
+	}
+
+qtiseclib_dispatch:
+	spin_unlock(&isr_table.lock);
+	qtiseclib_invoke_isr(id, handle);
+}
 
 /*
  * Top-level EL3 interrupt handler.
@@ -34,7 +130,7 @@ static uint64_t qti_el3_interrupt_handler(uint32_t id, uint32_t flags,
 
 	irq = plat_ic_acknowledge_interrupt();
 
-	qtiseclib_invoke_isr(irq, handle);
+	interrupt_svc_invoke_isr(irq, handle);
 
 	/* End of Interrupt. */
 	if (irq < 1022U) {

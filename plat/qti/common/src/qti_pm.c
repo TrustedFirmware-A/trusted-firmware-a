@@ -10,9 +10,9 @@
 #include <bl31/bl31.h>
 #include <common/debug.h>
 #include <drivers/delay_timer.h>
+#include <drivers/qti/sec_core/sec_core.h>
 #include <lib/mmio.h>
 #include <lib/psci/psci.h>
-
 #include <platform.h>
 #include <platform_def.h>
 #include <qti_cpu.h>
@@ -285,6 +285,8 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops)
 {
 	int err;
+
+	qti_sec_core_remap((uintptr_t)bl31_warm_entrypoint);
 
 	err = qtiseclib_psci_init((uintptr_t)bl31_warm_entrypoint);
 	if (err == PSCI_E_SUCCESS) {
