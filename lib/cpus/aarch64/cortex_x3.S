@@ -8,9 +8,12 @@
 #include <asm_macros.S>
 #include <common/bl_common.h>
 #include <cortex_x3.h>
-#include <cpu_macros.S>
-#include <plat_macros.S>
 #include "wa_cve_2022_23960_bhb_vector.S"
+
+#include <cpu_macros.S>
+#include <wa_cve_2025_0647_cpprctx.h>
+
+#include <plat_macros.S>
 
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
@@ -149,6 +152,29 @@ workaround_reset_end cortex_x3, CVE(2024, 7881)
 
 check_erratum_ls cortex_x3, CVE(2024, 7881), CPU_REV(1, 2)
 
+	/*
+	 * Instruction patch sequence to trap 'cpp rctx' instructions to EL3.
+	 * Enables mitigation for CVE-2025-0647.
+	 */
+workaround_reset_start cortex_x3, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+	mov	x0, #WA_PATCH_SLOT(3)
+	bl	wa_cve_2025_0647_instruction_patch
+workaround_reset_end cortex_x3, CVE(2025, 647)
+
+check_erratum_chosen cortex_x3, CVE(2025, 647), WORKAROUND_CVE_2025_0647
+
+#if WORKAROUND_CVE_2025_0647
+func cortex_x3_impl_defined_el3_handler
+	mov	x0, #WA_LS_RCG_EN
+
+	/* See if this call came from trap handler. */
+	cmp	x1, #EC_IMP_DEF_EL3
+	bne	wa_cve_2025_0647_do_cpp_wa
+	orr	x0, x0, #WA_IS_TRAP_HANDLER
+	b	wa_cve_2025_0647_do_cpp_wa
+endfunc cortex_x3_impl_defined_el3_handler
+#endif
+
 cpu_reset_func_start cortex_x3
 	/* Disable speculative loads */
 	msr	SSBS, xzr
@@ -189,6 +215,13 @@ func cortex_x3_cpu_reg_dump
 	ret
 endfunc cortex_x3_cpu_reg_dump
 
+#if WORKAROUND_CVE_2025_0647
+declare_cpu_ops_eh cortex_x3, CORTEX_X3_MIDR, \
+	cortex_x3_reset_func, \
+	cortex_x3_impl_defined_el3_handler, \
+	cortex_x3_core_pwr_dwn
+#else
 declare_cpu_ops cortex_x3, CORTEX_X3_MIDR, \
 	cortex_x3_reset_func, \
 	cortex_x3_core_pwr_dwn
+#endif

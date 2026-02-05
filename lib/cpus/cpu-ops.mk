@@ -41,6 +41,16 @@ CPU_FLAG_LIST += WORKAROUND_CVE_2022_23960
 WORKAROUND_CVE_2024_7881		?=1
 CPU_FLAG_LIST += WORKAROUND_CVE_2024_7881
 
+# Flag to enable the CVE-2025-0647 workaround for CPP RCTX instructions. This
+# workaround requires Arm arch v8.5 or greater, so only enable by default for
+# v8.5+.
+ifeq "8.5" "$(word 1, $(sort 8.5 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
+ifeq (${ARCH},aarch64)
+        WORKAROUND_CVE_2025_0647		?=1
+endif
+endif
+CPU_FLAG_LIST += WORKAROUND_CVE_2025_0647
+
 # Flags to indicate internal or external Last level cache
 # By default internal
 CPU_FLAG_LIST += NEOVERSE_Nx_EXTERNAL_LLC
@@ -203,6 +213,10 @@ CPU_FLAG_LIST += ERRATA_A65_1227419
 # to r0p0, r1p0, r1p1, r1p2 revisions of the CPU and is still open.
 CPU_FLAG_LIST += ERRATA_A65_1541130
 
+# Flag to apply erratum 1638571 workaround during runtime. This erratum applies
+# to r0p0, r1p0, r1p1 revisions of the CPU and is still open.
+CPU_FLAG_LIST += ERRATA_A65AE_1638571
+
 # Flag to apply erratum 855971 workaround during reset. This erratum applies
 # only to revision <= r0p3 of the Cortex A72 cpu.
 CPU_FLAG_LIST += ERRATA_A72_859971
@@ -235,6 +249,18 @@ CPU_FLAG_LIST += ERRATA_A76_1073348
 # only to revision <= r2p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1130799
 
+# Flag to apply erratum 1165347 workaround during reset. This erratum applies
+# to revisions r0p0, r1p0, and r2p0 of the Cortex A76 cpu. It is fixed in r3p0.
+CPU_FLAG_LIST += ERRATA_A76_1165347
+
+# Flag to apply erratum 1165522 workaround during reset. This erratum applies
+# to all revisions of Cortex A76 cpu.
+CPU_FLAG_LIST += ERRATA_A76_1165522
+
+# Flag to apply erratum 1207823 workaround during reset. This erratum applies
+# to revisions r0p0, r1p0, and r2p0 of the Cortex A76 cpu. It is fixed in r3p0.
+CPU_FLAG_LIST += ERRATA_A76_1207823
+
 # Flag to apply erratum 1220197 workaround during reset. This erratum applies
 # only to revision <= r2p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1220197
@@ -263,16 +289,13 @@ CPU_FLAG_LIST += ERRATA_A76_1286807
 # only to revision <= r4p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1791580
 
-# Flag to apply erratum 1165522 workaround during reset. This erratum applies
-# to all revisions of Cortex A76 cpu.
-CPU_FLAG_LIST += ERRATA_A76_1165522
-
 # Flag to apply erratum 1868343 workaround during reset. This erratum applies
 # only to revision <= r4p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1868343
 
 # Flag to apply erratum 1946160 workaround during reset. This erratum applies
-# only to revisions r3p0 - r4p1 of the Cortex A76 cpu.
+# to revisions r0p0, r1p0, r2p0, r3p0, r3p1, r4p0, and r4p1 of the Cortex A76 cpu.
+# It is still open.
 CPU_FLAG_LIST += ERRATA_A76_1946160
 
 # Flag to apply erratum 2743102 workaround during powerdown. This erratum
@@ -1272,7 +1295,7 @@ CPU_FLAG_LIST += ERRATA_A720_3456091
 # the Cortex-A720 cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A720_3699561
 
-# Flag to apply erratum 2940794 workaround during reset. This erratum applies
+# Flag to apply erratum 3711910 workaround during reset. This erratum applies
 # to revisions r0p0, r0p1 and r0p2 of the Cortex-A720 cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A720_3711910
 
@@ -1303,6 +1326,13 @@ ifneq (${DYNAMIC_WORKAROUND_CVE_2018_3639},0)
         endif
 endif
 
+ifeq (${WORKAROUND_CVE_2025_0647},1)
+ifeq "8.5" "$(word 1, $(sort 8.5 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
+else
+        $(error Error: WORKAROUND_CVE_2025_0647 can only be used with Arm Arch v8.5+, set ARM_ARCH_MAJOR and ARM_ARCH_MINOR appropriately.)
+endif
+endif
+
 # process all flags
 $(eval $(call default_zeros, $(CPU_FLAG_LIST)))
 $(eval $(call add_defines, $(CPU_FLAG_LIST)))
@@ -1319,7 +1349,8 @@ TF_LDFLAGS_aarch64	+= --fix-cortex-a53-835769
 endif
 
 ifneq ($(filter 1,${ERRATA_A53_1530924} ${ERRATA_A55_1530923}	\
-        ${ERRATA_A57_1319537} ${ERRATA_A72_1319367} ${ERRATA_A76_1165522}),)
+        ${ERRATA_A57_1319537} ${ERRATA_A72_1319367} ${ERRATA_A65AE_1638571}	\
+		${ERRATA_A72_1319367} ${ERRATA_A76_1165522}),)
 ERRATA_SPECULATIVE_AT	:= 1
 else
 ERRATA_SPECULATIVE_AT	:= 0
