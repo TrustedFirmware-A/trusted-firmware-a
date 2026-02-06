@@ -3,6 +3,23 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.10.30](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.29..refs/tags/lts-v2.10.30) (2026-02-06)
+
+### Resolved Issues
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - correct comments for Cortex-A720 erratum 3711910 ([cdc2b3e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/cdc2b3ef54cdf8b48c8cd09c06f889eecaa19221))
+    - correct CVE-2024-7881 workaround and drop duplicate erratum ([24a8b77](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/24a8b776b7a982b1bcd7ae2ff58bdc6f711db413))
+    - remove C1-Ultra erratum 3651221 ([92e6fba](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/92e6fba586637587deceaae76f2f657bb11ebaac))
+    - reorder docs for Cortex-A76 erratum 1165522 ([3a466bf](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3a466bf508cb19bf864a6c82f04e4db988ffdd4e))
+    - update revisions for Cortex-A76 erratum 1946160 ([89cc4cd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/89cc4cd9b3296e907e875380cbbcf32607350dc3))
+    - workaround for Cortex-A65AE erratum 1638571 ([87424d9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/87424d940b039fcaec2c3b5d7cee644a88fdf3a0))
+    - workaround for Cortex-A76 erratum 1165347 ([aa59387](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/aa593870f33c5d4dca300de1a747a517ead9a887))
+    - workaround for Cortex-A76 erratum 1207823 ([319df17](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/319df17becb2620dbb8542ba0841d6681165110d))
+
 ## [lts-2.10.29](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.28..refs/tags/lts-v2.10.29) (2026-01-30)
 
 ### Performance Improvements
