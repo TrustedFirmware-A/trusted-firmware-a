@@ -253,6 +253,14 @@ CPU_FLAG_LIST += ERRATA_A76_1073348
 # only to revision <= r2p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1130799
 
+# Flag to apply erratum 1165347 workaround during reset. This erratum applies
+# to revisions r0p0, r1p0, and r2p0 of the Cortex A76 cpu. It is fixed in r3p0.
+CPU_FLAG_LIST += ERRATA_A76_1165347
+
+# Flag to apply erratum 1207823 workaround during reset. This erratum applies
+# to revisions r0p0, r1p0, and r2p0 of the Cortex A76 cpu. It is fixed in r3p0.
+CPU_FLAG_LIST += ERRATA_A76_1207823
+
 # Flag to apply erratum 1220197 workaround during reset. This erratum applies
 # only to revision <= r2p0 of the Cortex A76 cpu.
 CPU_FLAG_LIST += ERRATA_A76_1220197
@@ -290,7 +298,8 @@ CPU_FLAG_LIST += ERRATA_A76_1165522
 CPU_FLAG_LIST += ERRATA_A76_1868343
 
 # Flag to apply erratum 1946160 workaround during reset. This erratum applies
-# only to revisions r3p0 - r4p1 of the Cortex A76 cpu.
+# to revisions r0p0, r1p0, r2p0, r3p0, r3p1, r4p0, and r4p1 of the Cortex A76 cpu.
+# It is still open.
 CPU_FLAG_LIST += ERRATA_A76_1946160
 
 # Flag to apply erratum 2743102 workaround during powerdown. This erratum
