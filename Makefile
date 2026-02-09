@@ -121,7 +121,7 @@ SP_MK_GEN		?=	${SPTOOLPATH}/sp_mk_generator.py
 SP_DTS_LIST_FRAGMENT	?=	${BUILD_PLAT}/sp_list_fragment.dts
 
 # Variables for use with sptool
-TLCTOOL 		?=	poetry run tlc
+TLCTOOL 		?=	$(host-poetry) run tlc
 
 # Variables for use with ROMLIB
 ROMLIBPATH		?=	lib/romlib
@@ -1085,8 +1085,8 @@ endif #(NEED_FDT)
 # Add Secure Partition packages
 ifeq (${NEED_SP_PKG},yes)
 $(BUILD_PLAT)/sp_gen.mk: ${SP_MK_GEN} ${SP_LAYOUT_FILE} | $$(@D)/
-	$(if $(host-poetry),$(q)poetry -q install --no-root)
-	$(q)$(if $(host-poetry),poetry run )${PYTHON} "$<" "$@" $(filter-out $<,$^) $(BUILD_PLAT) ${COT} ${SP_DTS_LIST_FRAGMENT}
+	$(if $(host-poetry),$(q)$(host-poetry) -q install --no-root)
+	$(q)$(if $(host-poetry),$(host-poetry) run )${PYTHON} "$<" "$@" $(filter-out $<,$^) $(BUILD_PLAT) ${COT} ${SP_DTS_LIST_FRAGMENT}
 sp: $(DTBS) $(BUILD_PLAT)/sp_gen.mk $(SP_PKGS)
 	$(s)echo
 	$(s)echo "Built SP Images successfully"
@@ -1236,18 +1236,18 @@ $(BUILD_PLAT)/romlib/romlib.bin $(BUILD_PLAT)/lib/libwrappers.a $&: $(BUILD_PLAT
 	$(q)${MAKE} PLAT_DIR=${PLAT_DIR} BUILD_PLAT=${BUILD_PLAT} ENABLE_BTI=${ENABLE_BTI} CRYPTO_LIB=$(CRYPTO_LIB) ARM_ARCH_MINOR=${ARM_ARCH_MINOR} INCLUDES=$(call escape-shell,$(INCLUDES)) DEFINES=$(call escape-shell,$(DEFINES)) --no-print-directory -C ${ROMLIBPATH} all
 
 memmap: all
-	$(if $(host-poetry),$(q)poetry -q install --no-root)
-	$(q)$(if $(host-poetry),poetry run )memory --root ${BUILD_PLAT} symbols
+	$(if $(host-poetry),$(q)$(host-poetry) -q install --no-root)
+	$(q)$(if $(host-poetry),$(host-poetry) run )memory --root ${BUILD_PLAT} symbols
 
 tl: ${BUILD_PLAT}/tl.bin
 ${BUILD_PLAT}/tl.bin: ${HW_CONFIG} | $$(@D)/
-	$(if $(host-poetry),$(q)poetry -q install --no-root)
-	$(q)$(if $(host-poetry),poetry run )tlc create --fdt $< -s ${FW_HANDOFF_SIZE} $@
+	$(if $(host-poetry),$(q)$(host-poetry) -q install --no-root)
+	$(q)$(if $(host-poetry),$(host-poetry) run )tlc create --fdt $< -s ${FW_HANDOFF_SIZE} $@
 
 doc:
 	$(s)echo "  BUILD DOCUMENTATION"
-	$(if $(host-poetry),$(q)poetry -q install --with docs --no-root)
-	$(q)$(if $(host-poetry),poetry run )${MAKE} --no-print-directory -C ${DOCS_PATH} BUILDDIR=$(abspath ${BUILD_BASE}/docs) html
+	$(if $(host-poetry),$(q)$(host-poetry) -q install --with docs --no-root)
+	$(q)$(if $(host-poetry),$(host-poetry) run )${MAKE} --no-print-directory -C ${DOCS_PATH} BUILDDIR=$(abspath ${BUILD_BASE}/docs) html
 
 enctool: ${ENCTOOL}
 

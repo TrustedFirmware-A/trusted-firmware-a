@@ -527,8 +527,8 @@ ifneq ($(COTDTPATH),)
         $(eval $(call MAKE_PRE,$(BUILD_PLAT)/$(COTDTPATH),$(COTDTPATH),$(BUILD_PLAT)/$(COTDTPATH:.dts=.o.d)))
 
         $(BUILD_PLAT)/$(COTDTPATH:.dts=.c): $(BUILD_PLAT)/$(COTDTPATH) | $$(@D)/
-		$(if $(host-poetry),$(q)poetry -q install --no-root)
-		$(q)$(if $(host-poetry),poetry run )cot-dt2c convert-to-c $< $@
+		$(if $(host-poetry),$(q)$(host-poetry) -q install --no-root)
+		$(q)$(if $(host-poetry),$(host-poetry) run )cot-dt2c convert-to-c $< $@
 
         BL2_SOURCES += $(BUILD_PLAT)/$(COTDTPATH:.dts=.c)
 endif
