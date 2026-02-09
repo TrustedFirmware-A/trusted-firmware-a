@@ -1,5 +1,5 @@
 #
-# Copyright 2024-2025 NXP
+# Copyright 2024-2026 NXP
 # Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -20,7 +20,12 @@ include ${PLAT_COMMON_PATH}/plat_make_helper/plat_build_macros.mk
 # revisions.
 S32_ERRATA_LIST += ERRATA_S32_051700
 
+$(eval $(call add_define, PLAT_DEF_FIP_UUID))
+
+$(eval $(call add_define, PLAT_TBBR_IMG_DEF))
+
 PLAT_INCLUDES = \
+	-Iinclude/common/tbbr \
 	-I${PLAT_S32G274ARDB2}/include \
 	-Idrivers/imx/usdhc \
 
