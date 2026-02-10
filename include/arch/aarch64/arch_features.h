@@ -147,137 +147,6 @@ static inline bool is_ ## name ## _present(void)				\
 				enabled_worlds)					\
 	CREATE_FEATURE_SUPPORTED(name, is_ ## name ## _present, guard)
 
-/* +----------------------------+
- * |	Features supported	|
- * +----------------------------+
- * |	GENTIMER		|
- * +----------------------------+
- * |	FEAT_PAN		|
- * +----------------------------+
- * |	FEAT_VHE		|
- * +----------------------------+
- * |	FEAT_TTCNP		|
- * +----------------------------+
- * |	FEAT_UAO		|
- * +----------------------------+
- * |	FEAT_PACQARMA3		|
- * +----------------------------+
- * |	FEAT_PAUTH		|
- * +----------------------------+
- * |	FEAT_TTST		|
- * +----------------------------+
- * |	FEAT_BTI		|
- * +----------------------------+
- * |	FEAT_MTE2		|
- * +----------------------------+
- * |	FEAT_SSBS		|
- * +----------------------------+
- * |	FEAT_NMI		|
- * +----------------------------+
- * |	FEAT_GCS		|
- * +----------------------------+
- * |	FEAT_EBEP		|
- * +----------------------------+
- * |	FEAT_SEBEP		|
- * +----------------------------+
- * |	FEAT_SEL2		|
- * +----------------------------+
- * |	FEAT_TWED		|
- * +----------------------------+
- * |	FEAT_FGT		|
- * +----------------------------+
- * |	FEAT_EC/ECV2		|
- * +----------------------------+
- * |	FEAT_RNG		|
- * +----------------------------+
- * |	FEAT_TCR2		|
- * +----------------------------+
- * |	FEAT_S2POE		|
- * +----------------------------+
- * |	FEAT_S1POE		|
- * +----------------------------+
- * |	FEAT_S2PIE		|
- * +----------------------------+
- * |	FEAT_S1PIE		|
- * +----------------------------+
- * |	FEAT_AMU/AMUV1P1	|
- * +----------------------------+
- * |	FEAT_MPAM		|
- * +----------------------------+
- * |	FEAT_HCX		|
- * +----------------------------+
- * |	FEAT_RNG_TRAP		|
- * +----------------------------+
- * |	FEAT_RME		|
- * +----------------------------+
- * |	FEAT_SB			|
- * +----------------------------+
- * |	FEAT_CSV2_2/CSV2_3	|
- * +----------------------------+
- * |	FEAT_SPE		|
- * +----------------------------+
- * |	FEAT_SVE		|
- * +----------------------------+
- * |	FEAT_RAS		|
- * +----------------------------+
- * |	FEAT_DIT		|
- * +----------------------------+
- * |	FEAT_SYS_REG_TRACE	|
- * +----------------------------+
- * |	FEAT_TRF		|
- * +----------------------------+
- * |	FEAT_NV2		|
- * +----------------------------+
- * |	FEAT_BRBE		|
- * +----------------------------+
- * |	FEAT_TRBE		|
- * +----------------------------+
- * |	FEAT_SME/SME2		|
- * +----------------------------+
- * |	FEAT_PMUV3		|
- * +----------------------------+
- * |	FEAT_MTPMU		|
- * +----------------------------+
- * |	FEAT_FGT2		|
- * +----------------------------+
- * |	FEAT_THE		|
- * +----------------------------+
- * |	FEAT_SCTLR2		|
- * +----------------------------+
- * |	FEAT_D128		|
- * +----------------------------+
- * |	FEAT_LS64_ACCDATA	|
- * +----------------------------+
- * |	FEAT_FPMR		|
- * +----------------------------+
- * |	FEAT_MOPS		|
- * +----------------------------+
- * |	FEAT_PAUTH_LR		|
- * +----------------------------+
- * |	FEAT_FGWTE3		|
- * +----------------------------+
- * |	FEAT_MPAM_PE_BW_CTRL	|
- * +----------------------------+
- * |	FEAT_CPA2		|
- * +----------------------------+
- * |	FEAT_AIE		|
- * +----------------------------+
- * |	FEAT_PFAR		|
- * +----------------------------+
- * |	FEAT_RME_GPC2		|
- * +----------------------------+
- * |	FEAT_RME_GDI		|
- * +----------------------------+
- * |    FEAT_IDTE3              |
- * +----------------------------+
- * |    FEAT_UINJ               |
- * +----------------------------+
- * |    FEAT_LSE                |
- * +----------------------------+
- * |	FEAT_MORELLO		|
- * +----------------------------+
- */
-
 __attribute__((always_inline))
 static inline bool is_armv7_gentimer_present(void)
 {
@@ -851,4 +720,20 @@ CREATE_FEATURE_FUNCS(feat_uinj, id_aa64pfr2_el1, ID_AA64PFR2_EL1_UINJ_SHIFT,
 CREATE_FEATURE_FUNCS(feat_morello, id_aa64pfr1_el1, ID_AA64PFR1_EL1_CE_SHIFT,
 		     ID_AA64PFR1_EL1_CE_MASK, MORELLO_EXTENSION_IMPLEMENTED,
 			 ENABLE_FEAT_MORELLO, FEAT_ENABLE_ALL_WORLDS)
+
+/* FEAT_STEP2: Enhanced Software Step Extension */
+CREATE_FEATURE_FUNCS(feat_step2, id_aa64dfr2_el1, ID_AA64DFR2_STEP_SHIFT,
+		     ID_AA64DFR2_STEP_MASK, 1U, ENABLE_FEAT_STEP2,
+		     FEAT_ENABLE_ALL_WORLDS)
+
+/* FEAT_HDBSS: Hardware Dirty state tracking structure */
+CREATE_FEATURE_FUNCS(feat_hdbss, id_aa64mmfr1_el1, ID_AA64MMFR1_EL1_HAFDBS_SHIFT,
+		     ID_AA64MMFR1_EL1_HAFDBS_MASK, HDBSS_IMPLEMENTED,
+		     ENABLE_FEAT_HDBSS, FEAT_ENABLE_NS)
+
+/* FEAT_HACDBS: Hardware accelerator for cleaning Dirty state */
+CREATE_FEATURE_FUNCS(feat_hacdbs, id_aa64mmfr4_el1, ID_AA64MMFR4_EL1_HACDBS_SHIFT,
+		     ID_AA64MMFR4_EL1_HACDBS_MASK, HACDBS_IMPLEMENTED,
+		     ENABLE_FEAT_HACDBS, FEAT_ENABLE_NS)
+
 #endif /* ARCH_FEATURES_H */

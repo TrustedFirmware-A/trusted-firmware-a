@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2018-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -158,6 +158,18 @@
 #define SCR_FEAT_IDTE3 (0)
 #endif
 
+#if ENABLE_FEAT_HDBSS
+#define SCR_FEAT_HDBSS SCR_HDBSSEn_BIT
+#else
+#define SCR_FEAT_HDBSS (0)
+#endif
+
+#if ENABLE_FEAT_HACDBS
+#define SCR_FEAT_HACDBS SCR_HACDBSEn_BIT
+#else
+#define SCR_FEAT_HACDBS (0)
+#endif
+
 #ifndef SCR_PLAT_FEATS
 #define SCR_PLAT_FEATS (0)
 #endif
@@ -220,6 +232,8 @@
 	SCR_FEAT_AIE		|						\
 	SCR_FEAT_PFAR		|						\
 	SCR_FEAT_IDTE3		|						\
+	SCR_FEAT_HDBSS		|						\
+	SCR_FEAT_HACDBS		|						\
 	SCR_PLAT_FEATS)
 #define SCR_EL3_FLIPPED (							\
 	SCR_FEAT_RAS		|						\
@@ -326,7 +340,14 @@ CASSERT((CPTR_EL3_FLIPPED & CPTR_EL3_FEATS) == CPTR_EL3_FLIPPED, cptr_flipped_no
 #define MDCR_FEAT_EBEP (0)
 #endif
 
+#if ENABLE_FEAT_STEP2
+#define MDCR_FEAT_STEP2 MDCR_EnSTEPOP_BIT
+#else
+#define MDCR_FEAT_STEP2 (0)
+#endif
+
 #define MDCR_EL3_FEATS (							\
+	MDCR_FEAT_STEP2		|						\
 	MDCR_DEBUGV8P9		|						\
 	MDCR_FEAT_BRBE		|						\
 	MDCR_FEAT_FGT		|						\

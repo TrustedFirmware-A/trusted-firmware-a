@@ -70,6 +70,12 @@ static unsigned int read_feat_debugv8p9_id_field(void)
 			     ID_AA64DFR0_DEBUGVER_MASK);
 }
 
+static unsigned int read_feat_step2_id_field(void)
+{
+	return ISOLATE_FIELD(read_id_aa64dfr2_el1(), ID_AA64DFR2_STEP_SHIFT,
+			     ID_AA64DFR2_STEP_MASK);
+}
+
 static unsigned int read_feat_pmuv3_id_field(void)
 {
 	return ISOLATE_FIELD(read_id_aa64dfr0_el1(), ID_AA64DFR0_PMUVER_SHIFT,
@@ -340,6 +346,18 @@ static unsigned int read_feat_morello_field(void)
 			     ID_AA64PFR1_EL1_CE_MASK);
 }
 
+static unsigned int read_feat_hdbss_id_field(void)
+{
+	return ISOLATE_FIELD(read_id_aa64mmfr1_el1(), ID_AA64MMFR1_EL1_HAFDBS_SHIFT,
+			     ID_AA64MMFR1_EL1_HAFDBS_MASK);
+}
+
+static unsigned int read_feat_hacdbs_id_field(void)
+{
+	return ISOLATE_FIELD(read_id_aa64mmfr4_el1(), ID_AA64MMFR4_EL1_HACDBS_SHIFT,
+			     ID_AA64MMFR4_EL1_HACDBS_MASK);
+}
+
 /***********************************************************************************
  * TF-A supports many Arm architectural features starting from arch version
  * (8.0 till 8.7+). These features are mostly enabled through build flags. This
@@ -528,6 +546,12 @@ void detect_arch_features(unsigned int core_pos)
 				 "RME_GDI", 1, 1);
 	tainted |= check_feature(ENABLE_FEAT_IDTE3, read_feat_idte3_id_field(),
 				 "IDTE3", 2, 2);
+	tainted |= check_feature(ENABLE_FEAT_STEP2, read_feat_step2_id_field(),
+				 "STEP2", 1, 1);
+	tainted |= check_feature(ENABLE_FEAT_HDBSS, read_feat_hdbss_id_field(),
+				 "HDBSS", 4, 4);
+	tainted |= check_feature(ENABLE_FEAT_HACDBS, read_feat_hacdbs_id_field(),
+				 "HACDBS", 1, 1);
 
 	/* Morello Arch feature */
 	tainted |= check_feature(ENABLE_FEAT_MORELLO, read_feat_morello_field(),

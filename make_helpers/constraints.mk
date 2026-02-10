@@ -202,6 +202,12 @@ ifeq (${ENABLE_FEAT_SCTLR2},0)
         $(error Error: PAUTH_LR cannot be used without ENABLE_FEAT_SCTLR2)
 endif
 
+ifneq (${ENABLE_FEAT_HACDBS},0)
+	ifeq (${ENABLE_FEAT_HDBSS},0)
+                $(error ENABLE_FEAT_HACDBS requires ENABLE_FEAT_HDBSS)
+	endif
+endif
+
 # FEAT_PAUTH_LR is only supported in aarch64 state
 ifneq (${ARCH},aarch64)
         $(error ENABLE_FEAT_PAUTH_LR requires AArch64)
@@ -306,6 +312,15 @@ ifeq (${ARCH},aarch32)
 	endif
 	ifneq (${ENABLE_FEAT_UINJ},0)
 		$(error "ENABLE_FEAT_UINJ cannot be used with ARCH=aarch32")
+	endif
+	ifneq (${ENABLE_FEAT_STEP2},0)
+                $(error "ENABLE_FEAT_STEP2 cannot be used with ARCH=aarch32")
+	endif
+	ifneq (${ENABLE_FEAT_HDBSS},0)
+                $(error "ENABLE_FEAT_HDBSS cannot be used with ARCH=aarch32")
+	endif
+	ifneq (${ENABLE_FEAT_HACDBS},0)
+                $(error "ENABLE_FEAT_HACDBS cannot be used with ARCH=aarch32")
 	endif
 endif #(ARCH=aarch32)
 

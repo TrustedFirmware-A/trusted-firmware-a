@@ -398,6 +398,18 @@ Common build options
       If additional traps need to be disabled for specific platforms,
       please contact the Arm team on `TF-A public mailing list`_.
 
+-  ``ENABLE_FEAT_HDBSS``: Numeric value to enable support for HDBSS (Hardware
+   Dirty state tracking structure) by setting ``SCR_EL3.HDBSSEn`` for NS world.
+   This is an optional architectural feature and is available from v9.4 and
+   upwards. This flag can take the values 0 to 2, to align  with the
+   ``ENABLE_FEAT`` mechanism. Default value is ``0``.
+
+-  ``ENABLE_FEAT_HACDBS``: Numeric value to enable support for
+   HACDBS (Hardware accelerator for cleaning Dirty state) by setting
+   ``SCR_EL3.HACDBSEn`` for NS world. This is an optional architectural feature
+   and is available from v9.4 and upwards. This flag can take the values 0 to 2,
+   to align  with the ``ENABLE_FEAT`` mechanism. Default value is ``0``.
+
 -  ``ENABLE_FEAT_HCX``: Numeric value to set the bit SCR_EL3.HXEn in EL3 to
    allow access to HCRX_EL2 (extended hypervisor control register) from EL2 as
    well as adding HCRX_EL2 to the EL2 context save/restore operations. Its a
@@ -538,6 +550,12 @@ Common build options
    and mandatory in Armv8.9 implementations.
    This flag can take the values 0 to 2, to align  with the ``ENABLE_FEAT``
    mechanism. Default value is ``0``.
+
+-  ``ENABLE_FEAT_STEP2``: Numeric value that enables support for FEAT_STEP2 by
+   setting ``MDCR_EL3.EnSTEPOP`` so that lower ELs can access ``MDSTEPOP_EL1``.
+   This feature is optional from Armv9.4 implementations and is mandatory in
+   Armv9.5 implementations. This flag can take the values 0 to 2, to align  with
+   the ``ENABLE_FEAT`` mechanism Defaults value is ``0``.
 
 -  ``ENABLE_FEAT_D128``: Numeric value to enable support for FEAT_D128
    at EL2 and below, setting the bit SCT_EL3.D128En in EL3 to allow access to

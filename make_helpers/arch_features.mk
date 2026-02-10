@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2022-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -131,6 +131,7 @@ endif
 # Enable the features which are mandatory from ARCH version 9.5 and upwards.
 ifeq "9.5" "$(word 1, $(sort 9.5 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
 # 9.4 Compliant
+armv9-5-a-feats         := ENABLE_FEAT_STEP2
 armv9-5-a-feats         += ${armv9-4-a-feats}
 FEAT_LIST               := ${armv9-5-a-feats}
 endif
@@ -485,6 +486,15 @@ ENABLE_FEAT_FGWTE3			?=	0
 # Flag to enable checked pointer arithmetic (FEAT_CPA2) for EL3.
 # We don't have a flag for FEAT_CPA since that has no effect on software
 ENABLE_FEAT_CPA2			?=	0
+
+# Flag to enable Enhanced Software Step Extension (FEAT_STEP2)
+ENABLE_FEAT_STEP2			?=	0
+
+# Flag to enable Hardware Dirty state tracking structure (FEAT_HDBSS).
+ENABLE_FEAT_HDBSS			?=	0
+
+# Flag to enable Hardening Address and Context Debug Banked State (FEAT_HACDBS).
+ENABLE_FEAT_HACDBS			?=	0
 
 #----
 #9.6
