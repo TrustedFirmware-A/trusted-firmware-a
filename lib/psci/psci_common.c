@@ -268,8 +268,8 @@ static unsigned int psci_num_cpus_running(void)
 
 	for (cpu_idx = 0U; cpu_idx < psci_plat_core_count; cpu_idx++) {
 		aff_state = psci_get_aff_info_state_by_idx(cpu_idx);
-		if (aff_state == AFF_STATE_ON ||
-		    aff_state == AFF_STATE_ON_PENDING) {
+		if ((aff_state == AFF_STATE_ON) ||
+		    (aff_state == AFF_STATE_ON_PENDING)) {
 			no_of_cpus++;
 		}
 	}
@@ -1210,7 +1210,7 @@ static cpu_ops_pwr_dwn_op_t get_cpu_pwr_dwn(unsigned int power_level)
 	struct cpu_ops *ops = get_cpu_data(cpu_ops_ptr);
 
 	/* Call the last available power down handler */
-	if (power_level > CPU_MAX_PWR_DWN_OPS - 1) {
+	if (power_level > (CPU_MAX_PWR_DWN_OPS - 1)) {
 		power_level = CPU_MAX_PWR_DWN_OPS - 1;
 	}
 
@@ -1312,8 +1312,9 @@ void __dead2 psci_pwrdown_cpu_end_terminal(void)
 	 * be denied. Hopefully this is transient, retrying a few times should
 	 * power down.
 	 */
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < 32; i++) {
 		wfi();
+	}
 
 	/* Wake up wasn't transient. System is probably in a bad state. */
 	ERROR("Could not power off CPU.\n");
