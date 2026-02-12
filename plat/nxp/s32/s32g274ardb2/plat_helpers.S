@@ -113,14 +113,6 @@ endfunc plat_reset_handler
 /* void platform_mem_init(void); */
 func platform_mem_init
 	mov	x10, x30
-	mov_imm	x0, BL31_BASE
-	mov_imm	x1, BL31_LIMIT
-	sub	x1, x1, x0
-	bl	zeromem
-	mov_imm	x0, BL33_BASE
-	mov_imm	x1, BL33_LIMIT
-	sub	x1, x1, x0
-	bl	zeromem
 	mov_imm	x0, IO_BUFFER_BASE
 	mov_imm	x1, IO_BUFFER_SIZE
 	bl	zeromem

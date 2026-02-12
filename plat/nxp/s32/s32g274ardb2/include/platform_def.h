@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -32,20 +32,25 @@
 #define PLAT_MAX_RET_STATE		U(1)
 #define PLAT_MAX_PWR_LVL_STATES		U(2)
 
+#define S32G_DDR0_END		UL(0xffffffff)
+
+#define S32G_BL33_IMAGE_SIZE		(7 * SZ_1M)
+
 /* BL2 stage */
 #define BL2_BASE			UL(0x34078000)
 #define BL2_LIMIT			UL(0x34100000)
 
-/* BL31 stage */
-#define BL31_BASE			UL(0x34200000)
-#define BL31_LIMIT			UL(0x34300000)
+/* BL33 stage */
+#define BL33_BASE			(S32G_DDR0_END - S32G_BL33_IMAGE_SIZE - \
+						SZ_1M + 1)
+#define BL33_LIMIT			(S32G_DDR0_END)
 
-/* It is a dummy value for now, given the missing DDR */
-#define BL33_BASE			UL(0x34500000)
-#define BL33_LIMIT			UL(0x345FF000)
+/* BL31 stage */
+#define BL31_BASE			((BL33_BASE - 1) - (2 * SZ_1M) + 1)
+#define BL31_LIMIT			(BL33_BASE - 1)
 
 /* IO buffer used to copy images from storage */
-#define IO_BUFFER_BASE			BL33_LIMIT
+#define IO_BUFFER_BASE			UL(0x345ff000)
 #define IO_BUFFER_SIZE			U(0x13000)
 
 #define PLAT_PHY_ADDR_SPACE_SIZE	(ULL(1) << 36)
