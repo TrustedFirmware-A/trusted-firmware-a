@@ -171,8 +171,6 @@
 #define ACCESS_FLAG_SHIFT		10
 /* The not global bit, nG */
 #define NOT_GLOBAL_SHIFT		11
-/* The Non-secure Extension bit, NSE */
-#define NSE_SHIFT			11
 /* Contiguous hint bit. */
 #define CONT_HINT_SHIFT			52
 /* Execute-never bits, XN. */
