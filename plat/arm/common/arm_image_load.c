@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -116,8 +116,9 @@ struct bl_params *arm_get_next_bl_params(void)
 	/*
 	 * Copy the memory descriptors to ARM_BL2_MEM_DESC_BASE area.
 	 */
-	(void) memcpy(bl2_mem_params_descs_cpy, bl_mem_params_desc_ptr,
-		(bl_mem_params_desc_num * sizeof(bl_mem_params_node_t)));
+	for (unsigned int i = 0; i < bl_mem_params_desc_num; i++) {
+		bl2_mem_params_descs_cpy[i] = bl_mem_params_desc_ptr[i];
+	}
 
 	/*
 	 * Modify the global 'bl_mem_params_desc_ptr' to point to the
@@ -132,8 +133,7 @@ struct bl_params *arm_get_next_bl_params(void)
 	 * Copy 'next_bl_params' to the reserved location after the copied
 	 * memory descriptors.
 	 */
-	(void) memcpy(next_bl_params_cpy_ptr, next_bl_params,
-						(sizeof(bl_params_t)));
+	*next_bl_params_cpy_ptr = *next_bl_params;
 
 	populate_next_bl_params_config(next_bl_params_cpy_ptr);
 #endif /* TRANSFER_LIST */
