@@ -100,18 +100,27 @@ static void xlat_desc_print(const xlat_ctx_t *ctx, uint64_t desc)
 	}
 
 #if ENABLE_RME
+	/*
+	 * When RME is enabled xlat library do not support any translation
+	 * regimes other than EL3 stage1.
+	 */
+	assert(ctx->xlat_regime == EL3_REGIME);
+
 	switch (desc & LOWER_ATTRS(EL3_S1_NSE | NS)) {
-	case 0ULL:
-		printf("-S");
-		break;
 	case LOWER_ATTRS(NS):
 		printf("-NS");
 		break;
 	case LOWER_ATTRS(EL3_S1_NSE):
 		printf("-RT");
 		break;
-	default: /* LOWER_ATTRS(EL3_S1_NSE | NS) */
+	case LOWER_ATTRS(EL3_S1_NSE | NS):
 		printf("-RL");
+		break;
+	default:
+		/* Secure PAS is supported only when SEL2 is implemented */
+		assert(is_feat_sel2_supported());
+		printf("-S");
+		break;
 	}
 #else
 	printf(((LOWER_ATTRS(NS) & desc) != 0ULL) ? "-NS" : "-S");

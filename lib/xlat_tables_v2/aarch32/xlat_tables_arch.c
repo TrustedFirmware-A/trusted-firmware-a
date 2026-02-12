@@ -43,11 +43,13 @@ size_t xlat_arch_get_max_supported_granule_size(void)
  * Determine the physical address space encoded in the 'attr' parameter.
  *
  * The physical address will fall into one of two spaces; secure or
- * nonsecure.
+ * nonsecure. The context 'ctx' is ignored for aarch32.
  */
-uint32_t xlat_arch_get_pas(uint32_t attr)
+uint32_t xlat_arch_get_pas(const xlat_ctx_t *ctx, uint32_t attr)
 {
 	uint32_t pas = MT_PAS(attr);
+
+	(void)ctx;
 
 	if (pas == MT_NS) {
 		return LOWER_ATTRS(NS);
