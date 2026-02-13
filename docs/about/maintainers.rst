@@ -855,19 +855,12 @@ QEMU platform port
 
 QTI platform port and SoC drivers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Lachit Patel <lpatel@codeaurora.org>
-:|G|: `lachitp`_
-:|M|: Sreevyshanavi Kare <skare@codeaurora.org>
-:|G|: `sreekare`_
-:|M|: Muhammad Arsath K F <quic_mkf@quicinc.com>
-:|G|: `quic_mkf`_
-:|M|: Saurabh Gorecha <quic_sgorecha@quicinc.com>
-:|G|: `quic_sgorecha`_
 :|M|: Sumit Garg <sumit.garg@oss.qualcomm.com>
 :|G|: `b49020`_
 :|M|: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
 :|G|: `ldts`_
-:|M|: QTI TF Maintainers <qti.trustedfirmware.maintainers@codeaurora.org>
+:|M|: Sreevyshanavi Kare <skare@qti.qualcomm.com>
+:|G|: `skare-git`_
 :|F|: docs/plat/qti/
 :|F|: plat/qti/
 :|F|: drivers/qti/
@@ -1148,7 +1141,6 @@ Conventional Changelog Extensions
 .. _jslater8: https://github.com/jslater8
 .. _jwerner-chromium: https://github.com/jwerner-chromium
 .. _kostapr: https://github.com/kostapr
-.. _lachitp: https://github.com/lachitp
 .. _laurenw-arm: https://github.com/laurenw-arm
 .. _ldts: https://github.com/ldts
 .. _leon-chen-mtk: https://github.com/leon-chen-mtk
@@ -1176,8 +1168,6 @@ Conventional Changelog Extensions
 .. _odeprez: https://github.com/odeprez
 .. _pangupta: https://github.com/pangupta
 .. _prabhakarlad: https://github.com/prabhakarlad
-.. _quic_mkf: https://github.com/quicmkf
-.. _quic_sgorecha: https://github.com/sgorecha
 .. _raghuncstate: https://github.com/raghuncstate
 .. _raymo200915: https://github.com/raymo200915
 .. _remi-triplefault: https://github.com/repk
@@ -1190,9 +1180,9 @@ Conventional Changelog Extensions
 .. _shawnguo2: https://github.com/shawnguo2
 .. _sieumunt: https://github.com/sieumunt
 .. _sjaypee208: https://github.com/sjaypee208
+.. _skare-git: https://github.com/skare-git
 .. _smaeul: https://github.com/smaeul
 .. _soby-mathew: https://github.com/soby-mathew
-.. _sreekare: https://github.com/sreekare
 .. _stefanasimion: https://github.com/stefanasimion
 .. _stephan-gh: https://github.com/stephan-gh
 .. _thomas-arm: https://github.com/thomas-arm
