@@ -42,8 +42,6 @@ void cm_sysregs_context_save_amu(unsigned int security_state);
 void cm_sysregs_context_restore_amu(unsigned int security_state);
 
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
-void cm_el2_sysregs_context_save_gic(uint32_t security_state);
-void cm_el2_sysregs_context_restore_gic(uint32_t security_state);
 void cm_el2_sysregs_context_save(uint32_t security_state);
 void cm_el2_sysregs_context_restore(uint32_t security_state);
 #else
