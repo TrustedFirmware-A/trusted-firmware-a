@@ -426,7 +426,7 @@ void imx_gpc_init(void)
 		A53_DUMMY_PDN_ACK);
 
 	/* disable DSM mode by default */
-	mmio_clrbits_32(IMX_GPC_BASE + SLPCR, DSM_MODE_MASK);
+	mmio_clrbits_32(IMX_GPC_BASE + SLPCR, SLPCR_EN_DSM);
 
 	/*
 	 * USB PHY power up needs to make sure RESET bit in SRC is clear,
