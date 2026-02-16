@@ -139,7 +139,6 @@ uint64_t spmd_spm_core_sync_entry(spmd_spm_core_context_t *spmc_ctx)
 	/* Restore the context assigned above */
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_restore(SECURE);
-	cm_el2_sysregs_context_restore_gic(SECURE);
 #else
 	cm_el1_sysregs_context_restore(SECURE);
 #endif
@@ -151,7 +150,6 @@ uint64_t spmd_spm_core_sync_entry(spmd_spm_core_context_t *spmc_ctx)
 	/* Save secure state */
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_save(SECURE);
-	cm_el2_sysregs_context_save_gic(SECURE);
 #else
 	cm_el1_sysregs_context_save(SECURE);
 #endif
@@ -253,7 +251,6 @@ static uint64_t spmd_secure_interrupt_handler(uint32_t id,
 	/* Save the non-secure context before entering SPMC */
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_save(NON_SECURE);
-	cm_el2_sysregs_context_save_gic(NON_SECURE);
 #else
 	cm_el1_sysregs_context_save(NON_SECURE);
 
@@ -289,7 +286,6 @@ static uint64_t spmd_secure_interrupt_handler(uint32_t id,
 	ctx->secure_interrupt_ongoing = false;
 
 #if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_restore_gic(NON_SECURE);
 	cm_el2_sysregs_context_restore(NON_SECURE);
 #else
 	cm_el1_sysregs_context_restore(NON_SECURE);
@@ -767,7 +763,6 @@ uint64_t spmd_smc_switch_state(uint32_t smc_fid,
 	/* Save incoming security state */
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_save(secure_state_in);
-	cm_el2_sysregs_context_save_gic(secure_state_in);
 #else
 	cm_el1_sysregs_context_save(secure_state_in);
 #if CTX_INCLUDE_FPREGS || CTX_INCLUDE_SVE_REGS
@@ -778,7 +773,6 @@ uint64_t spmd_smc_switch_state(uint32_t smc_fid,
 
 	/* Restore outgoing security state */
 #if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_restore_gic(secure_state_out);
 	cm_el2_sysregs_context_restore(secure_state_out);
 #else
 	cm_el1_sysregs_context_restore(secure_state_out);
@@ -1062,7 +1056,6 @@ uint64_t spmd_smc_handler(uint32_t smc_fid,
 			/* Save non-secure system registers context */
 #if SPMD_SPM_AT_SEL2
 			cm_el2_sysregs_context_save(NON_SECURE);
-			cm_el2_sysregs_context_save_gic(NON_SECURE);
 #else
 			cm_el1_sysregs_context_save(NON_SECURE);
 #endif

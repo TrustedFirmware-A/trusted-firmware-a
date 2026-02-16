@@ -126,12 +126,6 @@ static int32_t rmm_init(void)
 
 	INFO("RMM init start.\n");
 
-	/*
-	 * The SPMD could init before. RMMD doesn't restore GIC context so it
-	 * can be shared with NS, so just this once restore GIC context. Use the
-	 * NS copy as the Realm copy will be unused.
-	 */
-	cm_el2_sysregs_context_restore_gic(NON_SECURE);
 	rc = rmmd_rmm_sync_entry(ctx);
 	if (rc != E_RMM_BOOT_SUCCESS) {
 		ERROR("RMM init failed: %ld\n", rc);
