@@ -20,6 +20,7 @@
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/mmio.h>
 #include <lib/xlat_tables/xlat_tables_v2.h>
+#include <plat/arm/common/plat_arm.h>
 #include <plat/common/platform.h>
 
 #include <ele_api.h>
@@ -36,6 +37,11 @@ static entry_point_info_t bl33_image_ep_info;
 
 extern const mmap_region_t imx_mmap[];
 extern uintptr_t gpio_base[GPIO_NUM];
+
+static const uintptr_t gicr_base_addrs[2] = {
+	PLAT_ARM_GICR_BASE,
+	0U
+};
 
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		u_register_t arg2, u_register_t arg3)
@@ -112,6 +118,16 @@ void bl31_platform_setup(void)
 	generic_delay_timer_init();
 
 	/*
+	 * bl31_main uses gic_pcpu_init() for redistributor base address
+	 * discovery process so even though we're already doing that below
+	 * as a prerequisite for the platform workaround, we're still going
+	 * to have to set the GICR frames otherwise gic_pcpu_init() will
+	 * try to dereference a NULL pointer (or end up with a failed
+	 * assert)
+	 */
+	gic_set_gicr_frames(gicr_base_addrs);
+
+	/*
 	 * In order to apply platform specific gic workaround, the
 	 * gicv3_driver_data need to be initialized, the 'USE_GIC_DRIVER'
 	 * will init it again, it should be fine.
@@ -126,6 +142,12 @@ void bl31_platform_setup(void)
 		gicr_ctlr = gicr_read_ctlr(gicr_base);
 		gicr_write_ctlr(gicr_base, gicr_ctlr & ~(GICR_CTLR_EN_LPIS_BIT));
 	}
+
+	/*
+	 * done with the workaround - set to 0 to avoid assertion failure during
+	 * gicv3_rdistif_probe() in DEBUG builds
+	 */
+	gic_data.gicr_base = 0;
 
 	/* get soc info */
 	ele_get_soc_info();
