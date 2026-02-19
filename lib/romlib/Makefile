@@ -25,6 +25,10 @@ ifneq ($(CRYPTO_LIB),)
     PROCESSED_JMPTBL = $(BUILD_DIR)/jmptbl_processed.i
     CRYPTO_JMPTBL = ../../$(PLAT_DIR)/jmptbl.i ../../$(PLAT_DIR)/jmptbl_mbedtls.i
 
+    ifneq ($(filter rsa rsa+ecdsa,$(TF_MBEDTLS_KEY_ALG)),)
+        CRYPTO_JMPTBL += ../../$(PLAT_DIR)/jmptbl_mbedtls_rsa.i
+    endif
+
     ifeq (${PSA_CRYPTO},1)
         CRYPTO_JMPTBL += ../../$(PLAT_DIR)/jmptbl_mbedtls_psa.i
     endif # ifeq (${PSA_CRYPTO},1)
