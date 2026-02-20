@@ -33,6 +33,5 @@ mbedtls mbedtls_pk_init
 mbedtls mbedtls_pk_parse_subpubkey
 mbedtls mbedtls_pk_verify_ext
 mbedtls mbedtls_platform_set_snprintf
-mbedtls mbedtls_x509_get_rsassa_pss_params
 mbedtls mbedtls_x509_get_sig_alg
 mbedtls mbedtls_md_info_from_type
