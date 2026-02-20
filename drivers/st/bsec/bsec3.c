@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2024-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,6 +19,7 @@
 #include <platform_def.h>
 
 #define BSEC_IP_VERSION_1_0	U(0x10)
+#define BSEC_IP_VERSION_1_2	U(0x12)
 #define BSEC_IP_ID_3		U(0x100033)
 
 #define MAX_NB_TRIES		U(3)
@@ -175,7 +176,11 @@ uint32_t bsec_probe(void)
 	uint32_t version = bsec_get_version();
 	uint32_t id = bsec_get_id();
 
+#if STM32MP21
+	if ((version != BSEC_IP_VERSION_1_2) || (id != BSEC_IP_ID_3)) {
+#else /* STM32MP21 */
 	if ((version != BSEC_IP_VERSION_1_0) || (id != BSEC_IP_ID_3)) {
+#endif /* STM32MP21 */
 		EARLY_ERROR("%s: version = 0x%x, id = 0x%x\n", __func__, version, id);
 		panic();
 	}

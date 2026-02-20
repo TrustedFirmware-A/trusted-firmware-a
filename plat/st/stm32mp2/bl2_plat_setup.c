@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2023-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -223,8 +223,18 @@ skip_console_init:
 	fconf_populate("TB_FW", STM32MP_DTB_BASE);
 
 #if STM32MP_USB_PROGRAMMER
+#if STM32MP21
+	stm32_rifsc_ip_configure(STM32MP21_RIMU_OTG_HS, STM32MP21_RIFSC_OTG_HS_ID,
+				 RIFSC_USB_BOOT_OTG_HS_RIMC_CONF);
+#endif /* STM32MP21 */
+#if STM32MP23
+	stm32_rifsc_ip_configure(STM32MP2_RIMU_USB3DR, STM32MP23_RIFSC_USB3DR_ID,
+				 RIFSC_USB_BOOT_USB3DR_RIMC_CONF);
+#endif /* STM32MP23 */
+#if STM32MP25
 	stm32_rifsc_ip_configure(STM32MP2_RIMU_USB3DR, STM32MP25_RIFSC_USB3DR_ID,
 				 RIFSC_USB_BOOT_USB3DR_RIMC_CONF);
+#endif /* STM32MP25 */
 #endif /* STM32MP_USB_PROGRAMMER */
 
 	/*
@@ -252,6 +262,12 @@ static void prepare_encryption(void)
 	if (stm32mp2_risaf_write_encryption_key(RISAF4_INST, mkey) != 0) {
 		panic();
 	}
+
+#if STM32MP21
+	if (stm32mp2_risaf_write_mce_key(RISAF4_INST, mkey) != 0) {
+		panic();
+	}
+#endif /* STM32MP21 */
 }
 
 /*******************************************************************************

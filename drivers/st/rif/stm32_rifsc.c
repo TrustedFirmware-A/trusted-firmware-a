@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2023-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,7 +19,15 @@ void stm32_rifsc_ip_configure(int rimu_id, int rifsc_id, uint32_t param)
 {
 	uint32_t bit;
 
+#if STM32MP21
+	assert(rifsc_id < STM32MP21_RIFSC_MAX_ID);
+#endif /* STM32MP21 */
+#if STM32MP23
+	assert(rifsc_id < STM32MP23_RIFSC_MAX_ID);
+#endif /* STM32MP23 */
+#if STM32MP25
 	assert(rifsc_id < STM32MP25_RIFSC_MAX_ID);
+#endif /* STM32MP25 */
 
 	bit = BIT(rifsc_id % U(32));
 

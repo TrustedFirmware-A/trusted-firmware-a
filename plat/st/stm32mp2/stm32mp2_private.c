@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2023-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -31,7 +31,7 @@
 					MT_EXECUTE_NEVER)
 #endif
 
-#if STM32MP_USB_PROGRAMMER
+#if STM32MP_USB_PROGRAMMER && !STM32MP21
 #define MAP_SYSRAM_MEM	MAP_REGION_FLAT(STM32MP_SYSRAM_MEM_BASE, \
 					STM32MP_SYSRAM_MEM_SIZE, \
 					MT_MEMORY | \
@@ -45,7 +45,7 @@
 					MT_RW | \
 					MT_SECURE | \
 					MT_EXECUTE_NEVER)
-#endif
+#endif /* STM32MP_USB_PROGRAMMER && !STM32MP21 */
 
 #if STM32MP_DDR_FIP_IO_STORAGE
 #define MAP_SRAM1	MAP_REGION_FLAT(SRAM1_BASE, \
@@ -65,12 +65,12 @@
 
 #if defined(IMAGE_BL2)
 static const mmap_region_t stm32mp2_mmap[] = {
-#if STM32MP_USB_PROGRAMMER
+#if STM32MP_USB_PROGRAMMER && !STM32MP21
 	MAP_SYSRAM_MEM,
 	MAP_SYSRAM_DEV,
-#else
+#else /* !STM32MP_USB_PROGRAMMER || STM32MP21 */
 	MAP_SYSRAM,
-#endif
+#endif /* STM32MP_USB_PROGRAMMER && !STM32MP21 */
 #if STM32MP_DDR_FIP_IO_STORAGE
 	MAP_SRAM1,
 #endif
@@ -152,8 +152,10 @@ static const uintptr_t stm32mp2_uart_addresses[STM32MP_NB_OF_UART] = {
 	UART5_BASE,
 	USART6_BASE,
 	UART7_BASE,
+#if STM32MP25
 	UART8_BASE,
 	UART9_BASE,
+#endif /* STM32MP25 */
 };
 
 uintptr_t get_uart_address(uint32_t instance_nb)
@@ -221,6 +223,83 @@ void stm32mp_get_soc_name(char name[STM32_SOC_NAME_SIZE])
 
 	/* MPUs Part Numbers */
 	switch (get_part_number()) {
+#if STM32MP21
+	case STM32MP211A_PART_NB:
+		cpu_s = "211A";
+		break;
+	case STM32MP211C_PART_NB:
+		cpu_s = "211C";
+		break;
+	case STM32MP211D_PART_NB:
+		cpu_s = "211D";
+		break;
+	case STM32MP211F_PART_NB:
+		cpu_s = "211F";
+		break;
+	case STM32MP213A_PART_NB:
+		cpu_s = "213A";
+		break;
+	case STM32MP213C_PART_NB:
+		cpu_s = "213C";
+		break;
+	case STM32MP213D_PART_NB:
+		cpu_s = "213D";
+		break;
+	case STM32MP213F_PART_NB:
+		cpu_s = "213F";
+		break;
+	case STM32MP215A_PART_NB:
+		cpu_s = "215A";
+		break;
+	case STM32MP215C_PART_NB:
+		cpu_s = "215C";
+		break;
+	case STM32MP215D_PART_NB:
+		cpu_s = "215D";
+		break;
+	case STM32MP215F_PART_NB:
+		cpu_s = "215F";
+		break;
+#endif /* STM32MP21 */
+#if STM32MP23
+	case STM32MP231A_PART_NB:
+		cpu_s = "231A";
+		break;
+	case STM32MP231C_PART_NB:
+		cpu_s = "231C";
+		break;
+	case STM32MP231D_PART_NB:
+		cpu_s = "231D";
+		break;
+	case STM32MP231F_PART_NB:
+		cpu_s = "231F";
+		break;
+	case STM32MP233A_PART_NB:
+		cpu_s = "233A";
+		break;
+	case STM32MP233C_PART_NB:
+		cpu_s = "233C";
+		break;
+	case STM32MP233D_PART_NB:
+		cpu_s = "233D";
+		break;
+	case STM32MP233F_PART_NB:
+		cpu_s = "233F";
+		break;
+	case STM32MP235A_PART_NB:
+		cpu_s = "235A";
+		break;
+	case STM32MP235C_PART_NB:
+		cpu_s = "235C";
+		break;
+	case STM32MP235D_PART_NB:
+		cpu_s = "235D";
+		break;
+	case STM32MP235F_PART_NB:
+		cpu_s = "235F";
+		break;
+#endif /* STM32MP23 */
+#if STM32MP25
 	case STM32MP251A_PART_NB:
 		cpu_s = "251A";
 		break;
@@ -269,6 +348,7 @@ void stm32mp_get_soc_name(char name[STM32_SOC_NAME_SIZE])
 	case STM32MP257F_PART_NB:
 		cpu_s = "257F";
 		break;
+#endif /* STM32MP25 */
 	default:
 		cpu_s = "????";
 		break;
@@ -276,6 +356,38 @@ void stm32mp_get_soc_name(char name[STM32_SOC_NAME_SIZE])
 
 	/* Package */
 	switch (get_cpu_package()) {
+#if STM32MP21
+	case STM32MP21_PKG_CUSTOM:
+		pkg = "XX";
+		break;
+	case STM32MP21_PKG_AL_VFBGA361:
+		pkg = "AL";
+		break;
+	case STM32MP21_PKG_AN_VFBGA273:
+		pkg = "AN";
+		break;
+	case STM32MP21_PKG_AO_VFBGA225:
+		pkg = "AO";
+		break;
+	case STM32MP21_PKG_AM_TFBGA289:
+		pkg = "AM";
+		break;
+#endif /* STM32MP21 */
+#if STM32MP23
+	case STM32MP23_PKG_CUSTOM:
+		pkg = "XX";
+		break;
+	case STM32MP23_PKG_AL_VFBGA361:
+		pkg = "AL";
+		break;
+	case STM32MP23_PKG_AK_VFBGA424:
+		pkg = "AK";
+		break;
+	case STM32MP23_PKG_AJ_TFBGA361:
+		pkg = "AJ";
+		break;
+#endif /* STM32MP23 */
+#if STM32MP25
 	case STM32MP25_PKG_CUSTOM:
 		pkg = "XX";
 		break;
@@ -288,6 +400,7 @@ void stm32mp_get_soc_name(char name[STM32_SOC_NAME_SIZE])
 	case STM32MP25_PKG_AI_TFBGA436:
 		pkg = "AI";
 		break;
+#endif /* STM32MP25 */
 	default:
 		pkg = "??";
 		break;
@@ -343,13 +456,24 @@ void stm32mp_print_boardinfo(void)
 /* Return true when SoC provides a single Cortex-A35 core, and false otherwise */
 bool stm32mp_is_single_core(void)
 {
+#if STM32MP21
+	return true;
+#else /* STM32MP21 */
 	bool single_core = false;
 
 	switch (get_part_number()) {
+#if STM32MP23
+	case STM32MP231A_PART_NB:
+	case STM32MP231C_PART_NB:
+	case STM32MP231D_PART_NB:
+	case STM32MP231F_PART_NB:
+#endif /* STM32MP23 */
+#if STM32MP25
 	case STM32MP251A_PART_NB:
 	case STM32MP251C_PART_NB:
 	case STM32MP251D_PART_NB:
 	case STM32MP251F_PART_NB:
+#endif /* STM32MP25 */
 		single_core = true;
 		break;
 	default:
@@ -357,6 +481,7 @@ bool stm32mp_is_single_core(void)
 	}
 
 	return single_core;
+#endif /* STM32MP21 */
 }
 
 /* Return true when device is in closed state */
@@ -371,6 +496,23 @@ bool stm32mp_is_auth_supported(void)
 	bool supported = false;
 
 	switch (get_part_number()) {
+#if STM32MP21
+	case STM32MP211C_PART_NB:
+	case STM32MP211F_PART_NB:
+	case STM32MP213C_PART_NB:
+	case STM32MP213F_PART_NB:
+	case STM32MP215C_PART_NB:
+	case STM32MP215F_PART_NB:
+#endif /* STM32MP21 */
+#if STM32MP23
+	case STM32MP231C_PART_NB:
+	case STM32MP231F_PART_NB:
+	case STM32MP233C_PART_NB:
+	case STM32MP233F_PART_NB:
+	case STM32MP235C_PART_NB:
+	case STM32MP235F_PART_NB:
+#endif /* STM32MP23 */
+#if STM32MP25
 	case STM32MP251C_PART_NB:
 	case STM32MP251F_PART_NB:
 	case STM32MP253C_PART_NB:
@@ -379,6 +521,7 @@ bool stm32mp_is_auth_supported(void)
 	case STM32MP255F_PART_NB:
 	case STM32MP257C_PART_NB:
 	case STM32MP257F_PART_NB:
+#endif /* STM32MP25 */
 		supported = true;
 		break;
 	default:
