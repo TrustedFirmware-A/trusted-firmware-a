@@ -53,8 +53,14 @@ static uint32_t ddrc_init_cfg(const struct ddrss_config *config)
 uint32_t ddr_init(uintptr_t load_from)
 {
 	struct ddrss_config ddr_config;
+	int err;
 
 	assert(load_from != 0UL);
+
+	err = plat_ddr_mmap_setup();
+	if (err != 0) {
+		return MAPPING_FAILED;
+	}
 
 	ddr_config = load_ddr_config(load_from + sizeof(struct ddr_fw_header));
 	return ddr_init_cfg(&ddr_config);
