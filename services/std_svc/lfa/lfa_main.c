@@ -160,7 +160,13 @@ static int lfa_activate(uint32_t component_id, uint64_t flags,
 					  context_id);
 	}
 
-	lfa_components[component_id].activation_pending = false;
+	/*
+	 * Update the activation pending flag only if the activation was
+	 * successful.
+	 */
+	if (ret == LFA_SUCCESS) {
+		lfa_components[component_id].activation_pending = false;
+	}
 
 	return ret;
 }
