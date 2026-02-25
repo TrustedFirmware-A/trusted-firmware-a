@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2022, Arm Limited. All rights reserved.
- * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -64,9 +64,9 @@ enum mhu_error_t mhu_init_receiver(uintptr_t mhu_receiver_base);
  *
  * Returns mhu_error_t error code.
  *
- * The send_buffer must be 4-byte aligned and its length must be at least
- * (4 - (size % 4)) bytes bigger than the data size to prevent buffer
- * over-reading.
+ * For MHUv2, the send_buffer must be 4-byte aligned and its length must
+ * be at least (4 - (size % 4)) bytes bigger than the data size to
+ * prevent buffer over-reading.
  */
 enum mhu_error_t mhu_send_data(const uint8_t *send_buffer, size_t size);
 
@@ -80,7 +80,7 @@ enum mhu_error_t mhu_send_data(const uint8_t *send_buffer, size_t size);
  *
  * Returns mhu_error_t error code.
  *
- * The receive_buffer must be 4-byte aligned and its length must be a
+ * For MHUv2, the receive_buffer must be 4-byte aligned and its length
  * multiple of 4.
  */
 enum mhu_error_t mhu_receive_data(uint8_t *receive_buffer, size_t *size);
