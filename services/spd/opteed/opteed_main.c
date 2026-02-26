@@ -385,6 +385,28 @@ static int add_options_widevine_node(void *fdt)
 			return ret;
 	}
 
+	if (cros_oem_gck.length) {
+		ret = fdt_property(fdt, "google,gsc-counter-key",
+				   cros_oem_gck.buffer, cros_oem_gck.length);
+		if (ret)
+			return ret;
+	}
+
+	if (cros_oem_ddk.length) {
+		ret = fdt_property(fdt, "google,drm-device-key",
+				   cros_oem_ddk.buffer, cros_oem_ddk.length);
+		if (ret)
+			return ret;
+	}
+
+	if (cros_oem_stable_huk.length) {
+		ret = fdt_property(fdt, "op-tee,stable-hardware-unique-key",
+				   cros_oem_stable_huk.buffer,
+				   cros_oem_stable_huk.length);
+		if (ret)
+			return ret;
+	}
+
 	ret = fdt_end_node(fdt);
 	if (ret)
 		return ret;

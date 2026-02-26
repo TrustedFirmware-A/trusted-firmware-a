@@ -24,6 +24,9 @@ enum cros_drm_set {
 	CROS_DRM_SET_TPM_AUTH_PUB = 0U,
 	CROS_DRM_SET_HARDWARE_UNIQUE_KEY = 1U,
 	CROS_DRM_SET_ROOT_OF_TRUST = 2U,
+	CROS_DRM_SET_GSC_COUNTER_KEY = 3U,
+	CROS_DRM_SET_DRM_DEVICE_KEY = 4U,
+	CROS_DRM_SET_STABLE_HARDWARE_UNIQUE_KEY = 5U,
 };
 
 /*******************************************************************************
@@ -48,6 +51,24 @@ enum cros_drm_set {
 #define CROS_OEM_SMC_DRM_SET_ROOT_OF_TRUST_FUNC_ID \
 	CROS_OEM_SMC_CALL_ID(CROS_DRM_SET_ROOT_OF_TRUST)
 
+/* Sets the GSC counter key. The maximum size is 32 bytes.
+ * |x1| is the length of the data, |x2| is the physical address of the data.
+ */
+#define CROS_OEM_SMC_DRM_SET_GSC_COUNTER_KEY_FUNC_ID \
+	CROS_OEM_SMC_CALL_ID(CROS_DRM_SET_GSC_COUNTER_KEY)
+
+/* Sets the DRM device key. The maximum size is 32 bytes.
+ * |x1| is the length of the data, |x2| is the physical address of the data.
+ */
+#define CROS_OEM_SMC_DRM_SET_DRM_DEVICE_KEY_FUNC_ID \
+	CROS_OEM_SMC_CALL_ID(CROS_DRM_SET_DRM_DEVICE_KEY)
+
+/* Sets the stable hardware unique key. The maximum size is 32 bytes.
+ * |x1| is the length of the data, |x2| is the physical address of the data.
+ */
+#define CROS_OEM_SMC_DRM_SET_STABLE_HARDWARE_UNIQUE_KEY_FUNC_ID \
+	CROS_OEM_SMC_CALL_ID(CROS_DRM_SET_STABLE_HARDWARE_UNIQUE_KEY)
+
 #define is_cros_oem_smc(_call_id) (((_call_id) & 0xFFF0U) == CROS_OEM_SMC_ID)
 
 struct cros_oem_data {
@@ -61,5 +82,11 @@ extern struct cros_oem_data cros_oem_tpm_auth_pk;
 extern struct cros_oem_data cros_oem_huk;
 
 extern struct cros_oem_data cros_oem_rot;
+
+extern struct cros_oem_data cros_oem_gck;
+
+extern struct cros_oem_data cros_oem_ddk;
+
+extern struct cros_oem_data cros_oem_stable_huk;
 
 #endif /* CROS_WIDEVINE_SMC_HANDLERS_H */
