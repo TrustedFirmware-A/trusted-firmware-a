@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,10 +13,14 @@
 
 	.globl	bl2_entrypoint
 
-#if BL2_IN_XIP_MEM || ENABLE_RME
-#define FIXUP_SIZE	0
-#else
+/*
+ * PIE for BL2 image is supported only in case of RESET_TO_BL2=1 and
+ * BL2_IN_XIP_MEM=0
+ */
+#if ENABLE_PIE && RESET_TO_BL2 && !BL2_IN_XIP_MEM
 #define FIXUP_SIZE	((BL2_LIMIT) - (BL2_BASE))
+#else
+#define FIXUP_SIZE	0
 #endif
 
 func bl2_entrypoint
