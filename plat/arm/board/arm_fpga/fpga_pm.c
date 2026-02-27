@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +9,7 @@
 
 #include <lib/psci/psci.h>
 #include <plat/arm/common/plat_arm.h>
+#include <plat/common/plat_hold_pen.h>
 #include <plat/common/platform.h>
 
 #include "fpga_private.h"
@@ -32,8 +34,13 @@
  * to the running system as specified by the FPGA image.
  */
 
-uint64_t hold_base[PLATFORM_CORE_COUNT];
-uintptr_t fpga_sec_entrypoint;
+/*
+ * Cache-line aligned hold pen area.  Each slot occupies one cache line
+ * so that flushing one core's slot cannot corrupt another's.
+ * Referenced from assembly (fpga_helpers.S) via adr_l.
+ */
+struct hold_slot hold_pen[PLATFORM_CORE_COUNT];
+static uintptr_t fpga_sec_entrypoint;
 
 /*
  * Calls to the CPU specified by the mpidr will set its hold entry to a value
@@ -51,9 +58,8 @@ static int fpga_pwr_domain_on(u_register_t mpidr)
 	if (mpidr == current_mpidr) {
 		return PSCI_E_ALREADY_ON;
 	}
-	hold_base[pos] = PLAT_FPGA_HOLD_STATE_GO;
-	flush_dcache_range((uintptr_t)&hold_base[pos], sizeof(uint64_t));
-	sev(); /* Wake any CPUs from wfe */
+
+	plat_hold_pen_signal(hold_pen, pos, fpga_sec_entrypoint);
 
 	return PSCI_E_SUCCESS;
 }
@@ -96,8 +102,7 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops)
 {
 	fpga_sec_entrypoint = sec_entrypoint;
-	flush_dcache_range((uint64_t)&fpga_sec_entrypoint,
-			   sizeof(fpga_sec_entrypoint));
+	plat_hold_pen_init(hold_pen, PLATFORM_CORE_COUNT);
 	*psci_ops = &plat_fpga_psci_pm_ops;
 	return 0;
 }

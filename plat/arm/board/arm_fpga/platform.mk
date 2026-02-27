@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2026, BayLibre SAS
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -120,6 +121,7 @@ BL31_SOURCES		+=	common/fdt_fixup.c				\
 				drivers/delay_timer/generic_delay_timer.c	\
 				drivers/arm/pl011/${ARCH}/pl011_console.S	\
 				plat/common/plat_psci_common.c			\
+				plat/common/plat_hold_pen.c			\
 				plat/arm/board/arm_fpga/fpga_pm.c			\
 				plat/arm/board/arm_fpga/fpga_topology.c		\
 				plat/arm/board/arm_fpga/fpga_console.c		\

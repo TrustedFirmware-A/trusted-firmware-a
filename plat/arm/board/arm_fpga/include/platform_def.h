@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -85,9 +86,5 @@
 #define PLAT_MAX_OFF_STATE 		2
 
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
-
-#define PLAT_FPGA_HOLD_ENTRY_SHIFT	3
-#define PLAT_FPGA_HOLD_STATE_WAIT	0
-#define PLAT_FPGA_HOLD_STATE_GO		1
 
 #endif

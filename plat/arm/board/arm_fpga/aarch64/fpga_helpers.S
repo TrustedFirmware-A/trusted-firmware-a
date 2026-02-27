@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,6 +8,7 @@
 #include <arch.h>
 #include <asm_macros.S>
 #include <common/bl_common.h>
+#include <plat/common/plat_hold_pen.S>
 #include "../fpga_private.h"
 
 #include <platform_def.h>
@@ -69,25 +71,8 @@ func plat_secondary_cold_boot_setup
 	mov	x5, #VALID_MPID
 	strb	w5, [x4, x0]
 
-	/*
-	 * Poll the CPU's hold entry until it indicates to jump
-	 * to the entrypoint address.
-	 */
-
-	adrp	x1, hold_base
-	add	x1, x1, :lo12:hold_base
-poll_hold_entry:
-	ldr	x3, [x1, x0, LSL #PLAT_FPGA_HOLD_ENTRY_SHIFT]
-	cmp	x3, #PLAT_FPGA_HOLD_STATE_GO
-	b.ne	1f
-
-	adrp	x2, fpga_sec_entrypoint
-	add	x2, x2, :lo12:fpga_sec_entrypoint
-	ldr	x3, [x2]
-	br	x3
-1:
-	wfe
-	b	poll_hold_entry
+	adr_l	x1, hold_pen
+	plat_hold_pen_wait_and_jump x1, x0, x2
 
 endfunc plat_secondary_cold_boot_setup
 
