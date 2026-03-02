@@ -32,6 +32,10 @@ PLAT_BL_COMMON_SOURCES	+=	drivers/gpio/gpio_spi.c		\
 				drivers/tpm/tpm2_slb9670/slb9670_gpio.c
 endif
 
+ifeq (${TRANSFER_LIST}, 1)
+include lib/transfer_list/transfer_list.mk
+endif
+
 ifeq (${MEASURED_BOOT},1)
 MEASURED_BOOT_MK := drivers/measured_boot/event_log/event_log.mk
 $(info Including ${MEASURED_BOOT_MK})

@@ -14,12 +14,19 @@
 #include <lib/xlat_tables/xlat_mmu_helpers.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include <drivers/generic_delay_timer.h>
-#include <plat/common/platform.h>
+#if TRANSFER_LIST
+#include <transfer_list.h>
+#endif
 
+#include <plat/common/platform.h>
 #include <rpi_shared.h>
 
 /* Data structure which holds the extents of the trusted SRAM for BL1 */
 static meminfo_t bl1_tzram_layout;
+#if TRANSFER_LIST
+/* Secure transfer list header (firmware handoff) */
+struct transfer_list_header *secure_tl;
+#endif
 
 meminfo_t *bl1_plat_sec_mem_layout(void)
 {
@@ -51,6 +58,16 @@ void bl1_early_platform_setup(void)
 	/* Allow BL1 to see the whole Trusted RAM */
 	bl1_tzram_layout.total_base = BL_RAM_BASE;
 	bl1_tzram_layout.total_size = BL_RAM_SIZE;
+
+#if TRANSFER_LIST
+	/* Initialize the secure transfer list in the reserved FW handoff region */
+	secure_tl = transfer_list_init((void *)(uintptr_t)FW_HANDOFF_BASE,
+				       FW_HANDOFF_SIZE);
+	if (secure_tl == NULL) {
+		ERROR("BL1: Failed to initialize transfer list\n");
+		panic();
+	}
+#endif /* TRANSFER_LIST */
 }
 
 /******************************************************************************
@@ -76,6 +93,13 @@ void bl1_platform_setup(void)
 {
 	uint32_t __unused rev;
 	int __unused rc;
+
+#if TRANSFER_LIST
+	image_desc_t *bl2_desc = bl1_plat_get_image_desc(BL2_IMAGE_ID);
+	assert(bl2_desc != NULL);
+
+	bl2_desc->ep_info.args.arg3 = (uint64_t)secure_tl;
+#endif
 
 	rc = rpi3_vc_hardware_get_board_revision(&rev);
 

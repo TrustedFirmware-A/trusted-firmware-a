@@ -52,4 +52,6 @@ int plat_rpi_get_model(void);
 
 void plat_rpi_bl31_custom_setup(void);
 
+void rpi3_bl2_sync_transfer_list(void);
+
 #endif /* RPI3_SHARED_H */

@@ -9,7 +9,7 @@
 #include <common/bl_common.h>
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
-
+#include <rpi_shared.h>
 /*******************************************************************************
  * This function flushes the data structures so that they are visible
  * in memory for the next BL image.
@@ -17,6 +17,7 @@
 void plat_flush_next_bl_params(void)
 {
 	flush_bl_params_desc();
+	rpi3_bl2_sync_transfer_list();
 }
 
 /*******************************************************************************
