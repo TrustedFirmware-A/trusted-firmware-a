@@ -301,7 +301,7 @@ typedef struct rp_ide_key_info {
  */
 #define RMM_EL3_IFC_VERSION_MINOR	(U(8))
 #else
-#define RMM_EL3_IFC_VERSION_MAJOR	(U(1))
+#define RMM_EL3_IFC_VERSION_MAJOR	(U(2))
 
 /*
  * The minor version number of the RMM Boot Interface implementation.

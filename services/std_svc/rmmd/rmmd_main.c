@@ -247,7 +247,8 @@ int rmmd_setup(void)
 static uint64_t	rmmd_smc_forward(uint32_t src_sec_state,
 				 uint32_t dst_sec_state, uint64_t x0,
 				 uint64_t x1, uint64_t x2, uint64_t x3,
-				 uint64_t x4, void *handle)
+				 uint64_t x4, uint64_t x5, uint64_t x6,
+				 uint64_t x7, void *handle)
 {
 	cpu_context_t *ctx = cm_get_context(dst_sec_state);
 
@@ -267,20 +268,29 @@ static uint64_t	rmmd_smc_forward(uint32_t src_sec_state,
 
 	/*
 	 * As per SMCCCv1.2, we need to preserve x4 to x7 unless
-	 * being used as return args. Hence we differentiate the
-	 * onward and backward path. Support upto 8 args in the
-	 * onward path and 4 args in return path.
+	 * being used as return args.
+	 */
+#if RMM_V1_COMPAT
+	/*
+	 * We differentiate the onward and backward path. Support
+	 * upto 8 args in the onward path and 4 args in return path.
 	 * Register x4 will be preserved by RMM in case it is not
 	 * used in return path.
 	 */
 	if (src_sec_state == NON_SECURE) {
-		SMC_RET8(ctx, x0, x1, x2, x3, x4,
-			 SMC_GET_GP(handle, CTX_GPREG_X5),
-			 SMC_GET_GP(handle, CTX_GPREG_X6),
-			 SMC_GET_GP(handle, CTX_GPREG_X7));
+		SMC_RET8(ctx, x0, x1, x2, x3, x4, x5, x6, x7);
 	}
 
 	SMC_RET5(ctx, x0, x1, x2, x3, x4);
+#else
+	/*
+	 * Expand return registers to x0-x7 for RMM 2.x
+	 * Register x4-x7 will be preserved by RMM in case they are not
+	 * used in return path.
+	 */
+
+	SMC_RET8(ctx, x0, x1, x2, x3, x4, x5, x6, x7);
+#endif
 }
 
 /*******************************************************************************
@@ -323,7 +333,11 @@ uint64_t rmmd_rmi_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2,
 		}
 		VERBOSE("RMMD: RMI call from non-secure world.\n");
 		return rmmd_smc_forward(NON_SECURE, REALM, smc_fid,
-					x1, x2, x3, x4, handle);
+					x1, x2, x3, x4,
+					SMC_GET_GP(handle, CTX_GPREG_X5),
+					SMC_GET_GP(handle, CTX_GPREG_X6),
+					SMC_GET_GP(handle, CTX_GPREG_X7),
+					handle);
 	}
 
 	if (src_sec_state != SMC_FROM_REALM) {
@@ -335,7 +349,11 @@ uint64_t rmmd_rmi_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2,
 		uint64_t x5 = SMC_GET_GP(handle, CTX_GPREG_X5);
 
 		return rmmd_smc_forward(REALM, NON_SECURE, x1,
-					x2, x3, x4, x5, handle);
+					x2, x3, x4, x5,
+					SMC_GET_GP(handle, CTX_GPREG_X6),
+					SMC_GET_GP(handle, CTX_GPREG_X7),
+					SMC_GET_GP(handle, CTX_GPREG_X8),
+					handle);
 	}
 	default:
 		WARN("RMMD: Unsupported RMM call 0x%08x\n", smc_fid);
