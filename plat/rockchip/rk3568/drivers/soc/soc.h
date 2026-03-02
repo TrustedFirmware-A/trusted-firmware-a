@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,9 +23,6 @@
 #define CRU_SOFTRSTS_CON(n)		(CRU_SOFTRST_CON + ((n) * 4))
 #define CRU_SOFTRSTS_CON_CNT		26
 #define GRF_DDR_CON3			0x000c
-#define SGRF_FIREWALL_SLV_CON(i)	(0x240 + i * 4)
-
-#define FIREWALL_DDR_FW_DDR_CON_REG	0x80
 
  /* low 32 bits */
 #define TIMER_LOAD_COUNT0		0x00

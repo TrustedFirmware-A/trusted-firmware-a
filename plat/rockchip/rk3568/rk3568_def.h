@@ -51,7 +51,7 @@
 #define PMUSRAM_SIZE		SIZE_K(128)
 #define PMUSRAM_RSIZE		SIZE_K(8)
 
-#define DDRSGRF_BASE		0xfe200000
+#define FIREWALL_DDR_BASE	0xfe200000
 #define OTP_NS_BASE		0xfe38c000
 #define OTP_S_BASE		0xfe3a0000
 #define UART1_BASE		0xfe650000

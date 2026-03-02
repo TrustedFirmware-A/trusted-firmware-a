@@ -46,6 +46,7 @@ PLAT_INCLUDES		:=	-Iinclude/bl31					\
 				-I${RK_PLAT_SOC}/drivers/pmu/			\
 				-I${RK_PLAT_SOC}/drivers/soc/			\
 				-I${RK_PLAT_SOC}/drivers/scmi/			\
+				-I${RK_PLAT_SOC}/drivers/secure/		\
 				-I${RK_PLAT_SOC}/include/
 
 RK_GIC_SOURCES		:=	${GICV3_SOURCES}				\
@@ -88,6 +89,7 @@ BL31_SOURCES		+=	${RK_GIC_SOURCES}				\
 				${RK_PLAT_COMMON}/scmi/scmi_rstd.c		\
 				${RK_PLAT_SOC}/drivers/otp/otp.c		\
 				${RK_PLAT_SOC}/drivers/scmi/rk3568_clk.c	\
+				${RK_PLAT_SOC}/drivers/secure/secure.c		\
 				${RK_PLAT_SOC}/drivers/soc/soc.c		\
 				${RK_PLAT_SOC}/drivers/pmu/pmu.c		\
 				${RK_PLAT_SOC}/plat_sip_calls.c

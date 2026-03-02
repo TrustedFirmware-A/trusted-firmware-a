@@ -66,9 +66,9 @@
 /*******************************************************************************
  * Platform memory map related constants
  ******************************************************************************/
-/* TF txet, ro, rw, Size: 512KB */
+/* TF txet, ro, rw, Size: 1MB */
 #define TZRAM_BASE		RK_DRAM_BASE
-#define TZRAM_SIZE		0x100000
+#define TZRAM_SIZE		SZ_1M
 
 /*******************************************************************************
  * BL31 specific defines.
