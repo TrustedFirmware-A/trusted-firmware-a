@@ -1,3 +1,5 @@
+.. _build_marvell:
+
 TF-A Build Instructions for Marvell Platforms
 =============================================
 
@@ -61,6 +63,7 @@ There are several build options:
             - a70x0_mochabin - Globalscale MOCHAbin
             - a80x0
             - a80x0_mcbin  - MacchiatoBin
+            - a80x0_nbx    - Free Mobile Nodebox10G
             - a80x0_puzzle - IEI Puzzle-M801
             - t9130        - CN913x
             - t9130_cex7_eval - CN913x CEx7 Evaluation Board

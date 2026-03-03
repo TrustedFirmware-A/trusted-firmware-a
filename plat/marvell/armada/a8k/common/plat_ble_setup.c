@@ -635,6 +635,14 @@ static int ble_skip_image_i2c(struct skip_image *skip_im)
 
 static int ble_skip_image_other(struct skip_image *skip_im)
 {
+	if (skip_im->info.user_defined.check != NULL) {
+		int skip = skip_im->info.user_defined.check(skip_im);
+
+		if (skip)
+			mmio_write_32(SCRATCH_PAD_REG2, SCRATCH_PAD_SKIP_VAL);
+		return skip;
+	}
+
 	ERROR("implementation missing for skip image request\n");
 	/* not supported, make your own implementation */
 	return 0;

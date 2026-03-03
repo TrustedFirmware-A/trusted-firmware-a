@@ -82,12 +82,29 @@ ifeq (${MSS_SUPPORT}, 1)
 include $(MARVELL_PLAT_BASE)/common/mss/mss_common.mk
 endif
 
+# Detect broken truncate -s %SIZE (uutils coreutils bug: rounds to wrong boundary)
+TRUNCATE_BUG := $(shell rm -f /tmp/.truncate_test_$$$$; \
+	printf 'x' > /tmp/.truncate_test_$$$$ && \
+	truncate -s %128K /tmp/.truncate_test_$$$$ 2>/dev/null && \
+	_sz=$$(stat -c%s /tmp/.truncate_test_$$$$) && \
+	rm -f /tmp/.truncate_test_$$$$ && \
+	[ "$$_sz" != "131072" ] && echo y || { rm -f /tmp/.truncate_test_$$$$; echo n; })
+
 $(BUILD_PLAT)/$(BOOT_IMAGE): $(BUILD_PLAT)/bl1.bin $(BUILD_PLAT)/$(FIP_NAME)
 	$(if $(shell find $(BUILD_PLAT)/bl1.bin -type f -size +128k),$(error "Image '$(BUILD_PLAT)/bl1.bin' is bigger than 128kB"))
 	$(q)cp $(BUILD_PLAT)/bl1.bin $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+ifeq ($(TRUNCATE_BUG),y)
+	$(s)echo "WARNING: truncate -s %SIZE is broken (uutils coreutils bug), using workaround"
+	$(q)truncate -s 131072 $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+else
 	$(q)truncate -s %128K $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+endif
 	$(q)cat $(BUILD_PLAT)/$(FIP_NAME) >> $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+ifeq ($(TRUNCATE_BUG),y)
+	$(q)_sz=$$(stat -c%s $(BUILD_PLAT)/$(BOOT_IMAGE)); truncate -s $$(( (_sz + 3) / 4 * 4 )) $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+else
 	$(q)truncate -s %4 $(BUILD_PLAT)/$(BOOT_IMAGE) || { rm -f $(BUILD_PLAT)/$(BOOT_IMAGE); false; }
+endif
 	$(s)echo
 	$(s)echo "Built $@ successfully"
 	$(s)echo
