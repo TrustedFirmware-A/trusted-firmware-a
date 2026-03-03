@@ -1675,6 +1675,23 @@ Firmware update options
    if the firmware store description, which provides information on
    the updatable images is part of the structure.
 
+.. _sp_live_activation_build_options:
+
+SP Live Activation build options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- ``SUPPORT_SP_LIVE_ACTIVATION``: Boolean option to enable live activation of
+  Secure Partition(s) by using common SPMD LSP helpers. Enforces all of the
+  following dependencies are met:
+
+  -  ``LFA_SUPPORT=1`` to enable the live activation service in BL31.
+  -  ``ENABLE_SPMD_LP=1`` allows SPMD logical secure partition to be enabled.
+  -  ``SPMD_SPM_AT_SEL2=1`` as the current implementation only supports working
+     with an S-EL2 SPMC (for example, Hafnium) to live activate an SP; It is
+     incompatible with EL3 SPMC.
+
+  This flag is experimental and currently exercised on FVP. Default value is 0.
+
 --------------
 
 *Copyright (c) 2019-2026, Arm Limited. All rights reserved.*

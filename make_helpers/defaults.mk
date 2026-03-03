@@ -464,3 +464,6 @@ SEPARATE_BL2_FIP		:=	0
 # Disable NUMA awareness for per-CPU framework by default. Platforms should
 # enable this feature by setting PLATFORM_NODE_COUNT > 1
 PLATFORM_NODE_COUNT		:= 1
+
+# Support for live activation of SPs managed by S-EL2 SPMC
+SUPPORT_SP_LIVE_ACTIVATION	:= 0

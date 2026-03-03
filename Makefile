@@ -644,6 +644,7 @@ $(eval $(call assert_booleans,\
 	PRESERVE_DSU_PMU_REGS \
 	HOB_LIST \
 	LFA_SUPPORT \
+	SUPPORT_SP_LIVE_ACTIVATION \
 )))
 
 # Numeric_Flags
@@ -916,6 +917,7 @@ $(eval $(call add_defines,\
 	HOB_LIST \
 	HW_CONFIG_BASE \
 	LFA_SUPPORT \
+	SUPPORT_SP_LIVE_ACTIVATION \
 )))
 
 ifeq (${PLATFORM_REPORT_CTX_MEM_USE}, 1)

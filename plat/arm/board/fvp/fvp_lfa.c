@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <plat/common/platform.h>
 #include <services/bl31_lfa.h>
+#include <services/el3_spmd_logical_sp.h>
 #include <services/rmmd_rmm_lfa.h>
 #include <tools_share/firmware_image_package.h>
 
@@ -26,6 +27,13 @@ static plat_lfa_component_info_t fvp_lfa_components[LFA_MAX_DEFINED_COMPONENTS] 
 	[LFA_RMM_COMPONENT]  = {LFA_RMM_COMPONENT, UUID_REALM_MONITOR_MGMT_FIRMWARE,
 				NULL, false},
 #endif /* ENABLE_RME */
+
+#if SUPPORT_SP_LIVE_ACTIVATION
+	[LFA_SP1] = { LFA_SP1, IMAGE_UUID_SECURE_PARTITION_1, NULL, false},
+
+	[LFA_SP2] = { LFA_SP2, IMAGE_UUID_SECURE_PARTITION_2, NULL, false},
+#endif /* SUPPORT_SP_LIVE_ACTIVATION */
+
 };
 
 uint32_t plat_lfa_get_components(plat_lfa_component_info_t **components)
@@ -39,6 +47,14 @@ uint32_t plat_lfa_get_components(plat_lfa_component_info_t **components)
 	fvp_lfa_components[LFA_RMM_COMPONENT].activator = get_rmm_activator();
 #endif /* ENABLE_RME */
 
+#if SUPPORT_SP_LIVE_ACTIVATION
+	fvp_lfa_components[LFA_SP1].activator =
+		get_secure_partition_activator();
+
+	fvp_lfa_components[LFA_SP2].activator =
+		get_secure_partition_activator();
+#endif /* SUPPORT_SP_LIVE_ACTIVATION */
+
 	*components = fvp_lfa_components;
 	return LFA_MAX_DEFINED_COMPONENTS;
 }
@@ -50,6 +66,12 @@ bool is_plat_lfa_activation_pending(uint32_t lfa_component_id)
 		return true;
 	}
 #endif /* ENABLE_RME */
+
+#if SUPPORT_SP_LIVE_ACTIVATION
+	if (lfa_component_id == LFA_SP1 || lfa_component_id == LFA_SP2) {
+		return true;
+	}
+#endif /* SUPPORT_SP_LIVE_ACTIVATION */
 
 	return false;
 }

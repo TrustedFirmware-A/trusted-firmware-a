@@ -27,7 +27,7 @@
  */
 
 /*
- * Portions copyright (c) 2014-2023, Arm Limited and Contributors.
+ * Portions copyright (c) 2014-2026, Arm Limited and Contributors.
  * All rights reserved.
  */
 
@@ -72,5 +72,28 @@ union uuid_helper_t {
 
 /* XXX namespace pollution? */
 typedef struct uuid uuid_t;
+
+static inline void convert_uuid_to_u32_array(const uuid_t uuid, uint32_t out[4])
+{
+	out[0] = ((uint32_t)uuid.time_low[0]) |
+		((uint32_t)uuid.time_low[1] << 8) |
+		((uint32_t)uuid.time_low[2] << 16) |
+		((uint32_t)uuid.time_low[3] << 24);
+
+	out[1] = ((uint32_t)uuid.time_mid[0]) |
+		((uint32_t)uuid.time_mid[1] << 8) |
+		((uint32_t)uuid.time_hi_and_version[0] << 16) |
+		((uint32_t)uuid.time_hi_and_version[1] << 24);
+
+	out[2] = ((uint32_t)uuid.clock_seq_hi_and_reserved) |
+		((uint32_t)uuid.clock_seq_low << 8) |
+		((uint32_t)uuid.node[0] << 16) |
+		((uint32_t)uuid.node[1] << 24);
+
+	out[3] = ((uint32_t)uuid.node[2]) |
+		((uint32_t)uuid.node[3] << 8) |
+		((uint32_t)uuid.node[4] << 16) |
+		((uint32_t)uuid.node[5] << 24);
+}
 
 #endif /* UUID_H */

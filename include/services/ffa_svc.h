@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -21,6 +21,7 @@
 #define FFA_ERROR_INTERRUPTED		-5
 #define FFA_ERROR_DENIED		-6
 #define FFA_ERROR_RETRY			-7
+#define FFA_ERROR_ABORTED		-8
 
 /* The macros below are used to identify FFA calls from the SMC function ID */
 #define FFA_FNUM_MIN_VALUE	U(0x60)
@@ -221,6 +222,8 @@
 #define FFA_PARTITION_VM_DESTROYED	U(1 << 7)
 #define FFA_PARTITION_DIRECT_REQ2_RECV	U(1 << 9)
 #define FFA_PARTITION_DIRECT_REQ2_SEND	U(1 << 10)
+#define FFA_PARTITION_LIVE_ACTIVATION	U(1 << 11)
+#define FFA_PARTITION_CPU_RENDEZVOUS	U(1 << 12)
 
 /*
  * "vm-availability-messages" values.
@@ -400,6 +403,17 @@ struct ffa_partition_info_v1_1 {
 	uint16_t execution_ctx_count;
 	uint32_t properties;
 	uint32_t uuid[4];
+};
+
+/* Extended structure for FF-A v1.3. */
+struct ffa_partition_info_v1_3 {
+	uint16_t ep_id;
+	uint16_t execution_ctx_count;
+	uint32_t properties;
+	uint32_t protocol_uuid[4];
+	uint32_t image_uuid[4];
+	uint32_t ffa_version;
+	uint32_t reserved;
 };
 
 #endif /* FFA_SVC_H */

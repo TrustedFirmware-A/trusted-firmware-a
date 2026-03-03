@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited and Contributors. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef EL3_SPMD_LOGICAL_SP_H
@@ -8,6 +8,7 @@
 #include <common/bl_common.h>
 #include <lib/cassert.h>
 #include <services/ffa_svc.h>
+#include <services/lfa_svc.h>
 
 /*******************************************************************************
  * Structure definition, typedefs & constants for the SPMD Logical Partitions.
@@ -76,6 +77,18 @@ CASSERT(sizeof(struct spmd_lp_desc) == 40, assert_spmd_lp_desc_size_mismatch);
  */
 #define EL3_SPMD_MAX_NUM_LP	U(5)
 
+/*
+ * Maximum number of struct ffa_partition_info_v1_3 descriptors that fit in one
+ * FFA_PARTITION_INFO_GET_REGS_64 response. The ABI lets the callee populate
+ * args3-args17 (15 x 64-bit registers = 120 bytes) in struct ffa_value; each
+ * descriptor consumes sizeof(struct ffa_partition_info_v1_3) = 48 bytes.
+ * Therefore, rounding it means 2 entries per call for FF-A v1.3.
+ */
+#define MAX_INFO_REGS_ENTRIES_PER_CALL	2U
+
+CASSERT(sizeof(struct ffa_partition_info_v1_3) == 48,
+	ffa_partition_info_desc_size_mismatch);
+
 static inline bool is_spmd_lp_id(unsigned int id)
 {
 #if ENABLE_SPMD_LP
@@ -131,7 +144,7 @@ uint64_t spmd_el3_populate_logical_partition_info(void *handle, uint64_t x1,
 
 bool ffa_partition_info_regs_get_part_info(
 	struct ffa_value *args, uint8_t idx,
-	struct ffa_partition_info_v1_1 *partition_info);
+	struct ffa_partition_info_v1_3 *partition_info);
 
 bool spmd_el3_invoke_partition_info_get(
 				const uint32_t target_uuid[4],
@@ -146,6 +159,9 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 				 uint64_t x2,
 				 uint64_t x3,
 				 uint64_t x4,
+				 uint64_t x5,
+				 uint64_t x6,
+				 uint64_t x7,
 				 void *handle,
 				 struct ffa_value *retval);
 
@@ -164,5 +180,19 @@ uintptr_t plat_spmd_logical_sp_smc_handler(unsigned int smc_fid,
 		void *cookie,
 		void *handle,
 		u_register_t flags);
+
+struct lfa_component_ops *get_secure_partition_activator(void);
+
+enum lfa_retc convert_ffa_error_code_to_lfa(int32_t ffa_error_code);
+
+enum lfa_retc spmd_lsp_start_request_sp_live_activation(uint16_t lsp_id,
+						uint16_t sp_id,
+						uintptr_t image_base,
+						uint32_t image_page_count,
+						uintptr_t manifest_base,
+						uint32_t manifest_page_count);
+
+enum lfa_retc spmd_lsp_finish_request_sp_live_activation(uint16_t lsp_id,
+						 uint16_t sp_id);
 
 #endif /* EL3_SPMD_LOGICAL_SP_H */
