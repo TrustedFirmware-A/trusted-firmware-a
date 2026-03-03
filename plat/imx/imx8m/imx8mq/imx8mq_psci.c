@@ -113,7 +113,7 @@ void imx_domain_suspend_finish(const psci_power_state_t *target_state)
 		/* enable the gic cpu interface */
 		plat_gic_cpuif_enable();
 	} else {
-		write_scr_el3(read_scr_el3() & (~0x4));
+		write_scr_el3(read_scr_el3() & (~SCR_FIQ_BIT));
 		isb();
 	}
 }
