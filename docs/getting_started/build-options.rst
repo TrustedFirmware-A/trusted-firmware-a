@@ -68,6 +68,12 @@ Common build options
    While it is explicitly set to 1 when RESET_TO_BL2 is set to 1 it can also be
    true in a 4-world system where RESET_TO_BL2 is 0.
 
+-  ``BL2_INV_DCACHE``: This is an optional build option which control dcache
+   invalidation upon BL2 entry. Some platform cannot handle cache operations
+   during entry as the coherency unit is not yet initialized. This may cause
+   crashing. Leaving this option to '1' (default) will allow the operation.
+   This option is only relevant when BL2 is set to run at EL3.
+
 -  ``BL2_ENABLE_SP_LOAD``: Boolean option to enable loading SP packages from the
    FIP. Automatically enabled if ``SP_LAYOUT_FILE`` is provided.
 
