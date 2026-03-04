@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -45,7 +45,7 @@ extern struct tpm_chip_data tpm_chip_data;
 static void rpi3_bl2_tpm_early_interface_setup(void)
 {
 #if TPM_INTERFACE_FIFO_SPI
-	struct spi_plat *spidev;
+	struct tpm_spi_plat *spidev;
 	const struct tpm_timeout_ops timeout_ops = {
 		.timeout_init_us = timeout_init_us,
 		.timeout_elapsed = timeout_elapsed

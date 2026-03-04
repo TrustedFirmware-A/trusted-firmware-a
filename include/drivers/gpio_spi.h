@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,22 +15,22 @@ struct gpio_spi_config {
 	uint32_t spi_max_clock;
 };
 
-struct spi_priv;
+struct tpm_spi_priv;
 
-struct spi_ops {
-	int (*get_access)(struct spi_priv *context);
-	void (*release_access)(struct spi_priv *context);
-	void (*start)(struct spi_priv *context);
-	void (*stop)(struct spi_priv *context);
-	int (*xfer)(struct spi_priv *context, unsigned int bytes,
-		    const void *dout, void *din);
+struct tpm_spi_ops {
+	int (*get_access)(struct tpm_spi_priv *context);
+	void (*release_access)(struct tpm_spi_priv *context);
+	void (*start)(struct tpm_spi_priv *context);
+	void (*stop)(struct tpm_spi_priv *context);
+	int (*xfer)(struct tpm_spi_priv *context, unsigned int bytes,
+		    const uint8_t *dout, uint8_t *din);
 };
 
-struct spi_plat {
-	struct spi_priv *priv;
-	const struct spi_ops *ops;
+struct tpm_spi_plat {
+	struct tpm_spi_priv *priv;
+	const struct tpm_spi_ops *ops;
 };
 
-struct spi_plat *gpio_spi_init(const struct gpio_spi_config *gpio_spi_config);
+struct tpm_spi_plat *gpio_spi_init(const struct gpio_spi_config *gpio_spi_config);
 
 #endif /* GPIO_SPI_H */

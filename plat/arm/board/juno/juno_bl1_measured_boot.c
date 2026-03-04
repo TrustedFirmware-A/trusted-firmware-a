@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -41,9 +41,9 @@ void bl1_plat_mboot_init(void)
 		 * TODO: with MEASURED_BOOT=1 several algorithms now compiled into Mbed-TLS,
 		 * we ought to query the backend to figure out what algorithms to use.
 		 */
-		TPM_ALG_SHA256,
-		TPM_ALG_SHA384,
-		TPM_ALG_SHA512,
+		EVLOG_TPM_ALG_SHA256,
+		EVLOG_TPM_ALG_SHA384,
+		EVLOG_TPM_ALG_SHA512,
 #endif
 	};
 
