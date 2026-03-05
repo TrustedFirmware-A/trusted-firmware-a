@@ -245,22 +245,14 @@ void handler_sync_exception(cpu_context_t *ctx)
 		return sync_handler(ctx, smc_fid);
 	} else if (exc_class == EC_AARCH64_SYS) {
 		int ret = handle_sysreg_trap(esr_el3, ctx, get_flags(smc_fid, read_scr_el3()));
-
-		/* unhandled trap, UNDEF injection into lower. The support is
-		 * only provided for lower EL in AArch64 mode. */
-		if (ret == TRAP_RET_UNHANDLED) {
-			if (read_spsr_el3() & MASK(SPSR_M)) {
-				ERROR("Trapped an instruction from AArch32 %s mode\n",
-				      get_mode_str((unsigned int)GET_M32(read_spsr_el3())));
-				ERROR("at address 0x%lx, reason 0x%lx\n", read_elr_el3(), read_esr_el3());
-				panic();
-			}
-			inject_undef64(ctx);
-		} else if (ret == TRAP_RET_CONTINUE) {
+		if (ret == TRAP_RET_CONTINUE) {
 			/* advance the PC to continue after the instruction */
 			write_ctx_reg(state, CTX_ELR_EL3, read_ctx_reg(state, CTX_ELR_EL3) + 4);
-		} /* otherwise return to the trapping instruction (repeating it) */
-		return;
+			return;
+		} else if (ret == TRAP_RET_REPEAT) {
+			/* continue at the same instruction */
+			return;
+		}
 	/* If FFH Support then try to handle lower EL EA exceptions. */
 	} else if ((exc_class == EC_IABORT_LOWER_EL || exc_class == EC_DABORT_LOWER_EL)
 		    && ((read_ctx_reg(state, CTX_SCR_EL3) & SCR_EA_BIT) != 0UL)) {
@@ -279,8 +271,30 @@ void handler_sync_exception(cpu_context_t *ctx)
 #endif /* FFH_SUPPORT */
 	}
 
-	/* Synchronous exceptions other than the above are unhandled */
-	report_unhandled_exception();
+	/* unhandled trap, UNDEF injection not provided for lower EL in AArch32 mode. */
+	if (read_spsr_el3() & MASK(SPSR_M)) {
+		ERROR("Trapped an instruction from AArch32 %s mode\n",
+		      get_mode_str((unsigned int)GET_M32(read_spsr_el3())));
+		ERROR("at address 0x%lx, reason 0x%lx\n", read_elr_el3(), esr_el3);
+		report_unhandled_exception();
+	}
+
+	/*
+	 * UNDEF injection by default for AArch64 on any otherwise unhandled
+	 * trap. This is expected to include:
+	 *   0b000111 - SME/SVE instructions and registers
+	 *   0b001001 - PAUTH instructions
+	 *   0b001010 - FEAT_LS64/catch all instructions
+	 *   0b010100 - MSRR/MRSS
+	 *   0b011000 - MSR/MRS
+	 *   0b011001 - SVE instructions and registers
+	 *   0b011101 - SME instructions and illegal ZA execution
+	 *   0b101100 - floating point
+	 *
+	 * Exception syndromes not listed are either unreachable or the erronous
+	 * UNDEF injection is accepted as a better alternative to a panic at EL3.
+	 */
+	inject_undef64(ctx);
 }
 #endif /* __aarch64__ */
 

@@ -407,7 +407,7 @@ void detect_arch_features(unsigned int core_pos)
 				 "PMUv3", 1, ID_AA64DFR0_PMUVER_PMUV3P9);
 
 	tainted |= check_feature(USE_SPINLOCK_CAS, read_feat_lse_id_field(),
-				 "LSE", 2, 2);
+				 "LSE", 2, 3);
 
 	/* v8.1 features */
 	tainted |= check_feature(ENABLE_FEAT_PAN, read_feat_pan_id_field(),
@@ -472,7 +472,10 @@ void detect_arch_features(unsigned int core_pos)
 	 * feature when we intend to diverge from the default behaviour
 	 */
 	tainted |= check_feature(DISABLE_MTPMU, read_feat_mtpmu_id_field(),
-				 "MTPMU", 1, 1);
+				 "MTPMU", 1, 15);
+	if (read_feat_mtpmu_id_field() == 15) {
+		WARN("DISABLE_MTPMU is implemented in hardware, flag is redundant.\n");
+	}
 
 	/* v8.7 features */
 	tainted |= check_feature(ENABLE_FEAT_HCX, read_feat_hcx_id_field(),
