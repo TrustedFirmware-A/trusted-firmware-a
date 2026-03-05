@@ -683,7 +683,7 @@ HiSilicon HiKey and HiKey960 platform ports
 
 HiSilicon Poplar platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Shawn Guo <shawn.guo@linaro.org>
+:|M|: Shawn Guo <shawn.gsc@gmail.com>
 :|G|: `shawnguo2`_
 :|F|: docs/plat/poplar.rst
 :|F|: plat/hisilicon/poplar/
