@@ -11,23 +11,59 @@
  * Performs a compare-and-swap of 0 -> 1. If the lock is already held, uses
  * LDAXR/WFE to efficiently wait.
  */
-static void spin_lock_atomic(volatile uint32_t *dst)
+static uint32_t ldaxr_32(volatile uint32_t *dst)
 {
-	uint32_t src = 1;
-	uint32_t tmp;
+	uint32_t ret;
+
+	__asm__ volatile (
+	"ldaxr	%w[ret], [%[dst]]\n"
+	: [ret] "=r" (ret)
+	: "m" (*dst), [dst] "r" (dst));
+
+	return ret;
+}
+
+static uint32_t stxr_32(uint32_t src, volatile uint32_t *dst)
+{
+	uint32_t ret;
+
+	__asm__ volatile (
+	"stxr	%w[ret], %w[src], [%[dst]]\n"
+	: "+m" (*dst), [ret] "=&r" (ret)
+	: [src] "r" (src), [dst] "r" (dst));
+
+	return ret;
+}
+
+static uint32_t casa_32(uint32_t src, volatile uint32_t *dst)
+{
+	uint32_t ret = 0;
 
 	__asm__ volatile (
 	".arch_extension lse\n"
-	"1:	mov	%w[tmp], wzr\n"
-	"2:	casa	%w[tmp], %w[src], [%[dst]]\n"
-	"	cbz	%w[tmp], 3f\n"
-	"	ldxr	%w[tmp], [%[dst]]\n"
-	"	cbz	%w[tmp], 2b\n"
-	"	wfe\n"
-	"	b	1b\n"
-	"3:\n"
-	: "+m" (*dst), [tmp] "=&r" (tmp), [src] "+r" (src)
-	: [dst] "r" (dst));
+	"	casa	%w[ret], %w[src], [%[dst]]\n"
+	: "+m" (*dst), [ret] "+r" (ret)
+	: [src] "r" (src), [dst] "r" (dst));
+
+	return ret;
+}
+
+/*
+ * Check that the lock isn't held. Tries to compare-and-swap (CAS) it if not.
+ * Uses WFE to efficiently wait.
+ */
+static void spin_lock_atomic(volatile uint32_t *dst)
+{
+	for (; 1; wfe()) {
+		/* 1 means lock is held */
+		if (ldaxr_32(dst) != 0) {
+			continue;
+		}
+
+		if (casa_32(1, dst) == 0) {
+			return;
+		}
+	}
 }
 
 /*
@@ -35,18 +71,18 @@ static void spin_lock_atomic(volatile uint32_t *dst)
  */
 static void spin_lock_excl(volatile uint32_t *dst)
 {
-	uint32_t src = 1;
-	uint32_t tmp;
-
-	__asm__ volatile (
-	"	sevl\n"
-	"1:	wfe\n"
-	"2:	ldaxr	%w[tmp], [%[dst]]\n"
-	"	cbnz	%w[tmp], 1b\n"
-	"	stxr	%w[tmp], %w[src], [%[dst]]\n"
-	"	cbnz	%w[tmp], 2b\n"
-	: "+m" (*dst), [tmp] "=&r" (tmp), [src] "+r" (src)
-	: [dst] "r" (dst));
+	sevl();
+	while (1) {
+		wfe();
+spinlock_retry:
+		if (ldaxr_32(dst) == 0) {
+			if (stxr_32(1, dst) == 0) {
+				return;
+			} else {
+				goto spinlock_retry;
+			}
+		}
+	}
 }
 
 void spin_lock(spinlock_t *lock)
@@ -60,19 +96,23 @@ void spin_lock(spinlock_t *lock)
 	}
 }
 
-/*
- * Use store-release to unconditionally clear the spinlock variable. Store
- * operation generates an event to all cores waiting in WFE when address is
- * monitored by the global monitor.
- */
 void spin_unlock(spinlock_t *lock)
 {
 	volatile uint32_t *dst = &(lock->lock);
 
+	/*
+	 * Plain store operations generate an event to other cores waiting in
+	 * WFE when address is monitored by the global monitor.
+	 */
 	__asm__ volatile (
 	"stlr	wzr, [%[dst]]"
 	: "=m" (dst)
 	: [dst] "r" (dst));
+
+	/* atomics don't generate events so wake others manually */
+	if (is_feat_lse_supported()) {
+		sev();
+	}
 }
 
 static bool spin_trylock_atomic(volatile uint32_t *dst)
@@ -93,31 +133,18 @@ static bool spin_trylock_atomic(volatile uint32_t *dst)
 
 static bool spin_trylock_excl(volatile uint32_t *dst)
 {
-	uint32_t src = 1;
-	uint32_t ret;
-
 	/*
 	 * Loop until we either get the lock or are certain that we don't have
 	 * it. The exclusive store can fail due to racing and not because we
 	 * don't hold the lock.
 	 */
 	while (1) {
-		__asm__ volatile (
-		"ldaxr	%w[ret], [%[dst]]\n"
-		: [ret] "=r" (ret)
-		: "m" (*dst), [dst] "r" (dst));
-
 		/* 1 means lock is held */
-		if (ret != 0) {
+		if (ldaxr_32(dst) != 0) {
 			return false;
 		}
 
-		__asm__ volatile (
-		"stxr	%w[ret], %w[src], [%[dst]]\n"
-		: "+m" (*dst), [ret] "=&r" (ret)
-		: [src] "r" (src), [dst] "r" (dst));
-
-		if (ret == 0) {
+		if (stxr_32(1, dst) == 0) {
 			return true;
 		}
 	}
