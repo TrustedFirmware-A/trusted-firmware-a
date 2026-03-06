@@ -25,6 +25,9 @@ static const uint32_t gpio_ctrl_offset[GPIO_CTRL_REG_NUM] = {
 	 0xc, 0x10, 0x14, 0x18, 0x1c, 0x40, 0x54, 0x58
 };
 
+/* for GIC context save/restore if NIC lost power */
+struct plat_gic_ctx imx_gicv3_ctx;
+
 bool has_netc_irq;
 static bool has_wakeup_irq;
 static bool gpio_wakeup;
@@ -198,7 +201,7 @@ void imx_set_sys_wakeup(uint32_t last_core, bool pdn)
 void imx9_sys_sleep_prepare(uint32_t core_id)
 {
 	/* Save the gic context */
-	gic_save();
+	plat_gic_save(core_id, &imx_gicv3_ctx);
 
 	/* Save contex of gpios in wakeupmix */
 	for (uint32_t i = 0U; i < GPIO_NUM; i++) {
@@ -221,7 +224,7 @@ void imx9_sys_sleep_prepare(uint32_t core_id)
 void imx9_sys_sleep_unprepare(uint32_t core_id)
 {
 	/* Restore the gic context */
-	gic_resume();
+	plat_gic_restore(core_id, &imx_gicv3_ctx);
 
 #if HAS_XSPI_SUPPORT
 	xspi_restore();
