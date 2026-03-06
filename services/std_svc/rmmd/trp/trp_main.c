@@ -245,6 +245,7 @@ void trp_rmi_handler(unsigned long fid,
 		     unsigned long long x1, unsigned long long x2,
 		     unsigned long long x3, unsigned long long x4,
 		     unsigned long long x5, unsigned long long x6,
+		     unsigned long long x7,
 		     struct trp_smc_result *smc_ret)
 {
 	/* Not used in the current implementation */
@@ -253,6 +254,7 @@ void trp_rmi_handler(unsigned long fid,
 	(void)x4;
 	(void)x5;
 	(void)x6;
+	(void)x7;
 
 	switch (fid) {
 	case RMI_RMM_REQ_VERSION:

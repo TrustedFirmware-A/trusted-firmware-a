@@ -28,8 +28,15 @@ static int lfa_rmm_activate(struct lfa_component_status *activation,
 		INFO("LFA_ACTIVATE: Last CPU proceed with activation\n");
 
 		cm_el2_sysregs_context_save(NON_SECURE);
+#if RMM_V1_COMPAT
+		cm_el2_sysregs_context_save_gic(NON_SECURE);
+#endif
+
 		ret = rmmd_primary_activate();
 		cm_el2_sysregs_context_restore(NON_SECURE);
+#if RMM_V1_COMPAT
+		cm_el2_sysregs_context_restore_gic(NON_SECURE);
+#endif
 
 		cm_set_next_eret_context(NON_SECURE);
 
@@ -53,9 +60,14 @@ static int lfa_rmm_activate(struct lfa_component_status *activation,
 
 		if (ret == LFA_SUCCESS) {
 			cm_el2_sysregs_context_save(NON_SECURE);
+#if RMM_V1_COMPAT
+			cm_el2_sysregs_context_save_gic(NON_SECURE);
+#endif
 			ret = rmmd_secondary_activate();
 			cm_el2_sysregs_context_restore(NON_SECURE);
-
+#if RMM_V1_COMPAT
+			cm_el2_sysregs_context_restore_gic(NON_SECURE);
+#endif
 			cm_set_next_eret_context(NON_SECURE);
 		}
 	}

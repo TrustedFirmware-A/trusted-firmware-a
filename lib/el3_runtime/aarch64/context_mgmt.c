@@ -1424,8 +1424,10 @@ static void el2_sysregs_context_restore_mpam(el2_sysregs_t *ctx)
  * SCR_EL3.NS = 1 before accessing this register.
  * ---------------------------------------------------------------------------
  */
-static void el2_sysregs_context_save_gic(el2_sysregs_t *ctx, uint32_t security_state)
+void cm_el2_sysregs_context_save_gic(uint32_t security_state)
 {
+	el2_sysregs_t *ctx = get_el2_sysregs_ctx(cm_get_context(security_state));
+
 	u_register_t scr_el3 = read_scr_el3();
 
 #if defined(SPD_spmd) && SPMD_SPM_AT_SEL2
@@ -1458,8 +1460,10 @@ static void el2_sysregs_context_save_gic(el2_sysregs_t *ctx, uint32_t security_s
 	}
 }
 
-static void el2_sysregs_context_restore_gic(el2_sysregs_t *ctx, uint32_t security_state)
+void cm_el2_sysregs_context_restore_gic(uint32_t security_state)
 {
+	el2_sysregs_t *ctx = get_el2_sysregs_ctx(cm_get_context(security_state));
+
 	u_register_t scr_el3 = read_scr_el3();
 
 #if defined(SPD_spmd) && SPMD_SPM_AT_SEL2
@@ -1581,7 +1585,6 @@ void cm_el2_sysregs_context_save(uint32_t security_state)
 	el2_sysregs_ctx = get_el2_sysregs_ctx(ctx);
 
 	el2_sysregs_context_save_common(el2_sysregs_ctx);
-	el2_sysregs_context_save_gic(el2_sysregs_ctx, security_state);
 
 	if (is_feat_mte2_supported()) {
 		write_el2_ctx_mte2(el2_sysregs_ctx, tfsr_el2, read_tfsr_el2());
@@ -1680,7 +1683,6 @@ void cm_el2_sysregs_context_restore(uint32_t security_state)
 	el2_sysregs_ctx = get_el2_sysregs_ctx(ctx);
 
 	el2_sysregs_context_restore_common(el2_sysregs_ctx);
-	el2_sysregs_context_restore_gic(el2_sysregs_ctx, security_state);
 
 	if (is_feat_mte2_supported()) {
 		write_tfsr_el2(read_el2_ctx_mte2(el2_sysregs_ctx, tfsr_el2));
@@ -1787,6 +1789,7 @@ void cm_prepare_el3_exit_ns(void)
 
 	/* Restore EL2 sysreg contexts */
 	cm_el2_sysregs_context_restore(NON_SECURE);
+	cm_el2_sysregs_context_restore_gic(NON_SECURE);
 	cm_set_next_eret_context(NON_SECURE);
 #else
 	cm_prepare_el3_exit(NON_SECURE);

@@ -1574,6 +1574,10 @@ Common build options
    contexts for Realm security state and only one encryption context for the
    rest of the security states. Default value is 0.
 
+-  ``RMM_V1_COMPAT``: Boolean flag to enable support for RMM v1.x compatibility
+   mode. When set to 0, TF-A will use the RMM-EL3 interface version required
+   for RMMv2.0. Default value is 1.
+
 -  ``RMMD_ENABLE_EL3_TOKEN_SIGN``: Numeric value to enable support for singing
    realm attestation token signing requests in EL3. This flag can take the
    values 0 and 1. The default value is ``0``. When set to ``1``, this option

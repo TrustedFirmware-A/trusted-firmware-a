@@ -52,7 +52,7 @@ are explained below:
   - ``RES0``: Bit 31 of the version number is reserved 0 as to maintain
     consistency with the versioning schemes used in other parts of RMM.
 
-This document specifies the 0.8 version of Boot Interface ABI and RMM-EL3
+This document specifies the 2.0 version of Boot Interface ABI and RMM-EL3
 services specification and the 0.5 version of the Boot Manifest.
 
 .. _rmm_el3_boot_interface:
@@ -1042,46 +1042,109 @@ a failure. The errors are ordered by condition check.
    ``E_RMM_NOMEM``,"size of region is larger than the available memory"
    ``E_RMM_OK``,No errors detected
 
-RMM-EL3 world switch register save restore convention
-_____________________________________________________
+EL3–RMM Register Context Management Contract
+_____________________________________________
 
-As part of NS world switch, EL3 is expected to maintain a register context
-specific to each world and will save and restore the registers
-appropriately. This section captures the contract between EL3 and RMM on the
-register set to be saved and restored.
+As part of the Non-secure (NS) <-> Realm world switch, EL3 shall maintain a
+separate register context for each world. During a world transition, EL3
+shall save and restore the required register state to ensure correct
+execution, isolation, and security.
 
-EL3 must maintain a separate register context for the following:
+Register Context Managed by EL3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   #. General purpose registers (x0-x30) and ``sp_el0``, ``sp_el2`` stack pointers
-   #. EL2 system register context for all enabled features by EL3. These include system registers with the ``_EL2`` prefix. The EL2 physical and virtual timer registers must not be included in this.
+EL3 shall maintain a distinct register context per world and shall save
+and restore the following registers during a world switch.
 
-As part of SMC forwarding between the NS world and Realm world, EL3 allows x0-x7 to be passed
-as arguments to Realm and x0-x4 to be used for return arguments back to Non Secure.
-As per SMCCCv1.2, x4 must be preserved if not being used as return argument by the SMC function
-and it is the responsibility of RMM to preserve this or use this as a return argument.
-EL3 will always copy x0-x4 from Realm context to NS Context.
+**General-Purpose and Stack Registers**
 
-EL3 must save and restore the following as part of world switch:
-   #. EL2 system registers with the exception of ``zcr_el2`` register.
-   #. PAuth key registers (APIA, APIB, APDA, APDB, APGA).
+* General-purpose registers: ``x0–x30``
+* Stack pointers:
+  * ``SP_EL0``
+  * ``SP_EL2``
 
-EL3 will not save some registers as mentioned in the below list. It is the
-responsibility of RMM to ensure that these are appropriately saved if the
-Realm World makes use of them:
+**EL2 System Registers**
 
-   #. FP/SIMD registers
-   #. SVE registers
-   #. SME registers
-   #. EL1/0 registers with the exception of PAuth key registers as mentioned above.
-   #. zcr_el2 register.
+EL3 shall save and restore all EL2 system registers corresponding to
+features enabled by EL3 (that is, registers with the ``_EL2``
+architectural suffix), excluding the registers listed below (see
+:ref:`el2_registers_excluded`).
 
-It is essential that EL3 honors this contract to maintain the Confidentiality and integrity
-of the Realm world.
+**Pointer Authentication Registers**
 
-SMCCC v1.3 allows NS world to specify whether SVE context is in use. In this
-case, RMM could choose to not save the incoming SVE context but must ensure
-to clear SVE registers if they have been used in Realm World. The same applies
-to SME registers.
+EL3 shall save and restore the following Pointer Authentication (PAuth)
+key registers:
+
+* ``APIA``
+* ``APIB``
+* ``APDA``
+* ``APDB``
+* ``APGA``
+
+.. _el2_registers_excluded:
+
+Registers Not Managed by EL3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EL3 shall not save or restore the registers listed below. If the Realm
+world makes use of any of the registers below, the Realm Management
+Monitor (RMM) is responsible for ensuring their correct preservation.
+
+**EL2 Registers Excluded from EL3 Management**
+
+* EL2 physical timer registers
+* EL2 virtual timer registers
+* ``ZCR_EL2``
+* ``ICC_SRE_EL2``  if interface version is >= 1.0
+* ``ICH_HCR_EL2``  if interface version is >= 1.0
+* ``ICH_VMCR_EL2`` if interface version is >= 1.0
+
+**Additional Registers Outside EL3 Scope**
+
+* FP/SIMD registers
+* SVE registers
+* SME registers
+* EL1 and EL0 system registers (except the PAuth key registers listed
+  above)
+
+SMCCC Compliance
+~~~~~~~~~~~~~~~~~
+
+During SMC forwarding between the Non-secure world and the Realm world:
+
+* EL3 shall forward registers ``x0–x7`` from the Non-secure context to
+  the Realm context as SMC input arguments.
+* EL3 populates return values in registers ``x0–x7`` on return back to Non-Secure.
+
+In accordance with SMCCC v1.2:
+
+* Register ``x4-x7`` shall be preserved if it is not used to return a
+  result.
+* The responsibility for preserving ``x4-x7``, when required, lies with
+  RMM.
+
+In accordance with SMCCC v1.3:
+
+* The Non-secure world may specify whether SVE context is in use.
+* If the SVE context is marked as not in use by the Non-secure world, RMM may choose not to
+  preserve the incoming SVE state,
+  even if SVE registers are used during Realm execution.
+  Before returning to the Non-secure world, the SVE register state is cleared in this case
+* The same requirements apply to SME registers.
+
+Note:
+
+Communication between NS world and RMM as defined by the RMM specification expects
+a maximum of registers x0–x7 for input arguments and returns results in x0–x7.
+If a future RMM specification requires extended input or output beyond this register set,
+this section of EL3–RMM contract will be updated.
+
+Security Requirement
+~~~~~~~~~~~~~~~~~~~~
+
+EL3 shall adhere to this contract to preserve the confidentiality and
+integrity of the Realm world during world transitions. Non-compliance
+may cause state corruption or cross-world information leakage.
 
 Types
 _____

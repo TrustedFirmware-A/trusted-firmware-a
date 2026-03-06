@@ -291,6 +291,7 @@ typedef struct rp_ide_key_info {
  * Increase this whenever the semantics of the boot arguments change making it
  * backwards incompatible.
  */
+#if RMM_V1_COMPAT
 #define RMM_EL3_IFC_VERSION_MAJOR	(U(0))
 
 /*
@@ -299,9 +300,19 @@ typedef struct rp_ide_key_info {
  * breaking compatibility.
  */
 #define RMM_EL3_IFC_VERSION_MINOR	(U(8))
+#else
+#define RMM_EL3_IFC_VERSION_MAJOR	(U(2))
+
+/*
+ * The minor version number of the RMM Boot Interface implementation.
+ * Increase this when a bug is fixed, or a feature is added without
+ * breaking compatibility.
+ */
+#define RMM_EL3_IFC_VERSION_MINOR	(U(0))
+#endif /* RMM_V1_COMPAT */
 
 #define RMM_EL3_INTERFACE_VERSION				\
-	(((RMM_EL3_IFC_VERSION_MAJOR << 16) & 0x7FFFF) |	\
+	(((RMM_EL3_IFC_VERSION_MAJOR << U(16)) & U(0x7FFFF)) |	\
 		RMM_EL3_IFC_VERSION_MINOR)
 
 #define RMM_EL3_IFC_VERSION_GET_MAJOR(_version) (((_version) >> 16) \
