@@ -17,7 +17,7 @@ Arm FVPs without shifted affinities, and that do not support threaded CPU cores
 (64-bit host machine only).
 
 .. note::
-   The FVP models used are version 11.28 Build 23.
+   The FVP models used are version 11.31 Build 28.
 
 -  ``FVP_Base_AEMvA-AEMvA``
 -  ``FVP_Base_RevC-2xAEMvA``
