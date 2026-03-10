@@ -40,8 +40,11 @@
 
 extern uint64_t mmu_cfg_params[MMU_CFG_PARAM_MAX];
 
-/* Determine the physical address space encoded in the 'attr' parameter. */
-uint32_t xlat_arch_get_pas(uint32_t attr);
+/*
+ * Determine the physical address space encoded in the 'attr' parameter for the
+ * context 'ctx'.
+ */
+uint32_t xlat_arch_get_pas(const xlat_ctx_t *ctx, uint32_t attr);
 
 /*
  * Return the execute-never mask that will prevent instruction fetch at the

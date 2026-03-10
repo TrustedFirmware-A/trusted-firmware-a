@@ -129,7 +129,7 @@ uint64_t xlat_desc(const xlat_ctx_t *ctx, uint32_t attr,
 	desc |= LOWER_ATTRS(ACCESS_FLAG);
 
 	/* Determine the physical address space this region belongs to. */
-	desc |= xlat_arch_get_pas(attr);
+	desc |= xlat_arch_get_pas(ctx, attr);
 
 	/*
 	 * Deduce other fields of the descriptor based on the MT_RW memory

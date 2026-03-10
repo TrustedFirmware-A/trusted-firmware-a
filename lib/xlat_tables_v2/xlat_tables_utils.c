@@ -100,18 +100,27 @@ static void xlat_desc_print(const xlat_ctx_t *ctx, uint64_t desc)
 	}
 
 #if ENABLE_RME
+	/*
+	 * When RME is enabled xlat library do not support any translation
+	 * regimes other than EL3 stage1.
+	 */
+	assert(ctx->xlat_regime == EL3_REGIME);
+
 	switch (desc & LOWER_ATTRS(EL3_S1_NSE | NS)) {
-	case 0ULL:
-		printf("-S");
-		break;
 	case LOWER_ATTRS(NS):
 		printf("-NS");
 		break;
 	case LOWER_ATTRS(EL3_S1_NSE):
 		printf("-RT");
 		break;
-	default: /* LOWER_ATTRS(EL3_S1_NSE | NS) */
+	case LOWER_ATTRS(EL3_S1_NSE | NS):
 		printf("-RL");
+		break;
+	default:
+		/* Secure PAS is supported only when SEL2 is implemented */
+		assert(is_feat_sel2_supported());
+		printf("-S");
+		break;
 	}
 #else
 	printf(((LOWER_ATTRS(NS) & desc) != 0ULL) ? "-NS" : "-S");
@@ -422,60 +431,6 @@ static int xlat_get_mem_attributes_internal(const xlat_ctx_t *ctx,
 			*attributes |= MT_USER;
 	}
 
-	uint64_t ns_bit = (desc >> NS_SHIFT) & 1ULL;
-
-#if ENABLE_RME
-	uint64_t nse_bit = (desc >> NSE_SHIFT) & 1ULL;
-	uint32_t sec_state = (uint32_t)(ns_bit | (nse_bit << 1ULL));
-
-/*
- * =========================================================
- *  NSE    NS  |  Output PA space
- * =========================================================
- *    0    0   |  Secure (if S-EL2 is present, else invalid)
- *    0    1   |  Non-secure
- *    1    0   |  Root
- *    1    1   |  Realm
- *==========================================================
- */
-	switch (sec_state) {
-	case 0U:
-		/*
-		 * We expect to get Secure mapping on an RME system only if
-		 * S-EL2 is enabled.
-		 * Hence panic() if we hit the case without EEL2 being enabled.
-		 */
-		if ((read_scr_el3() & SCR_EEL2_BIT) == 0ULL) {
-			ERROR("A secure descriptor is not supported when"
-			      "FEAT_RME is implemented and FEAT_SEL2 is"
-			      "not enabled\n");
-			panic();
-		} else {
-			*attributes |= MT_SECURE;
-		}
-		break;
-	case 1U:
-		*attributes |= MT_NS;
-		break;
-	case 2U:
-		*attributes |= MT_ROOT;
-		break;
-	case 3U:
-		*attributes |= MT_REALM;
-		break;
-	default:
-		/* unreachable code */
-		assert(false);
-		break;
-	}
-#else /* !ENABLE_RME */
-	if (ns_bit == 1ULL) {
-		*attributes |= MT_NS;
-	} else {
-		*attributes |= MT_SECURE;
-	}
-#endif /* ENABLE_RME */
-
 	uint64_t xn_mask = xlat_arch_regime_get_xn_desc(ctx->xlat_regime);
 
 	if ((desc & xn_mask) == xn_mask) {
@@ -495,7 +450,11 @@ int xlat_get_mem_attributes_ctx(const xlat_ctx_t *ctx, uintptr_t base_va,
 				NULL, NULL, table_level);
 }
 
-
+/*
+ * From argument 'attr', only flags MT_RO/MT_RW, MT_EXECUTE/MT_EXECUTE_NEVER and
+ * MT_USER/MT_PRIVILEGED are taken into account. Any other flags like memory
+ * type, memory security state information are ignored.
+ */
 int xlat_change_mem_attributes_ctx(const xlat_ctx_t *ctx, uintptr_t base_va,
 				   size_t size, uint32_t attr)
 {
@@ -593,17 +552,14 @@ int xlat_change_mem_attributes_ctx(const xlat_ctx_t *ctx, uintptr_t base_va,
 
 		uint32_t old_attr = 0U, new_attr;
 		uint64_t *entry = NULL;
+		uint64_t new_desc, old_desc;
 		unsigned int level = 0U;
 		unsigned long long addr_pa = 0ULL;
 
 		(void) xlat_get_mem_attributes_internal(ctx, base_va, &old_attr,
 					    &entry, &addr_pa, &level);
 
-		/*
-		 * From attr, only MT_RO/MT_RW, MT_EXECUTE/MT_EXECUTE_NEVER and
-		 * MT_USER/MT_PRIVILEGED are taken into account. Any other
-		 * information is ignored.
-		 */
+		old_desc = *entry;
 
 		/* Clean the old attributes so that they can be rebuilt. */
 		new_attr = old_attr & ~(MT_RW | MT_EXECUTE_NEVER | MT_USER);
@@ -613,6 +569,19 @@ int xlat_change_mem_attributes_ctx(const xlat_ctx_t *ctx, uintptr_t base_va,
 		 * isn't allowed to change.
 		 */
 		new_attr |= attr & (MT_RW | MT_EXECUTE_NEVER | MT_USER);
+
+		/* Create new descriptor */
+		new_desc = xlat_desc(ctx, new_attr, addr_pa, level);
+
+		/* Retain NS bit */
+		new_desc |= old_desc & LOWER_ATTRS(NS);
+
+#if ENABLE_RME
+		/* Retain NSE bit */
+		if (ctx->xlat_regime == EL3_REGIME) {
+			new_desc |= old_desc & LOWER_ATTRS(EL3_S1_NSE);
+		}
+#endif
 
 		/*
 		 * The break-before-make sequence requires writing an invalid
@@ -630,7 +599,8 @@ int xlat_change_mem_attributes_ctx(const xlat_ctx_t *ctx, uintptr_t base_va,
 		xlat_arch_tlbi_va_sync();
 
 		/* Write new descriptor */
-		*entry = xlat_desc(ctx, new_attr, addr_pa, level);
+		*entry = new_desc;
+
 #if !HW_ASSISTED_COHERENCY
 		dccvac((uintptr_t)entry);
 #endif
