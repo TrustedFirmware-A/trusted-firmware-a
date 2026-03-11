@@ -18,10 +18,16 @@
 #define CROS_OEM_TPM_AUTH_PK_MAX_LEN 128
 #define CROS_OEM_HUK_LEN 32
 #define CROS_OEM_ROT_LEN 32
+#define CROS_OEM_GCK_LEN 32
+#define CROS_OEM_DDK_LEN 32
+#define CROS_OEM_STABLE_HUK_LEN 32
 
 static uint8_t cros_oem_tpm_auth_pk_buffer[CROS_OEM_TPM_AUTH_PK_MAX_LEN];
 static uint8_t cros_oem_huk_buffer[CROS_OEM_HUK_LEN];
 static uint8_t cros_oem_rot_len_buffer[CROS_OEM_ROT_LEN];
+static uint8_t cros_oem_gck_buffer[CROS_OEM_GCK_LEN];
+static uint8_t cros_oem_ddk_buffer[CROS_OEM_DDK_LEN];
+static uint8_t cros_oem_stable_huk_buffer[CROS_OEM_STABLE_HUK_LEN];
 
 struct cros_oem_data cros_oem_tpm_auth_pk = {
 	.buffer = cros_oem_tpm_auth_pk_buffer,
@@ -36,6 +42,21 @@ struct cros_oem_data cros_oem_huk = {
 struct cros_oem_data cros_oem_rot = {
 	.buffer = cros_oem_rot_len_buffer,
 	.max_length = sizeof(cros_oem_rot_len_buffer),
+};
+
+struct cros_oem_data cros_oem_gck = {
+	.buffer = cros_oem_gck_buffer,
+	.max_length = sizeof(cros_oem_gck_buffer),
+};
+
+struct cros_oem_data cros_oem_ddk = {
+	.buffer = cros_oem_ddk_buffer,
+	.max_length = sizeof(cros_oem_ddk_buffer),
+};
+
+struct cros_oem_data cros_oem_stable_huk = {
+	.buffer = cros_oem_stable_huk_buffer,
+	.max_length = sizeof(cros_oem_stable_huk_buffer),
 };
 
 static uintptr_t cros_write_data(struct cros_oem_data *data,
@@ -87,6 +108,12 @@ static uintptr_t cros_oem_svc_smc_handler(uint32_t smc_fid, u_register_t x1,
 		return cros_write_data(&cros_oem_huk, x1, x2, handle);
 	case CROS_OEM_SMC_DRM_SET_ROOT_OF_TRUST_FUNC_ID:
 		return cros_write_data(&cros_oem_rot, x1, x2, handle);
+	case CROS_OEM_SMC_DRM_SET_GSC_COUNTER_KEY_FUNC_ID:
+		return cros_write_data(&cros_oem_gck, x1, x2, handle);
+	case CROS_OEM_SMC_DRM_SET_DRM_DEVICE_KEY_FUNC_ID:
+		return cros_write_data(&cros_oem_ddk, x1, x2, handle);
+	case CROS_OEM_SMC_DRM_SET_STABLE_HARDWARE_UNIQUE_KEY_FUNC_ID:
+		return cros_write_data(&cros_oem_stable_huk, x1, x2, handle);
 	default:
 		WARN("Unimplemented OEM Call: 0x%x\n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);
