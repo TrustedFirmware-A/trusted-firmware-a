@@ -253,10 +253,10 @@ void handler_sync_exception(cpu_context_t *ctx)
 			/* continue at the same instruction */
 			return;
 		}
+#if FFH_SUPPORT
 	/* If FFH Support then try to handle lower EL EA exceptions. */
 	} else if ((exc_class == EC_IABORT_LOWER_EL || exc_class == EC_DABORT_LOWER_EL)
 		    && ((read_ctx_reg(state, CTX_SCR_EL3) & SCR_EA_BIT) != 0UL)) {
-#if FFH_SUPPORT
 		/*
 		 * Check for Uncontainable error type. If so, route to the
 		 * platform fatal error handler rather than the generic EA one.
