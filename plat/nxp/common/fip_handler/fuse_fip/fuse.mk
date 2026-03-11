@@ -1,6 +1,6 @@
 #
 # Copyright 2018-2020 NXP
-# Copyright (c) 2023-2024, Arm Limited. All rights reserved.
+# Copyright (c) 2023-2026, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -55,8 +55,7 @@ endif
 
 ifeq (${TRUSTED_BOARD_BOOT},1)
 
-ifeq (${MBEDTLS_DIR},)
-else
+ifeq (${NXP_TBBR_USE_X509},1)
   $(error Error: Trusted Board Boot with X509 certificates not supported with FUSE_PROG build option)
 endif
 

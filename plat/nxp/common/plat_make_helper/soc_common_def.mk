@@ -5,6 +5,8 @@
 
 # Adding SoC specific defines
 
+NXP_TBBR_USE_X509		?= 0
+
 ifneq (${CACHE_LINE},)
 $(eval $(call add_define_val,PLATFORM_CACHE_LINE_SHIFT,${CACHE_LINE}))
 $(eval CACHE_WRITEBACK_GRANULE=$(shell echo $$((1 << $(CACHE_LINE)))))
