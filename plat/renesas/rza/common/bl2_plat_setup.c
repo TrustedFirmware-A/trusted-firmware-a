@@ -48,7 +48,7 @@ static void software_delay(uint32_t delay)
 /* Check if a debugger is being connected for debugging. If yes, give it a while before halting
  * the core.
  */
-void handle_debug_mode(void)
+static void handle_debug_mode(void)
 {
 	/* check DEBUGEN */
 	uint32_t val = mmio_read_32(SYS_REG_LSI_MODE);
