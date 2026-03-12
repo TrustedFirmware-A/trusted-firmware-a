@@ -18,6 +18,7 @@ BL31_SOURCES		+=	common/desc_image_load.c			\
 				plat/common/plat_psci_common.c			\
 				plat/imx/imx9/common/aarch64/plat_helpers.S		\
 				plat/imx/common/imx_common.c			\
+				plat/imx/common/imx_interrupt_mgmt.c		\
 				plat/imx/common/plat_imx8_gic.c			\
 				plat/imx/common/lpuart_console.S		\
 				plat/imx/imx9/common/plat_topology.c		\
