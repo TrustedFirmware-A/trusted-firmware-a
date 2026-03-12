@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 NXP
+ * Copyright 2019, 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,10 +12,14 @@
 #include <common/build_message.h>
 #include <common/debug.h>
 #include <common/runtime_svc.h>
-#include <platform_def.h>
-#include <imx_sip_svc.h>
 #include <lib/el3_runtime/context_mgmt.h>
+#include <lib/el3_runtime/cpu_data.h>
 #include <lib/mmio.h>
+#include <lib/psci/psci.h>
+
+#include <imx_intercore_svc.h>
+#include <imx_sip_svc.h>
+#include <platform_def.h>
 #include <sci/sci.h>
 
 #if defined(PLAT_imx8mn) || defined(PLAT_imx8mp)
@@ -349,5 +353,28 @@ int imx_hifi_xrdc(uint32_t smc_fid)
 	xrdc_apply_hifi_config();
 
 	return 0;
+}
+#endif
+
+#if defined(PLAT_imx93)
+uint64_t imx_sip_cpuoff_handler(uint32_t smc_fid,
+			u_register_t x1,
+			u_register_t x2,
+			u_register_t x3,
+			u_register_t x4)
+{
+	uint32_t cpu_id = x1;
+	int ret;
+
+	if (psci_get_aff_by_idx(cpu_id) == AFF_STATE_ON) {
+		ret = trigger_intercore_cpuoff_svc(cpu_id);
+		if (ret) {
+			return SMC_UNK;
+		}
+
+		return SMC_OK;
+	}
+
+	return SMC_UNK;
 }
 #endif

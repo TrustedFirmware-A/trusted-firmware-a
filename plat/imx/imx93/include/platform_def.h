@@ -120,4 +120,7 @@
 
 #define COUNTER_FREQUENCY		24000000
 
+/*Use SGI-8 as Inter-Core Service IRQ */
+#define INTERCORE_SVC_IRQ		0x8
+
 #endif /* platform_def.h */

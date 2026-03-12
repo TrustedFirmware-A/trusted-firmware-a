@@ -50,6 +50,8 @@
 
 #define IMX_SIP_MISC_SET_TEMP		0xC200000C
 
+#define IMX_SIP_CPU_OFF			0xC2000012
+
 #define IMX_SIP_AARCH32			0xC20000FD
 
 int imx_kernel_entry_handler(uint32_t smc_fid, u_register_t x1,
@@ -126,4 +128,10 @@ int dram_dvfs_handler(uint32_t smc_fid, void *handle,
 int imx_src_handler(uint32_t smc_fid, u_register_t x1,
 		    u_register_t x2, u_register_t x3, void *handle);
 #endif
+
+#if defined(PLAT_imx93)
+uint64_t imx_sip_cpuoff_handler(uint32_t smc_fid, u_register_t x1,
+	u_register_t x2, u_register_t x3, u_register_t x4);
+#endif
+
 #endif /* __IMX_SIP_SVC_H__ */

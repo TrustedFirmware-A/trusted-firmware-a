@@ -41,19 +41,16 @@ static uint64_t imx_el3_interrupt_handler(uint32_t id, uint32_t flags,
 		WARN("No pending interrupt\n");
 		return 0U;
 	}
-	intr_id = plat_ic_acknowledge_interrupt();
 
-	INFO("Interrupt recvd is %d\n", intr_id);
+	intr_id = plat_ic_acknowledge_interrupt();
+	/* Mark this interrupt as complete firstly as CPU Off will not return from handler */
+	plat_ic_end_of_interrupt(intr_id);
+	isb();
 
 	handler = type_el3_interrupt_table[intr_id];
 	if (handler != NULL) {
 		handler(intr_id, flags, handle, cookie);
 	}
-
-	/*
-	 * Mark this interrupt as complete to avoid a interrupt storm.
-	 */
-	plat_ic_end_of_interrupt(intr_id);
 
 	return 0U;
 }
