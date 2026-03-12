@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2026, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -74,16 +75,14 @@ bool lfa_holding_start(void)
  * by the first CPU in `lfa_holding_start()` and only released by the last
  * CPU through `lfa_holding_release()`. This ensures that no two CPUs enter
  * the critical section at the same time during the wait phase. Once the
- * last CPU completes activation, each CPU decrements the activation count
- * and returns the final activation status,  which was set by the last CPU
- * to complete the activation process.
+ * last CPU completes activation, each CPU returns the final activation status,
+ * which was set by the last CPU to complete the activation process.
  *
  * @return Activation status set by the last CPU.
  */
 enum lfa_retc lfa_holding_wait(void)
 {
 	spin_lock(&holding_lock);
-	activation_count -= 1U;
 	spin_unlock(&holding_lock);
 	return activation_status;
 }
