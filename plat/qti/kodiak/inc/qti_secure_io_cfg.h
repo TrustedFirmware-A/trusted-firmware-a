@@ -21,7 +21,9 @@
 #define APPS_SMMU_MMU2QSS_AND_SAFE_WAIT_CNTR	0x15002670
 
 static const uintptr_t qti_secure_io_allowed_regs[] = {
+#if DEBUG
 	EUD_MODE_MANAGER2_EN,
+#endif
 	APPS_SMMU_TBU_PWR_STATUS,
 	APPS_SMMU_CUSTOM_CFG,
 	APPS_SMMU_STATS_SYNC_INV_TBU_ACK,
