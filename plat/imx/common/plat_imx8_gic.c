@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <assert.h>
+
 #include <platform_def.h>
 
 #include <common/bl_common.h>
@@ -15,6 +17,8 @@
 #include <plat/common/platform.h>
 
 #include <plat_imx8.h>
+
+#include "../drivers/arm/gic/v3/gicv3_private.h"
 
 #ifdef SM_AP_SEMA_ADDR
 extern void request_sm_ap_sema(void);
@@ -140,4 +144,80 @@ void plat_gic_restore(unsigned int proc_num, struct plat_gic_ctx *ctx)
 	gicv3_distif_init_restore(&ctx->dist_ctx);
 	for (int i = 0; i < PLATFORM_CORE_COUNT; i++)
 		gicv3_rdistif_init_restore(i, &ctx->rdist_ctx[i]);
+}
+
+/*******************************************************************************
+ * Helper function to clear all SPI interrupts of a CPU Core. It clears the
+ * pending state and disables all the SPIs that are routed to the calling
+ * CPU Core.
+ ******************************************************************************/
+static void imx_gicv3_clear_spi_cpu(uintptr_t gicd_base)
+{
+	unsigned int irq_num, num_ints;
+	unsigned long long cpu_aff, irq_aff;	/* the irouter affinity values */
+	unsigned int mpidr = (unsigned int)read_mpidr();
+
+	num_ints = mmio_read_32(gicd_base + GICD_TYPER);
+	num_ints &= TYPER_IT_LINES_NO_MASK;
+	num_ints = (num_ints + 1) << 5;
+
+	cpu_aff = mpidr & MPIDR_AFFINITY_MASK;
+
+	/* browse all SPIs */
+	for (irq_num = MIN_SPI_ID; irq_num < num_ints; irq_num++) {
+		irq_aff = gicd_read_irouter(gicd_base, irq_num);
+		if ((irq_aff & MPIDR_AFFINITY_MASK) == cpu_aff) {
+			/* if affinity matches CPU Core, clear INT */
+			/* disable INT */
+			GICD_WRITE_BIT(ICENABLE, gicd_base, irq_num);
+			/* remove pending state */
+			GICD_WRITE_BIT(ICPEND, gicd_base, irq_num);
+			gicd_wait_for_pending_write(gicd_base);
+		}
+	}
+}
+
+/*******************************************************************************
+ * Helper function to disable all SGI/PPI interrupts of a GIC redistributor.
+ ******************************************************************************/
+static void imx_gicv3_disable_sgi_ppi_cpu(uintptr_t gicr_base)
+{
+	/* Disable SGIs: 0-15, PPIs: 16-31 */
+	mmio_write_32(gicr_base + GICR_ISENABLER0, 0);
+}
+
+/*******************************************************************************
+ * Helper function to clear all SGI/PPI interrupts of a GIC redistributor.
+ ******************************************************************************/
+static void imx_gicv3_clear_sgi_ppi_cpu(uintptr_t gicr_base)
+{
+	/* Clean Pending SGIs and PPIs */
+	mmio_write_32(gicr_base + GICR_ICPENDR0, 0);
+}
+
+/*******************************************************************************
+ * This function clears interrupts for CPU Core at GIC distributor level.
+ ******************************************************************************/
+void imx_gicv3_distif_cpu_clear(void)
+{
+	assert(arm_gic_data.gicd_base != 0UL);
+
+	imx_gicv3_clear_spi_cpu(arm_gic_data.gicd_base);
+}
+
+/*******************************************************************************
+ * This function clears interrupts for CPU Core at GIC redistributor level.
+ ******************************************************************************/
+void imx_gicv3_rdistif_cpu_clear(unsigned int proc_num)
+{
+	uintptr_t gicr_base;
+
+	assert(proc_num < arm_gic_data.rdistif_num);
+	assert(arm_gic_data.rdistif_base_addrs != NULL);
+
+	gicr_base = arm_gic_data.rdistif_base_addrs[proc_num];
+	assert(gicr_base != 0UL);
+
+	imx_gicv3_disable_sgi_ppi_cpu(gicr_base);
+	imx_gicv3_clear_sgi_ppi_cpu(gicr_base);
 }
