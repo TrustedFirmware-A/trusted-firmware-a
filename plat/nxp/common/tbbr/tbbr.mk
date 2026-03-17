@@ -41,37 +41,9 @@ ifeq (${PBI_INPUT_FILE},)
     PBI_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${PBI_CSF_FILE}
 endif
 
-# If MBEDTLS_DIR is not specified, use CSF Header option
-ifeq (${MBEDTLS_DIR},)
-    # Generic image processing filters to prepend CSF header
-    ifeq (${BL33_INPUT_FILE},)
-    BL33_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
-    endif
-
-    ifeq (${BL31_INPUT_FILE},)
-    BL31_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
-    endif
-
-    ifeq (${BL32_INPUT_FILE},)
-    BL32_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
-    endif
-
-    ifeq (${FUSE_INPUT_FILE},)
-    FUSE_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
-    endif
-
-    PLAT_INCLUDES	+= -I$(PLAT_DRIVERS_PATH)/sfp
-    PLAT_TBBR_SOURCES	+= $(PLAT_AUTH_PATH)/csf_hdr_parser/cot.c	\
-			   $(PLAT_COMMON_PATH)/tbbr/csf_tbbr.c
-    # IMG PARSER here is CSF header parser
-    include $(PLAT_DRIVERS_PATH)/auth/csf_hdr_parser/csf_hdr.mk
-    PLAT_TBBR_SOURCES 	+=	$(CSF_HDR_SOURCES)
-
-    SCP_BL2_PRE_TOOL_FILTER	:= CST_SCP_BL2
-    BL31_PRE_TOOL_FILTER	:= CST_BL31
-    BL32_PRE_TOOL_FILTER	:= CST_BL32
-    BL33_PRE_TOOL_FILTER	:= CST_BL33
-else
+# Select X.509 (mbedTLS) vs CSF header flow for NXP.
+# NXP_TBBR_USE_X509=1 enables X.509; default uses CSF header.
+ifeq (${NXP_TBBR_USE_X509},1)
 
     ifeq (${DISABLE_FUSE_WRITE}, 1)
         $(eval $(call add_define,DISABLE_FUSE_WRITE))
@@ -140,8 +112,36 @@ else
 	$(s)echo "  OPENSSL $@"
 	$(q)${OPENSSL_BIN_PATH}/openssl rsa -in $< -pubout -outform DER 2>/dev/null |\
 	${OPENSSL_BIN_PATH}/openssl dgst -sha256 -binary > $@ 2>/dev/null
+else
+    # Generic image processing filters to prepend CSF header
+    ifeq (${BL33_INPUT_FILE},)
+    BL33_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
+    endif
 
-endif #MBEDTLS_DIR
+    ifeq (${BL31_INPUT_FILE},)
+    BL31_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
+    endif
+
+    ifeq (${BL32_INPUT_FILE},)
+    BL32_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
+    endif
+
+    ifeq (${FUSE_INPUT_FILE},)
+    FUSE_INPUT_FILE	:= $(PLAT_AUTH_PATH)/csf_hdr_parser/${CSF_FILE}
+    endif
+
+    PLAT_INCLUDES	+= -I$(PLAT_DRIVERS_PATH)/sfp
+    PLAT_TBBR_SOURCES	+= $(PLAT_AUTH_PATH)/csf_hdr_parser/cot.c	\
+			   $(PLAT_COMMON_PATH)/tbbr/csf_tbbr.c
+    # IMG PARSER here is CSF header parser
+    include $(PLAT_DRIVERS_PATH)/auth/csf_hdr_parser/csf_hdr.mk
+    PLAT_TBBR_SOURCES 	+=	$(CSF_HDR_SOURCES)
+
+    SCP_BL2_PRE_TOOL_FILTER	:= CST_SCP_BL2
+    BL31_PRE_TOOL_FILTER	:= CST_BL31
+    BL32_PRE_TOOL_FILTER	:= CST_BL32
+    BL33_PRE_TOOL_FILTER	:= CST_BL33
+endif #NXP_TBBR_USE_X509
 
 PLAT_INCLUDES		+=	-Iinclude/common/tbbr
 

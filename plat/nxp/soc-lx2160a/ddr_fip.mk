@@ -1,6 +1,6 @@
 #
 # Copyright 2020 NXP
-# Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2025-2026, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -61,9 +61,7 @@ endif
 
 
 ifeq (${TRUSTED_BOARD_BOOT},1)
-ifeq (${MBEDTLS_DIR},)
-include plat/nxp/soc-lx2160a/ddr_sb.mk
-else
+ifeq (${NXP_TBBR_USE_X509},1)
 include plat/nxp/soc-lx2160a/ddr_tbbr.mk
 
 # Variables for use with Certificate Generation Tool
@@ -78,6 +76,8 @@ ddr_certificates: ${DDR_CRT_DEPS} ${CRTTOOL}
 	$(s)echo "DDR certificates can be found in ${BUILD_PLAT}"
 	$(s)echo
 endif
+else
+include plat/nxp/soc-lx2160a/ddr_sb.mk
 endif
 endif
 

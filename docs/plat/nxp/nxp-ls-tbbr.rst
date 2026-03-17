@@ -44,6 +44,8 @@ Option 1: CoT using X 509 certificates
 
 - This CoT is as provided by ARM.
 
+- Enable this option by setting ``NXP_TBBR_USE_X509=1`` on the make command line.
+
 - To generate CSF header, path of CST repository needs to be specified as CST_DIR
 
 - CSF header is embedded to each of the BL2 image.
@@ -67,6 +69,7 @@ All Images
    .. code:: shell
 
        make PLAT=$PLAT TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 CST_DIR=$CST_DIR_PATH \
+       NXP_TBBR_USE_X509=1 \
        BOOT_MODE=<platform_supported_boot_mode> \
        RCW=$RCW_BIN \
        BL32=$TEE_BIN SPD=opteed\
@@ -77,7 +80,8 @@ All Images
 Additional FIP_DDR Image (For NXP platforms like lx2160a)
    .. code:: shell
 
-       make PLAT=$PLAT TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 fip_ddr
+       make PLAT=$PLAT TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 \
+       NXP_TBBR_USE_X509=1 fip_ddr
 
       Note: make target 'fip_ddr' should never be combine with other make target 'fip', 'pbl' & 'bl2'.
 
@@ -86,6 +90,8 @@ Option 2: CoT using NXP CSF headers.
 -------------------------------------------------------------------------
 
 - CSF header is embedded to each of the BL31, BL32 and  BL33 image.
+
+- This is the default flow when ``NXP_TBBR_USE_X509`` is not set or is ``0``.
 
 - To generate CSF header, path of CST repository needs to be specified as CST_DIR
 
