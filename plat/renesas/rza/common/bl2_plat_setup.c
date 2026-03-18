@@ -28,7 +28,7 @@
 
 #define SYS_REG_LSI_MODE		0x11020A00
 #define SYS_REG_LSI_MODE_STAT_DEBUGEN	BIT(9)
-#define WAIT_CNT			0x1000000
+#define WAIT_CNT			0x4000000
 
 /* Table of regions to map using the MMU. */
 const mmap_region_t plat_mmap[] = {
