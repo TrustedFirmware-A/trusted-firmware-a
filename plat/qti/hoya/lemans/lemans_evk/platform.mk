@@ -83,17 +83,19 @@ BL31_SOURCES		+=	drivers/delay_timer/generic_delay_timer.c		\
 				plat/common/plat_gicv3.c				\
 				${GICV3_SOURCES}					\
 				plat/common/plat_psci_common.c				\
+				$(PLAT_PATH)/common/src/$(ARCH)/qti_ringbuf_console.S	\
 				$(PLAT_PATH)/common/src/pm_ps_hold.c			\
 				$(PLAT_PATH)/common/src/qti_bl31_setup.c		\
 				$(PLAT_PATH)/common/src/qti_gic_v3.c			\
 				$(PLAT_PATH)/common/src/qti_interrupt_svc.c		\
+				$(PLAT_PATH)/common/src/qti_pm.c			\
+				$(PLAT_PATH)/common/src/qti_ringbuf_console_helper.c	\
 				$(PLAT_PATH)/common/src/qti_syscall.c			\
 				$(PLAT_PATH)/common/src/qti_topology.c			\
-				$(PLAT_PATH)/common/src/qti_pm.c			\
 				$(PLAT_PATH)/common/src/spmi_arb.c			\
 				$(PLAT_PATH)/hoya/common/$(ARCH)/hoya_helpers.S		\
 				$(PLAT_PATH)/hoya/common/hoya_bl31_setup.c		\
-				$(PLAT_PATH)/hoya/common/hoya_gicv3.c		\
+				$(PLAT_PATH)/hoya/common/hoya_gicv3.c			\
 				$(PLAT_PATH)/hoya/qtiseclib/src/qtiseclib_cb_interface.c
 
 include drivers/qti/smem/smem.mk

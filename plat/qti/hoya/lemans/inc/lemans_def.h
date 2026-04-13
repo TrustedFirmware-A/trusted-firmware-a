@@ -38,6 +38,23 @@
 #define QTI_DEVICE_SIZE				(0x1C000000 - QTI_DEVICE_BASE)
 
 /*----------------------------------------------------------------------------*/
+/* SHARED_IMEM address space for mapping */
+/*----------------------------------------------------------------------------*/
+#define SHARED_IMEM_BASE			0x146D8000
+#define SHARED_IMEM_SIZE			0x00001000
+
+#define TFA_BL31_SHARED_IMEM_TFA_AREA_BASE	(SHARED_IMEM_BASE + 0x734 + 340)
+
+#define TFA_BL31_IMEM_ADDR(offset) \
+	(TFA_BL31_SHARED_IMEM_TFA_AREA_BASE + (offset))
+
+/*
+ * Platform slot that stores the 64-bit address of the TF-A ring buffer.
+ * On Lemans this resolves to SHARED_IMEM_BASE + 0xCF0.
+ */
+#define TFA_BL31_RING_LOG_BASE			(SHARED_IMEM_BASE + 0xCF0)
+
+/*----------------------------------------------------------------------------*/
 /* AOP CMD DB  address space for mapping */
 /*----------------------------------------------------------------------------*/
 #define QTI_AOP_CMD_DB_BASE			0x90860000
