@@ -104,7 +104,14 @@ ERRATA_A72_1319367		:=	1
 ENABLE_PLAT_COMPAT		:=	0
 MULTI_CONSOLE_API		:=	1
 CTX_INCLUDE_EL2_REGS		:=	0
+# When SPD=opteed is used, S-EL1 (OP-TEE) must receive Group-0 secure
+# interrupts; routing G0 to EL3 would make register_interrupt_type_handler()
+# reject INTR_TYPE_S_EL1 and panic right after OP-TEE init.
+ifeq (${SPD},opteed)
+GICV2_G0_FOR_EL3		:=	0
+else
 GICV2_G0_FOR_EL3		:=	1
+endif
 CTX_INCLUDE_AARCH32_REGS	:=	0
 
 # Do not enable SVE
