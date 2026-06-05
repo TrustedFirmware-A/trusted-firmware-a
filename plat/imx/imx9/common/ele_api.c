@@ -45,6 +45,10 @@ void ele_get_soc_info(void)
 
 	/* Ensure write to soc_info is visible before CPU reads it */
 	dsb();
+
+#if defined(PLAT_imx95)
+	soc_info.soc &= 0xFFFFFF00;
+#endif
 }
 
 void ele_release_gmid(void)
