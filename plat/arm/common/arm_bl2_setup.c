@@ -182,6 +182,7 @@ static void arm_bl2_plat_config_load(void)
 {
 	int ret;
 	const struct dyn_cfg_dtb_info_t *fw_config_info;
+	const struct dyn_cfg_dtb_info_t *tb_fw_config_info;
 
 	/* Set global DTB info for fixed fw_config information */
 	set_config_info(ARM_FW_CONFIG_BASE, ~0UL, ARM_FW_CONFIG_MAX_SIZE,
@@ -211,6 +212,21 @@ static void arm_bl2_plat_config_load(void)
 	if (ret < 0) {
 		ERROR("Parsing of FW_CONFIG failed %d\n", ret);
 		plat_error_handler(ret);
+	}
+
+	/*
+	 * In RESET_TO_BL2 flows BL1 is absent, so BL2 may need to load/populate
+	 * TB_FW_CONFIG itself when the platform provides it (e.g. arm,sp data).
+	 */
+	tb_fw_config_info = FCONF_GET_PROPERTY(dyn_cfg, dtb, TB_FW_CONFIG_ID);
+	if (tb_fw_config_info != NULL) {
+		ret = fconf_load_config(TB_FW_CONFIG_ID);
+		if (ret < 0) {
+			ERROR("Loading of TB_FW_CONFIG failed %d\n", ret);
+			plat_error_handler(ret);
+		}
+
+		fconf_populate("TB_FW", tb_fw_config_info->config_addr);
 	}
 }
 #endif /* ARM_FW_CONFIG_LOAD_ENABLE && !TRANSFER_LIST */

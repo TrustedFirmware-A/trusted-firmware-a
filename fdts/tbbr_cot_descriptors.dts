@@ -195,6 +195,12 @@ cot {
 			hash = <&hw_config_hash>;
 		};
 
+		tb_fw_config {
+			image-id = <TB_FW_CONFIG_ID>;
+			parent = <&trusted_boot_fw_cert>;
+			hash = <&tb_fw_config_hash>;
+		};
+
 		fw_config {
 			image-id = <FW_CONFIG_ID>;
 			parent = <&trusted_boot_fw_cert>;
