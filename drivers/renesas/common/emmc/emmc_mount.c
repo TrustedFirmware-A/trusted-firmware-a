@@ -89,7 +89,7 @@ static EMMC_ERROR_CODE emmc_card_init(void)
 
 	/* CMD1 */
 	emmc_make_nontrans_cmd(CMD1_SEND_OP_COND, EMMC_HOST_OCR_VALUE);
-	for (retry = 300; retry > 0; retry--) {
+	for (retry = 1000; retry > 0; retry--) {
 		result =
 		    emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);
 		if (result != EMMC_SUCCESS) {
