@@ -69,8 +69,7 @@ void qtiseclib_kryo6_silver_reset_asm(void)
  */
 void qtiseclib_bl31_platform_setup(void)
 {
-	ERROR("Please use QTISECLIB_PATH while building TF-A\n");
-	ERROR("Platform won't boot with this QTISECLIB stub\n");
+	NOTICE("Build config without QTISECLIB blob\n");
 }
 
 void qtiseclib_invoke_isr(uint32_t irq, void *handle)

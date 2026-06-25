@@ -103,10 +103,6 @@ include drivers/qti/chipinfo/chipinfo.mk
 QTISECLIB_PATH ?=
 
 ifeq ($(QTISECLIB_PATH),)
-# if No lib then use stub implementation for qtiseclib interface
-$(warning QTISECLIB_PATH is not provided while building, using stub implementation. \
-		Please refer to documentation for more details \
-		THIS FIRMWARE WILL NOT BOOT!)
 
 QTI_CLOCK_RAIL_VOTE := 1
 
