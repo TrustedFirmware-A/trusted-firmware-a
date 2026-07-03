@@ -239,12 +239,38 @@ void handler_sync_exception(cpu_context_t *ctx)
 {
 	gp_regs_t *gpregs = get_gpregs_ctx(ctx);
 	uint32_t smc_fid = read_ctx_reg(gpregs, CTX_GPREG_X0);
+	int ret;
 	u_register_t esr_el3 = read_esr_el3();
 	u_register_t exc_class = EXTRACT(ESR_EC, esr_el3);
 	el3_state_t *state = get_el3state_ctx(ctx);
 	u_register_t scr_el3 = read_ctx_reg(state, CTX_SCR_EL3);
 
-	if (exc_class == EC_AARCH64_SMC) {
+	if (exc_class == EC_IMP_DEF_EL3) {
+		struct cpu_ops *cpu_ops = get_cpu_data(cpu_ops_ptr);
+
+		/*
+		 * A CPU driver configured an IMP DEF trap it should have also
+		 * declared a handler.
+		 */
+		assert(cpu_ops != NULL);
+		ret = cpu_ops->e_handler_func(exc_class);
+
+		if (ret == TRAP_RET_CONTINUE) {
+			/* advance the PC to continue after the instruction */
+			write_ctx_reg(state, CTX_ELR_EL3, read_ctx_reg(state, CTX_ELR_EL3) + 4);
+			return;
+		} else if (ret == TRAP_RET_REPEAT) {
+			/* continue at the same instruction */
+			return;
+		}
+
+		/*
+		 * This is likely a programming error and should be cought on
+		 * DEBUG builds. Fallthrough to UNDEF injection on release
+		 * builds for safety.
+		 */
+		assert(0);
+	} else if (exc_class == EC_AARCH64_SMC) {
 		return sync_handler(ctx, smc_fid, scr_el3);
 #if CTX_INCLUDE_AARCH32_REGS
 	} else if (exc_class == EC_AARCH32_SMC) {
@@ -255,7 +281,7 @@ void handler_sync_exception(cpu_context_t *ctx)
 #endif /* CTX_INCLUDE_AARCH32_REGS */
 	} else if (exc_class == EC_AARCH64_SYS) {
 		u_register_t sp_el0 = read_ctx_reg(gpregs, CTX_GPREG_SP_EL0);
-		int ret = handle_sysreg_trap(esr_el3, ctx, get_flags(smc_fid, scr_el3));
+		ret = handle_sysreg_trap(esr_el3, ctx, get_flags(smc_fid, scr_el3));
 
 		/*
 		 * Hardening check against firmware bugs where a trapped write
@@ -274,6 +300,12 @@ void handler_sync_exception(cpu_context_t *ctx)
 			/* continue at the same instruction */
 			return;
 		}
+
+		/*
+		 * Finally, fallthrough to UNDEF injection. Platform configured
+		 * a trap that was not expected which usually means a feature
+		 * was left disabled.
+		 */
 #if FFH_SUPPORT
 	/* If FFH Support then try to handle lower EL EA exceptions. */
 	} else if ((exc_class == EC_IABORT_LOWER_EL || exc_class == EC_DABORT_LOWER_EL)
