@@ -45,7 +45,7 @@ static int ext_tsen_probe(struct tsen_config *tsen_cfg)
 	uint32_t reg, timeout = 0;
 	struct tsen_regs *base;
 
-	if (tsen_cfg == NULL && tsen_cfg->regs_base == NULL) {
+	if (tsen_cfg == NULL || tsen_cfg->regs_base == NULL) {
 		ERROR("initial thermal sensor configuration is missing\n");
 		return -1;
 	}
@@ -85,7 +85,7 @@ static int ext_tsen_read(struct tsen_config *tsen_cfg, int *temp)
 	uint32_t reg;
 	struct tsen_regs *base;
 
-	if (tsen_cfg == NULL && !tsen_cfg->tsen_ready) {
+	if (tsen_cfg == NULL || !tsen_cfg->tsen_ready) {
 		ERROR("thermal sensor was not initialized\n");
 		return -1;
 	}
