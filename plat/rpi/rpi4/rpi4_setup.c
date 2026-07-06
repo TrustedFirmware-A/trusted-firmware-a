@@ -99,7 +99,7 @@ static void rpi4_prepare_dtb(void)
 	if (fdt_check_header(dtb) != 0)
 		return;
 
-	ret = fdt_open_into(dtb, dtb, 0x100000);
+	ret = fdt_open_into(dtb, dtb, PLAT_RPI4_DTB_MAX_SIZE);
 	if (ret < 0) {
 		ERROR("Invalid Device Tree at %p: error %d\n", dtb, ret);
 		return;

@@ -64,6 +64,16 @@
 #define DEVICE0_BASE			RPI_IO_BASE
 #define DEVICE0_SIZE			RPI_IO_SIZE
 
+/*
+ * Fixed firmware handoff reserves a 128 KiB DTB window. Other paths retain
+ * the existing 1 MiB expansion buffer.
+ */
+#if !RESET_TO_BL31 && !RPI3_DIRECT_LINUX_BOOT
+#define PLAT_RPI4_DTB_MAX_SIZE		ULL(0x00020000)
+#else
+#define PLAT_RPI4_DTB_MAX_SIZE		ULL(0x00100000)
+#endif
+
 #if RESET_TO_BL31
 
 /*
@@ -148,6 +158,7 @@
 #define FW_HANDOFF_BASE			BL31_LIMIT
 #define FW_HANDOFF_LIMIT		(FW_HANDOFF_BASE + FW_HANDOFF_SIZE)
 #define FW_HANDOFF_SIZE			SZ_8K
+#define FW_NS_HANDOFF_BASE		NS_DRAM0_BASE
 
 #if defined(SPD_spmd)
 #define PLAT_RPI3_SPMC_SP_MANIFEST_SIZE	SZ_4K

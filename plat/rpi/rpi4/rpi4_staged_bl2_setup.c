@@ -86,6 +86,7 @@ static uintptr_t rpi4_staged_get_kernel_entrypoint(void)
 #endif
 }
 
+#if RPI3_DIRECT_LINUX_BOOT
 static uintptr_t rpi4_staged_get_dtb_address(void)
 {
 #ifdef RPI3_PRELOADED_DTB_BASE
@@ -99,11 +100,15 @@ static uintptr_t rpi4_staged_get_dtb_address(void)
 	return 0;
 #endif
 }
+#endif
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
 	int err = 0;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+#if TRANSFER_LIST && !RPI3_DIRECT_LINUX_BOOT
+	struct transfer_list_header *ns_tl;
+#endif
 
 	assert(bl_mem_params != NULL);
 
@@ -141,6 +146,18 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		bl_mem_params->ep_info.pc = rpi4_staged_get_kernel_entrypoint();
 		bl_mem_params->ep_info.spsr = rpi3_get_spsr_for_bl33_entry();
 
+#if TRANSFER_LIST && !RPI3_DIRECT_LINUX_BOOT
+		ns_tl = rpi_bl2_relocate_transfer_list();
+		if (ns_tl == NULL) {
+			WARN("BL2: Invalid TL, falling back to default BL33 arguments\n");
+		} else if (transfer_list_set_handoff_args(
+				   ns_tl, &bl_mem_params->ep_info) == NULL) {
+			WARN("BL2: Invalid TL, falling back to default BL33 arguments\n");
+		} else {
+			flush_dcache_range((uintptr_t)ns_tl, ns_tl->size);
+			break;
+		}
+#endif /* TRANSFER_LIST && !RPI3_DIRECT_LINUX_BOOT */
 #if RPI3_DIRECT_LINUX_BOOT
 # if RPI3_BL33_IN_AARCH32
 		VERBOSE("rpi: Preparing to boot 32-bit Linux kernel\n");

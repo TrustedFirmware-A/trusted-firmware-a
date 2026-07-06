@@ -51,13 +51,12 @@ uintptr_t rpi4_get_dtb_address(void)
 {
 #ifdef RPI3_PRELOADED_DTB_BASE
 	return RPI3_PRELOADED_DTB_BASE;
-#elif RPI3_DIRECT_LINUX_BOOT
-# if RPI3_BL33_IN_AARCH32
-	return bl33_image_ep_info.args.arg2;
-# else
-	return bl33_image_ep_info.args.arg0;
-# endif
 #else
+	if (mmio_read_32(PLAT_RPI_STUB_MAGIC_ADDR) == 0U) {
+		return mmio_read_32(PLAT_RPI_DTB_PTR32_ADDR);
+	}
+
+	WARN("Stub magic failure, DTB address unknown\n");
 	return 0;
 #endif
 }
