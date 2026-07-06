@@ -89,7 +89,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	rpi4_staged_setup_local_timer();
 	rpi3_console_init();
 
-#if DEBUG
+#if DEBUG && !TRANSFER_LIST
 	assert(arg1 == RPI3_BL31_PLAT_PARAM_VAL);
 #endif
 

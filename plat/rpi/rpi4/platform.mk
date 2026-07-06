@@ -9,6 +9,10 @@ include lib/xlat_tables_v2/xlat_tables.mk
 
 include drivers/arm/gic/v2/gicv2.mk
 
+ifeq (${TRANSFER_LIST}, 1)
+include lib/transfer_list/transfer_list.mk
+endif
+
 PLAT_INCLUDES		:=	-Iplat/rpi/common/include		\
 				-Iplat/rpi/rpi4/include
 
@@ -68,6 +72,10 @@ BL1_SOURCES		+=	drivers/io/io_fip.c			\
 				plat/rpi/common/rpi3_io_storage.c	\
 				plat/rpi/rpi4/rpi4_staged_bl1_setup.c
 
+ifeq (${TRANSFER_LIST},1)
+BL1_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
+endif
+
 BL2_SOURCES		+=	common/desc_image_load.c		\
 				drivers/io/io_fip.c			\
 				drivers/io/io_memmap.c			\
@@ -82,6 +90,10 @@ BL2_SOURCES		+=	common/desc_image_load.c		\
 				plat/rpi/common/rpi3_io_storage.c	\
 				plat/rpi/rpi4/aarch64/rpi4_bl2_mem_params_desc.c \
 				plat/rpi/rpi4/rpi4_staged_bl2_setup.c
+
+ifeq (${TRANSFER_LIST},1)
+BL2_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
+endif
 
 BL31_SOURCES		+=	lib/cpus/aarch64/cortex_a72.S		\
 				plat/rpi/common/aarch64/plat_helpers.S	\

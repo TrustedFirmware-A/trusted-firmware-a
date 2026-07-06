@@ -55,6 +55,10 @@ void bl1_early_platform_setup(void)
 
 	bl1_tzram_layout.total_base = BL_RAM_BASE;
 	bl1_tzram_layout.total_size = BL_RAM_SIZE;
+
+#if TRANSFER_LIST
+	(void)rpi_bl1_transfer_list_init();
+#endif
 }
 
 void bl1_plat_arch_setup(void)
@@ -73,5 +77,9 @@ void bl1_plat_arch_setup(void)
 
 void bl1_platform_setup(void)
 {
+#if TRANSFER_LIST
+	rpi_bl1_set_bl2_transfer_list();
+#endif
+
 	plat_rpi3_io_setup();
 }

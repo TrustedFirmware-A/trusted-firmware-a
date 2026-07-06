@@ -6,6 +6,10 @@
 
 #include <assert.h>
 
+#if TRANSFER_LIST
+#include <transfer_list.h>
+#endif
+
 #include <arch_helpers.h>
 #include <common/bl_common.h>
 #include <common/debug.h>
@@ -31,6 +35,10 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	generic_delay_timer_init();
 
 	bl2_tzram_layout = *mem_layout;
+
+#if TRANSFER_LIST
+	(void)rpi_bl2_transfer_list_init(arg3);
+#endif
 
 	plat_rpi3_io_setup();
 }
@@ -96,6 +104,18 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	assert(bl_mem_params != NULL);
 
 	switch (image_id) {
+	case BL31_IMAGE_ID:
+#if TRANSFER_LIST
+		if (GET_RW(bl_mem_params->ep_info.spsr) == MODE_RW_64) {
+			bl_mem_params->ep_info.args.arg1 =
+				TRANSFER_LIST_HANDOFF_X1_VALUE(
+					REGISTER_CONVENTION_VERSION);
+		}
+		bl_mem_params->ep_info.args.arg3 =
+			(uintptr_t)rpi_bl2_get_transfer_list();
+#endif
+		break;
+
 	case BL33_IMAGE_ID:
 		bl_mem_params->ep_info.pc = rpi4_staged_get_kernel_entrypoint();
 		bl_mem_params->ep_info.spsr = rpi3_get_spsr_for_bl33_entry();

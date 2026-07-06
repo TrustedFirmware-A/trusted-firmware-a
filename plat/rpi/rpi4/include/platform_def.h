@@ -116,13 +116,26 @@
 
 #define BL1_RO_BASE			(SEC_ROM_BASE + PLAT_RPI_STUB_HEADER_SIZE)
 #define BL1_RO_LIMIT			(SEC_ROM_BASE + SEC_ROM_SIZE)
+/*
+ * Keep BL1_RW_BASE fixed while excluding transfer-list storage from the
+ * writable region.
+ */
+#if TRANSFER_LIST
+#define BL1_RW_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE - FW_HANDOFF_SIZE)
+#else
 #define BL1_RW_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE)
-#define BL1_RW_BASE			(BL1_RW_LIMIT - PLAT_MAX_BL1_RW_SIZE)
+#endif
+#define BL1_RW_BASE			(BL_RAM_BASE + BL_RAM_SIZE - \
+					 PLAT_MAX_BL1_RW_SIZE)
 
 /* RPi4 BL31 carries the DTB patching code and libfdt. */
 #define PLAT_MAX_BL31_SIZE		ULL(0x30000)
 
+#if TRANSFER_LIST
+#define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE - FW_HANDOFF_SIZE)
+#else
 #define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE)
+#endif
 #define BL31_BASE			(BL31_LIMIT - PLAT_MAX_BL31_SIZE)
 #define BL31_PROGBITS_LIMIT		BL1_RW_BASE
 
@@ -130,6 +143,14 @@
 
 #define BL2_LIMIT			BL31_BASE
 #define BL2_BASE			(BL2_LIMIT - PLAT_MAX_BL2_SIZE)
+
+#if TRANSFER_LIST
+#define FW_HANDOFF_BASE			BL31_LIMIT
+#define FW_HANDOFF_LIMIT		(FW_HANDOFF_BASE + FW_HANDOFF_SIZE)
+#define FW_HANDOFF_SIZE			SZ_8K
+#else
+#define FW_HANDOFF_SIZE			0
+#endif /* TRANSFER_LIST */
 
 #endif /* RESET_TO_BL31 */
 
