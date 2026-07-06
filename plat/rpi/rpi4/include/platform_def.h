@@ -142,8 +142,18 @@
 #define PLAT_MAX_BL31_SIZE		ULL(0x30000)
 
 #if TRANSFER_LIST
+#if MEASURED_BOOT
+/*
+ * Measured boot extends the TPM event-log transfer-list entry in BL2 before
+ * the SPMC manifest is added. Keep enough slack for that transient resize.
+ */
+#define FW_HANDOFF_SIZE			SZ_16K
+#else
+#define FW_HANDOFF_SIZE			SZ_8K
+#endif
 #define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE - FW_HANDOFF_SIZE)
 #else
+#define FW_HANDOFF_SIZE			0
 #define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE)
 #endif
 #define BL31_BASE			(BL31_LIMIT - PLAT_MAX_BL31_SIZE)
@@ -157,7 +167,6 @@
 #if TRANSFER_LIST
 #define FW_HANDOFF_BASE			BL31_LIMIT
 #define FW_HANDOFF_LIMIT		(FW_HANDOFF_BASE + FW_HANDOFF_SIZE)
-#define FW_HANDOFF_SIZE			SZ_8K
 #define FW_NS_HANDOFF_BASE		NS_DRAM0_BASE
 
 #if defined(SPD_spmd)
@@ -167,8 +176,6 @@
 #define PLAT_ARM_SPMC_SP_MANIFEST_SIZE	UL(0x0)
 #define PLAT_ARM_TB_FW_CONFIG_SIZE	UL(0x0)
 #endif /* SPD_spmd */
-#else
-#define FW_HANDOFF_SIZE			0
 #endif /* TRANSFER_LIST */
 
 #define BL32_MEM_BASE			SEC_DRAM0_BASE
@@ -261,5 +268,10 @@
  * System counter
  */
 #define SYS_COUNTER_FREQ_IN_TICKS	ULL(54000000)
+
+/*
+ * TCG Event Log
+ */
+#define PLAT_ARM_EVENT_LOG_MAX_SIZE	UL(0x800)
 
 #endif /* PLATFORM_DEF_H */

@@ -13,6 +13,25 @@ ifeq (${TRANSFER_LIST}, 1)
 include lib/transfer_list/transfer_list.mk
 endif
 
+ifeq (${MEASURED_BOOT},1)
+MEASURED_BOOT_MK := drivers/measured_boot/event_log/event_log.mk
+$(info Including ${MEASURED_BOOT_MK})
+include ${MEASURED_BOOT_MK}
+
+BL1_LIBS += $(LIBEVLOG_LIBS)
+BL1_INCLUDE_DIRS += $(LIBEVLOG_INCLUDE_DIRS)
+
+BL2_LIBS += $(LIBEVLOG_LIBS)
+BL2_INCLUDE_DIRS += $(LIBEVLOG_INCLUDE_DIRS)
+
+CRYPTO_SOURCES		:=	drivers/auth/crypto_mod.c
+
+BL1_SOURCES		+=	${CRYPTO_SOURCES}
+BL2_SOURCES		+=	${CRYPTO_SOURCES}
+
+include drivers/auth/mbedtls/mbedtls_crypto.mk
+endif
+
 PLAT_INCLUDES		:=	-Iplat/rpi/common/include		\
 				-Iplat/rpi/rpi4/include
 
@@ -76,6 +95,12 @@ ifeq (${TRANSFER_LIST},1)
 BL1_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
 endif
 
+ifeq (${MEASURED_BOOT},1)
+BL1_SOURCES		+=	common/measured_boot_helpers.c		\
+				plat/rpi/rpi4/rpi4_bl1_mboot.c		\
+				plat/rpi/common/rpi3_common_mboot.c
+endif
+
 BL2_SOURCES		+=	common/desc_image_load.c		\
 				drivers/io/io_fip.c			\
 				drivers/io/io_memmap.c			\
@@ -93,6 +118,12 @@ BL2_SOURCES		+=	common/desc_image_load.c		\
 
 ifeq (${TRANSFER_LIST},1)
 BL2_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
+endif
+
+ifeq (${MEASURED_BOOT},1)
+BL2_SOURCES		+=	common/measured_boot_helpers.c		\
+				plat/rpi/rpi4/rpi4_bl2_mboot.c		\
+				plat/rpi/common/rpi3_common_mboot.c
 endif
 
 BL31_SOURCES		+=	lib/cpus/aarch64/cortex_a72.S		\
@@ -226,6 +257,18 @@ endif
 
 ifeq (${ARCH},aarch32)
   $(error Error: AArch32 not supported on rpi4)
+endif
+
+ifeq (${MEASURED_BOOT},1)
+ifneq (${RESET_TO_BL31},0)
+  $(error Error: rpi4 measured boot requires RESET_TO_BL31=0)
+endif
+ifneq (${TRANSFER_LIST},1)
+  $(error Error: rpi4 measured boot requires TRANSFER_LIST=1)
+endif
+ifneq (${RPI3_DIRECT_LINUX_BOOT},0)
+  $(error Error: rpi4 measured boot requires RPI3_DIRECT_LINUX_BOOT=0)
+endif
 endif
 
 ifeq (${SPD},spmd)
