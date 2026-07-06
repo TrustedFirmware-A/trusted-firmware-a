@@ -44,6 +44,11 @@ void bl1_plat_mboot_init(void)
 #endif
 	};
 
+#if DISCRETE_TPM
+	rpi_bl1_tpm_setup();
+	rpi_bl1_tpm_validate(U(1) << PCR_0);
+#endif
+
 	assert(tl != NULL);
 
 	event_log = transfer_list_event_log_extend(tl,
@@ -85,4 +90,8 @@ void bl1_plat_mboot_finish(void)
 	flush_dcache_range((uintptr_t)tl, tl->size);
 
 	event_log_dump(base, event_log_get_cur_size(base));
+
+#if DISCRETE_TPM
+	rpi_tpm_close();
+#endif
 }

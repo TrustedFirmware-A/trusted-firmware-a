@@ -45,6 +45,10 @@ void bl2_plat_mboot_init(void)
 	size_t event_log_size;
 	int rc;
 
+#if DISCRETE_TPM
+	rpi_bl2_tpm_setup();
+#endif
+
 	assert(tl != NULL);
 
 	event_log_start = transfer_list_event_log_extend(
@@ -102,4 +106,8 @@ void bl2_plat_mboot_finish(void)
 
 	event_log_cur_size = event_log_get_cur_size(event_log_base);
 	event_log_dump(event_log_base, event_log_cur_size);
+
+#if DISCRETE_TPM
+	rpi_tpm_close();
+#endif
 }

@@ -14,6 +14,15 @@ include lib/transfer_list/transfer_list.mk
 endif
 
 ifeq (${MEASURED_BOOT},1)
+ifeq (${DISCRETE_TPM},1)
+TPM2_MK := drivers/tpm/tpm2.mk
+$(info Including ${TPM2_MK})
+include ${TPM2_MK}
+RPI4_PROVISION_TPM	?=	0
+$(eval $(call assert_boolean,RPI4_PROVISION_TPM))
+$(eval $(call add_define_val,RPI_TPM_PROVISION,$(RPI4_PROVISION_TPM)))
+endif
+
 MEASURED_BOOT_MK := drivers/measured_boot/event_log/event_log.mk
 $(info Including ${MEASURED_BOOT_MK})
 include ${MEASURED_BOOT_MK}
@@ -292,6 +301,21 @@ endif
 ifneq ($(ENABLE_STACK_PROTECTOR), 0)
 PLAT_BL_COMMON_SOURCES	+=	drivers/rpi3/rng/rpi3_rng.c		\
 				plat/rpi/common/rpi3_stack_protector.c
+endif
+
+ifeq (${MEASURED_BOOT},1)
+ifeq (${DISCRETE_TPM},1)
+BL1_SOURCES		+=	$(TPM2_SOURCES)			\
+				plat/rpi/common/rpi_tpm.c
+BL2_SOURCES		+=	$(TPM2_SOURCES)			\
+				plat/rpi/common/rpi_tpm.c
+ifeq (${TPM_INTERFACE},FIFO_SPI)
+BL1_SOURCES		+=	drivers/gpio/gpio_spi.c		\
+				drivers/tpm/tpm2_slb9670/slb9670_gpio.c
+BL2_SOURCES		+=	drivers/gpio/gpio_spi.c		\
+				drivers/tpm/tpm2_slb9670/slb9670_gpio.c
+endif
+endif
 endif
 
 ifeq (${SPD},spmd)
