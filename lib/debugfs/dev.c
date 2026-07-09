@@ -705,9 +705,15 @@ int devseek(chan_t *channel, long off, int whence)
 {
 	switch (whence) {
 	case KSEEK_SET:
+		if (off < 0) {
+			return -1;
+		}
 		channel->offset = off;
 		break;
 	case KSEEK_CUR:
+		if ((off < 0) && ((long)channel->offset < -off)) {
+			return -1;
+		}
 		channel->offset += off;
 		break;
 	case KSEEK_END:
