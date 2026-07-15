@@ -19,6 +19,10 @@ BL1_SOURCES		+=	bl1/${ARCH}/bl1_arch_setup.c		\
 ifeq (${ARCH},aarch64)
 BL1_SOURCES		+=	lib/el3_runtime/aarch64/context.S	\
 				lib/cpus/errata_common.c
+
+ifeq (${WORKAROUND_CVE_2025_0647},1)
+BL1_SOURCES		+=	lib/cpus/aarch64/wa_cve_2025_0647_cpprctx.S
+endif
 endif
 
 ifeq (${TRUSTED_BOARD_BOOT},1)
@@ -33,10 +37,6 @@ ifneq ($(findstring gcc,$(notdir $(LD))),)
         BL1_LDFLAGS	+=	-Wl,--sort-section=alignment
 else ifneq ($(findstring ld,$(notdir $(LD))),)
         BL1_LDFLAGS	+=	--sort-section=alignment
-endif
-
-ifeq (${WORKAROUND_CVE_2025_0647},1)
-BL1_SOURCES		+=	lib/cpus/aarch64/wa_cve_2025_0647_cpprctx.S
 endif
 
 BL1_DEFAULT_LINKER_SCRIPT_SOURCE := bl1/bl1.ld.S
