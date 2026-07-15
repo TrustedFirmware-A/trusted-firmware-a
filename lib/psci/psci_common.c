@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -1203,18 +1203,6 @@ void psci_pwrdown_cpu_start(unsigned int power_level)
  ******************************************************************************/
 void __dead2 psci_pwrdown_cpu_end_terminal(void)
 {
-#if ERRATA_SME_POWER_DOWN
-	/*
-	 * force SME off to not get power down rejected. Getting here is
-	 * terminal so we don't care if we lose context because of another
-	 * wakeup
-	 */
-	if (is_feat_sme_supported()) {
-		write_svcr(0);
-		isb();
-	}
-#endif /* ERRATA_SME_POWER_DOWN */
-
 	/*
 	 * Execute a wfi which, in most cases, will allow the power controller
 	 * to physically power down this cpu. Under some circumstances that may
@@ -1224,7 +1212,12 @@ void __dead2 psci_pwrdown_cpu_end_terminal(void)
 	for (int i = 0; i < 32; i++)
 		psci_power_down_wfi();
 
-	/* Wake up wasn't transient. System is probably in a bad state. */
+	/*
+	 * Wake up wasn't transient. System is probably in a bad state.
+	 *
+	 * NOTE: some cores will not power down if SVCR != 0. This should be
+	 * ensured by the platform.
+	 */
 	ERROR("Could not power off CPU.\n");
 	panic();
 }
