@@ -1860,6 +1860,8 @@ CPU_FLAG_LIST += ERRATA_C1PRO_3706576
 # to revisions r0p0 and r1p0 of the C1-Pro cpu and is fixed in r1p1.
 CPU_FLAG_LIST += ERRATA_C1PRO_3300099
 
+CPU_FLAG_LIST += ERRATA_C1PRO_3773617
+
 # Flag to apply erratum 3392149 workaround during reset. This erratum applies
 # to revision r0p0 of C1-Nano cpu and is fixed in r0p1.
 CPU_FLAG_LIST += ERRATA_C1NANO_3392149
