@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,15 +11,6 @@
 #include <arch_helpers.h>
 #include <lib/el3_runtime/pubsub.h>
 #include <lib/extensions/spe.h>
-
-static inline void psb_csync(void)
-{
-	/*
-	 * The assembler does not yet understand the psb csync mnemonic
-	 * so use the equivalent hint instruction.
-	 */
-	__asm__ volatile("hint #17");
-}
 
 void spe_init_el3(void)
 {
@@ -67,7 +58,7 @@ void spe_disable(void)
 	uint64_t v;
 
 	/* Drain buffered data */
-	psb_csync();
+	__asm__ volatile("hint #17");
 	dsbnsh();
 
 	/* Disable profiling buffer */
@@ -76,17 +67,3 @@ void spe_disable(void)
 	write_pmblimitr_el1(v);
 	isb();
 }
-
-static void *spe_drain_buffers_hook(const void *arg)
-{
-	if (!is_feat_spe_supported())
-		return (void *)-1;
-
-	/* Drain buffered data */
-	psb_csync();
-	dsbnsh();
-
-	return (void *)0;
-}
-
-SUBSCRIBE_TO_EVENT(cm_entering_secure_world, spe_drain_buffers_hook);
