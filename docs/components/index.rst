@@ -26,3 +26,4 @@ Components
    realm-management-extension
    rmm-el3-comms-spec
    granule-protection-tables-design
+   cpu-service

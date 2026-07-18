@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,11 +22,11 @@
 #error "Arm C1-Pro supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-#if ERRATA_SME_POWER_DOWN == 0
-#error "Arm C1-Pro needs ERRATA_SME_POWER_DOWN=1 to powerdown correctly"
-#endif
-
 cpu_reset_prologue c1_pro
+
+add_erratum_entry c1_pro, CVE(2026, 995), WORKAROUND_CVE_2026_0995
+.global check_erratum_c1_pro_995
+check_erratum_ls c1_pro, CVE(2026, 995), CPU_REV(1, 2)
 
 workaround_runtime_start c1_pro, ERRATUM(3338470), ERRATA_C1PRO_3338470
 	speculation_barrier
@@ -45,6 +45,13 @@ workaround_reset_start c1_pro, ERRATUM(3619847), ERRATA_C1PRO_3619847
 workaround_reset_end c1_pro, ERRATUM(3619847)
 
 check_erratum_ls c1_pro, ERRATUM(3619847), CPU_REV(0, 0)
+
+workaround_reset_start c1_pro, ERRATUM(3684268), ERRATA_C1PRO_3684268
+	sysreg_bit_set C1_PRO_IMP_CPUECTLR2_EL1, BIT(49)
+	dsb sy
+workaround_reset_end c1_pro, ERRATUM(3684268)
+
+check_erratum_ls c1_pro, ERRATUM(3684268), CPU_REV(1, 0)
 
 workaround_runtime_start c1_pro, ERRATUM(3686597), ERRATA_C1PRO_3686597
 #if ENABLE_SME_FOR_NS
@@ -122,6 +129,23 @@ cpu_reset_func_end c1_pro
 	 * ----------------------------------------------------
 	 */
 func c1_pro_core_pwr_dwn
+	/*
+	 * When software running at lower ELs requests power down without first
+	 * disabling SME, the CME connected to it will reject its power down
+	 * request. Skip setting the PWRDN_EN bit, downgrading the powerdown
+	 * request to a simple WFI wait, to get a minimal amount of power saving
+	 * rather than an instant pabandon.
+	 */
+#if ENABLE_SME_FOR_NS
+#if ENABLE_SME_FOR_NS == 2
+	is_feat_sme_present_asm x1
+	beq 1f
+#endif
+	mrs	x0, SVCR
+	cbnz	x0, c1_pro_skip_pwr_dwn
+1:
+#endif
+
 	/* ---------------------------------------------------
 	 * Flip CPU power down bit in power control register.
 	 * It will be set on powerdown and cleared on wakeup
@@ -131,6 +155,7 @@ func c1_pro_core_pwr_dwn
 	sysreg_bit_toggle C1_PRO_IMP_CPUPWRCTLR_EL1, \
 		C1_PRO_IMP_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
 	isb
+c1_pro_skip_pwr_dwn:
 	ret
 endfunc c1_pro_core_pwr_dwn
 

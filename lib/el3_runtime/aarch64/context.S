@@ -426,7 +426,6 @@ no_mpam:
 	/* Disable cycle counter when event counting is prohibited */
 	orr	x9, x9, #PMCR_EL0_DP_BIT
 	msr	pmcr_el0, x9
-	isb
 #if CTX_INCLUDE_PAUTH_REGS
 	/* ----------------------------------------------------------
  	 * Save the ARMv8.3-PAuth keys as they are not banked
@@ -466,6 +465,18 @@ no_mpam:
  * -----------------------------------------------------------------
  */
 func prepare_el3_entry
+	/*
+	 * context is about to mutate, so make sure we don't affect any still
+	 * in-flight profiling operations. We don't care that they actually
+	 * finish, that can still be later. NOP if not present
+	 */
+#if ENABLE_SPE_FOR_NS
+	psb_csync
+#endif
+#if ENABLE_TRBE_FOR_NS
+	tsb_csync
+#endif
+	isb
 	save_gp_pmcr_pauth_regs
 	enable_serror_at_el3
 	/*

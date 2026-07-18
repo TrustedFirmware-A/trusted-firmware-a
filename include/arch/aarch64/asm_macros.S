@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -226,13 +226,6 @@
 	.endm
 
 	/*
-	 * With RAS extension executes esb instruction, else NOP
-	 */
-	.macro esb
-	.inst	0xd503221f
-	.endm
-
-	/*
 	 * Helper macro to read system register value into x0
 	 */
 	.macro	read reg:req
@@ -264,6 +257,14 @@
 
 	.macro sb_barrier_insn
 	msr	SYSREG_SB, xzr
+	.endm
+
+	.macro psb_csync
+	hint #17 /* use the hint synonym for compatibility */
+	.endm
+
+	.macro tsb_csync
+	hint #18 /* use the hint synonym for compatibility */
 	.endm
 
 	/*
@@ -329,6 +330,11 @@
 	.macro is_feat_sme_present_asm reg:req
 	mrs	\reg, id_aa64pfr1_el1
 	ands	\reg, \reg, #(ID_AA64PFR1_EL1_SME_MASK << ID_AA64PFR1_EL1_SME_SHIFT)
+	.endm
+
+	.macro is_feat_mte_present_asm reg:req
+	mrs	\reg, id_aa64pfr1_el1
+	ubfx	\reg, \reg, #ID_AA64PFR1_EL1_MTE_SHIFT, #ID_AA64PFR1_EL1_MTE_WIDTH
 	.endm
 
 .macro call_reset_handler

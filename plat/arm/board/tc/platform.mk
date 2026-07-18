@@ -86,6 +86,22 @@ TC_CPU_SOURCES	+=	lib/cpus/aarch64/cortex_a520.S \
 			lib/cpus/aarch64/cortex_x4.S
 endif
 
+# CPU libraries for TARGET_PLATFORM=4
+ifeq (${TARGET_PLATFORM}, 4)
+WORKAROUND_CVE_2025_10263 :=	1
+
+# prevent CME related wakups
+CSS_ERRATA_SME_POWER_DOWN := 1
+TC_CPU_SOURCES	+=	lib/cpus/aarch64/c1_pro.S \
+			lib/cpus/aarch64/c1_nano.S \
+			lib/cpus/aarch64/c1_ultra.S
+
+ifeq (${WORKAROUND_CVE_2026_0995},1)
+BL31_SOURCES	+=	lib/cpus/aarch64/c1_pro_pubsub.c \
+			${CPU_SVC_SRCS}
+endif
+endif
+
 INTERCONNECT_SOURCES	:=	${TC_BASE}/tc_interconnect.c
 
 PLAT_BL_COMMON_SOURCES	+=	${TC_BASE}/tc_plat.c	\
