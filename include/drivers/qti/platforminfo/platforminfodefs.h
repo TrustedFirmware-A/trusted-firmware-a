@@ -17,13 +17,9 @@
 #define PLATFORMINFO_VERSION(major, minor) (((major) << 16) | (minor))
 
 /*
- * SMEM format version numbers. Each version adds fields at the end of
- * struct platforminfo_smem; only access fields whose version is <=
- * smem->format.
- *
- * PLATFORMINFO_SMEM_SIZE_Vn is the minimum SMEM item size needed to safely
- * read every field through that version. Check both format and size before
- * reading a version-gated field.
+ * SMEM format versions. Each adds fields at the end of struct platforminfo_smem;
+ * PLATFORMINFO_SMEM_SIZE_Vn is the minimum item size to read through version n.
+ * Check both format and size before reading a version-gated field.
  */
 #define PLATFORMINFO_FORMAT_VER_1	1U	/* chip_id, chip_version */
 #define PLATFORMINFO_SMEM_SIZE_V1 \
@@ -32,6 +28,22 @@
 #define PLATFORMINFO_FORMAT_VER_12	12U	/* chip_family, raw_device_family/number */
 #define PLATFORMINFO_SMEM_SIZE_V12 \
 	(offsetof(struct platforminfo_smem, raw_device_number) + sizeof(uint32_t))
+
+#define PLATFORMINFO_FORMAT_VER_14	14U	/* num_parts, disabled_features_array_offset */
+#define PLATFORMINFO_SMEM_SIZE_V14 \
+	(offsetof(struct platforminfo_smem, disabled_features_array_offset) + sizeof(uint32_t))
+
+#define PLATFORMINFO_FORMAT_VER_23	23U	/* part_instances_offset, num_part_instances */
+#define PLATFORMINFO_SMEM_SIZE_V23 \
+	(offsetof(struct platforminfo_smem, num_part_instances) + sizeof(uint32_t))
+
+/* Per-instance entry; array located at part_instances_offset (format >= 23). */
+struct part_instances {
+	uint16_t	part;       /* enum chipinfo_part value */
+	uint8_t		instance;   /* 0-based instance index */
+	uint8_t		disabled;   /* non-zero if this instance is fused off */
+	uint32_t	disabled_features; /* per-feature bitmask */
+};
 
 /*
  * Length of the build ID buffer in platforminfo_smem_t.
@@ -101,8 +113,8 @@ struct platforminfo_smem {
 	uint32_t raw_package_type; /* Raw package type. */
 	uint32_t partial_features_array_offset; /* Offset to uint32 array of partial features */
 	uint32_t cpu_cores_array_offset; /* Offset to uint32 array of CPU cores per cluster */
-	uint32_t anPartInstancesOffset; /* Offset to array of part-instance structures */
-	uint32_t nNumPartInstances; /* Length of the part-instance array */
+	uint32_t part_instances_offset; /* Offset to array of part-instance structures */
+	uint32_t num_part_instances; /* Length of the part-instance array */
 };
 
 #endif /* PLATFORMINFODEFS_H */
