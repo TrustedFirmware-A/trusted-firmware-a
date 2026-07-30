@@ -5,6 +5,7 @@
  */
 
 #include <errno.h>
+#include <stdbool.h>
 
 #include <common/debug.h>
 #include <drivers/delay_timer.h>
@@ -87,6 +88,7 @@ static const unsigned int v_opp_uv_default[VCORE_MAX_OPP] = {
 #endif
 
 static unsigned int v_opp_uv[ARRAY_SIZE(v_opp_uv_default)];
+static bool vcorefs_init_done;
 
 #ifdef CONFIG_MTK_VCOREDVFS_SUPPORT
 static int opp_type;
@@ -239,6 +241,8 @@ static void spm_vcorefs_vcore_setting(void)
 	spm_vcorefs_pwarp_cmd(CMD_13, VCORE_UV_TO_PMIC(v_opp_uv[1]));
 	spm_vcorefs_pwarp_cmd(CMD_14, VCORE_UV_TO_PMIC(v_opp_uv[0]));
 #endif
+
+	vcorefs_init_done = true;
 }
 
 int spm_vcorefs_plat_init(uint32_t dvfsrc_flag,
@@ -327,6 +331,12 @@ void spm_vcorefs_plat_resume(void)
 
 int spm_vcorefs_get_vcore_uv(uint32_t gear, uint32_t *val)
 {
+	if (!vcorefs_init_done) {
+		ERROR("spm_vcorefs: GET_UV called before VCORE_DVFS_INIT\n");
+		*val = 0;
+		return VCOREFS_E_NOT_SUPPORTED;
+	}
+
 	if (gear < VCORE_MAX_OPP)
 		*val = v_opp_uv[VCORE_MAX_OPP - gear - 1];
 	else
