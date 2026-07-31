@@ -18,7 +18,6 @@
 #include <qti_cpu.h>
 #include <qti_plat.h>
 
-#define QTI_LOCAL_PSTATE_WIDTH		4
 #define QTI_LOCAL_PSTATE_MASK		((1 << QTI_LOCAL_PSTATE_WIDTH) - 1)
 
 #if PSCI_OS_INIT_MODE
@@ -27,50 +26,12 @@
 					  (PLAT_MAX_PWR_LVL + 1)))
 #endif
 
-/* Make composite power state parameter till level 0 */
-#define qti_make_pwrstate_lvl0(lvl0_state, type) \
-		(((lvl0_state) << PSTATE_ID_SHIFT) | ((type) << PSTATE_TYPE_SHIFT))
-
-/* Make composite power state parameter till level 1 */
-#define qti_make_pwrstate_lvl1(lvl1_state, lvl0_state, type) \
-		(((lvl1_state) << QTI_LOCAL_PSTATE_WIDTH) | \
-		qti_make_pwrstate_lvl0(lvl0_state, type))
-
-/* Make composite power state parameter till level 2 */
-#define qti_make_pwrstate_lvl2(lvl2_state, lvl1_state, lvl0_state, type) \
-		(((lvl2_state) << (QTI_LOCAL_PSTATE_WIDTH * 2)) | \
-		qti_make_pwrstate_lvl1(lvl1_state, lvl0_state, type))
-
-/* Make composite power state parameter till level 3 */
-#define qti_make_pwrstate_lvl3(lvl3_state, lvl2_state, lvl1_state, lvl0_state, type) \
-		(((lvl3_state) << (QTI_LOCAL_PSTATE_WIDTH * 3)) | \
-		qti_make_pwrstate_lvl2(lvl2_state, lvl1_state, lvl0_state, type))
-
 /* QTI_CORE_PWRDN_EN_MASK happens to be same across all CPUs */
 #define QTI_CORE_PWRDN_EN_MASK		1
 
 /* cpu power control happens to be same across all CPUs */
 DEFINE_RENAME_SYSREG_RW_FUNCS(cpu_pwrctrl_val, S3_0_C15_C2_7)
 
-const unsigned int qti_pm_idle_states[] = {
-	qti_make_pwrstate_lvl0(QTI_LOCAL_STATE_OFF,
-			       PSTATE_TYPE_POWERDOWN),
-	qti_make_pwrstate_lvl0(QTI_LOCAL_STATE_DEEPOFF,
-			       PSTATE_TYPE_POWERDOWN),
-	qti_make_pwrstate_lvl1(QTI_LOCAL_STATE_DEEPOFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       PSTATE_TYPE_POWERDOWN),
-	qti_make_pwrstate_lvl2(QTI_LOCAL_STATE_OFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       PSTATE_TYPE_POWERDOWN),
-	qti_make_pwrstate_lvl3(QTI_LOCAL_STATE_OFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       QTI_LOCAL_STATE_DEEPOFF,
-			       PSTATE_TYPE_POWERDOWN),
-	0,
-};
 
 /*******************************************************************************
  * QTI standard platform handler called to check the validity of the power
@@ -82,6 +43,7 @@ int qti_validate_power_state(unsigned int power_state,
 {
 	unsigned int state_id;
 	int i;
+	const unsigned int *idle_states = plat_qti_pm_idle_states();
 
 	assert(req_state);
 
@@ -90,18 +52,18 @@ int qti_validate_power_state(unsigned int power_state,
 	 *  entry in the idle power state array. This can be made a binary
 	 *  search if the number of entries justify the additional complexity.
 	 */
-	for (i = 0; !!qti_pm_idle_states[i]; i++) {
+	for (i = 0; !!idle_states[i]; i++) {
 #if PSCI_OS_INIT_MODE
 		if ((power_state & ~QTI_LAST_AT_PLVL_MASK) ==
-		    qti_pm_idle_states[i])
+		    idle_states[i])
 #else
-		if (power_state == qti_pm_idle_states[i])
+		if (power_state == idle_states[i])
 #endif
 			break;
 	}
 
 	/* Return error if entry not found in the idle state array */
-	if (!qti_pm_idle_states[i])
+	if (!idle_states[i])
 		return PSCI_E_INVALID_PARAMS;
 
 	i = 0;
@@ -232,17 +194,30 @@ __dead2 void qti_system_reset(void)
 
 void qti_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
-	int i = 0;
+	int i;
 	unsigned int state_id, power_state;
-	int size = ARRAY_SIZE(qti_pm_idle_states);
+	const unsigned int *idle_states = plat_qti_pm_idle_states();
+
+	for (i = 0; i <= PLAT_MAX_PWR_LVL; i++) {
+		req_state->pwr_domain_state[i] = PSCI_LOCAL_STATE_RUN;
+	}
 
 	/*
 	 * Find deepest state.
-	 * The arm_pm_idle_states[] array has last element by default 0,
-	 * so the real deepest state is second last element of that array.
+	 * The idle-states array is 0-terminated, so the deepest state is the
+	 * last non-zero element, i.e. the one immediately before the terminator.
 	 */
-	power_state = qti_pm_idle_states[size - 2];
+	i = 0;
+	while (idle_states[i] != 0U) {
+		i++;
+	}
+
+	/* Need at least one valid state before the terminator. */
+	assert(i > 0);
+	power_state = idle_states[i - 1];
 	state_id = psci_get_pstate_id(power_state);
+
+	i = 0;
 
 	/* Parse the State ID and populate the state info parameter */
 	while (state_id) {

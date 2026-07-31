@@ -55,6 +55,40 @@ int  plat_qti_pwr_psci_init(uintptr_t warmboot_entry);
 void plat_qti_bl31_setup_post(void);
 void plat_qti_invoke_unhandled_isr(uint32_t id, void *handle);
 
+/*
+ * Composite PSCI power-state encoding helpers, shared by the common PSCI layer
+ * and the per-platform PM backends that define plat_qti_pm_idle_states(). The
+ * users of these macros must include <lib/psci/psci.h> for the PSTATE_* shifts.
+ */
+#define QTI_LOCAL_PSTATE_WIDTH		4
+
+/* Make composite power state parameter till level 0 */
+#define qti_make_pwrstate_lvl0(lvl0_state, type) \
+		(((lvl0_state) << PSTATE_ID_SHIFT) | ((type) << PSTATE_TYPE_SHIFT))
+
+/* Make composite power state parameter till level 1 */
+#define qti_make_pwrstate_lvl1(lvl1_state, lvl0_state, type) \
+		(((lvl1_state) << QTI_LOCAL_PSTATE_WIDTH) | \
+		qti_make_pwrstate_lvl0(lvl0_state, type))
+
+/* Make composite power state parameter till level 2 */
+#define qti_make_pwrstate_lvl2(lvl2_state, lvl1_state, lvl0_state, type) \
+		(((lvl2_state) << (QTI_LOCAL_PSTATE_WIDTH * 2)) | \
+		qti_make_pwrstate_lvl1(lvl1_state, lvl0_state, type))
+
+/* Make composite power state parameter till level 3 */
+#define qti_make_pwrstate_lvl3(lvl3_state, lvl2_state, lvl1_state, lvl0_state, type) \
+		(((lvl3_state) << (QTI_LOCAL_PSTATE_WIDTH * 3)) | \
+		qti_make_pwrstate_lvl2(lvl2_state, lvl1_state, lvl0_state, type))
+
+/*
+ * Backend-provided, 0-terminated array of the composite idle power states this
+ * platform supports (deepest state last, immediately before the terminator).
+ * Defined by the platform PM backend: e.g. hoya_pm.c advertises WFI-based CPU
+ * standby only, while qtiseclib_pm.c advertises the firmware power-down ladder.
+ */
+const unsigned int *plat_qti_pm_idle_states(void);
+
 typedef struct chip_id_info {
 	uint16_t jtag_id;
 	uint16_t chipinfo_id;

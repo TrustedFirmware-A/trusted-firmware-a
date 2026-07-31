@@ -8,6 +8,7 @@
 
 #include <lib/psci/psci.h>
 
+#include <platform_def.h>
 #include <qti_plat.h>
 #include <qtiseclib_interface.h>
 
@@ -52,4 +53,35 @@ int plat_qti_pwr_psci_init(uintptr_t warmboot_entry)
 void plat_qti_invoke_unhandled_isr(uint32_t id, void *handle)
 {
 	qtiseclib_invoke_isr(id, handle);
+}
+
+/*
+ * plat_qti_pm_idle_states - advertise the supported CPU idle states.
+ *
+ * The QTISECLIB backend supports the full firmware power-down (LPM) ladder, so
+ * advertise the CPU/cluster/system power-down states handled by qtiseclib.
+ */
+const unsigned int *plat_qti_pm_idle_states(void)
+{
+	static const unsigned int idle_states[] = {
+		qti_make_pwrstate_lvl0(QTI_LOCAL_STATE_OFF,
+				       PSTATE_TYPE_POWERDOWN),
+		qti_make_pwrstate_lvl0(QTI_LOCAL_STATE_DEEPOFF,
+				       PSTATE_TYPE_POWERDOWN),
+		qti_make_pwrstate_lvl1(QTI_LOCAL_STATE_DEEPOFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       PSTATE_TYPE_POWERDOWN),
+		qti_make_pwrstate_lvl2(QTI_LOCAL_STATE_OFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       PSTATE_TYPE_POWERDOWN),
+		qti_make_pwrstate_lvl3(QTI_LOCAL_STATE_OFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       QTI_LOCAL_STATE_DEEPOFF,
+				       PSTATE_TYPE_POWERDOWN),
+		0,
+	};
+
+	return idle_states;
 }
