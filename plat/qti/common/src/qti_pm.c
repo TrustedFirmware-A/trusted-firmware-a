@@ -139,6 +139,25 @@ static void qti_cpu_power_on_finish(const psci_power_state_t *target_state)
 
 static void qti_cpu_standby(plat_local_state_t cpu_state)
 {
+	u_register_t scr;
+
+	assert(cpu_state == QTI_LOCAL_STATE_STB);
+
+	/*
+	 * Enter standby retention with a WFI, routing non-secure interrupts to
+	 * EL3 to wake the CPU, then restore SCR_EL3 so they are handled in the
+	 * non-secure world. Route both IRQ and FIQ: GICv3 delivers NS Group 1
+	 * interrupts as FIQ, GICv2 as IRQ.
+	 */
+	scr = read_scr_el3();
+	write_scr_el3(scr | SCR_IRQ_BIT | SCR_FIQ_BIT);
+	isb();
+
+	dsb();
+	wfi();
+
+	write_scr_el3(scr);
+	isb();
 }
 
 static void qti_node_power_off(const psci_power_state_t *target_state)
