@@ -94,10 +94,7 @@ BL31_SOURCES		+=	drivers/delay_timer/generic_delay_timer.c		\
 				$(PLAT_PATH)/hoya/common/$(ARCH)/hoya_helpers.S		\
 				$(PLAT_PATH)/hoya/common/hoya_bl31_setup.c		\
 				$(PLAT_PATH)/hoya/common/hoya_gicv3.c		\
-				$(PLAT_PATH)/hoya/common/qtiseclib_pm.c			\
 				$(PLAT_PATH)/hoya/qtiseclib/src/qtiseclib_cb_interface.c
-
-BL31_SOURCES	+=		drivers/qti/sec_core/sec_core_stub.c
 
 include drivers/qti/smem/smem.mk
 include drivers/qti/chipinfo/chipinfo.mk
@@ -119,18 +116,24 @@ include drivers/qti/pdc/pdc.mk
 include drivers/qti/pwr_utils/pwr_utils.mk
 include drivers/qti/rpmh/rpmh.mk
 include drivers/qti/clock/clock.mk
+include drivers/qti/cpucp/cpucp.mk
 
-PLAT_INCLUDES   +=      -Iinclude/drivers/qti/qtimer/${CHIPSET} \
+PLAT_INCLUDES   +=      -Iinclude/drivers/qti/sec_core/${CHIPSET} \
+			-Iinclude/drivers/qti/qtimer/${CHIPSET} \
 			-Iinclude/drivers/qti/watchdog/${CHIPSET}
 
-BL31_SOURCES	+=	plat/qti/hoya/qtiseclib/src/qtiseclib_interface_stub.c \
+BL31_SOURCES	+=	$(PLAT_PATH)/hoya/common/hoya_pm.c \
+			$(PLAT_PATH)/hoya/qtiseclib/src/qtiseclib_interface_stub.c \
+			drivers/qti/sec_core/sec_core.c \
+			drivers/qti/sec_core/${CHIPSET}/sec_core_cfg.c \
 			drivers/qti/qtimer/qtimer.c \
 			drivers/qti/watchdog/watchdog.c
-
 else
 $(eval $(call add_define,QTISECLIB_PATH))
 # use library provided by QTISECLIB_PATH
-BL31_SOURCES	+=	drivers/qti/accesscontrol/access_control_stub.c \
+BL31_SOURCES	+=	$(PLAT_PATH)/hoya/common/qtiseclib_pm.c \
+			drivers/qti/sec_core/sec_core_stub.c \
+			drivers/qti/accesscontrol/access_control_stub.c \
 			drivers/qti/qtimer/qtimer_stub.c \
 			drivers/qti/watchdog/watchdog_stub.c
 
