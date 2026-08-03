@@ -1894,6 +1894,8 @@ CPU_FLAG_LIST += ERRATA_C1NANO_3630925
 # to revision r0p0 and r0p1 of C1-Nano cpu and is fixed in r0p2.
 CPU_FLAG_LIST += ERRATA_C1NANO_3754876
 
+CPU_FLAG_LIST += ERRATA_C1NANO_4497400
+
 # Flag to apply DSU erratum 798953. This erratum applies to DSUs revision r0p0.
 # Applying the workaround results in higher DSU power consumption on idle.
 CPU_FLAG_LIST += ERRATA_DSU_798953
