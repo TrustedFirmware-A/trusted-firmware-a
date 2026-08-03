@@ -1600,6 +1600,8 @@ CPU_FLAG_LIST += ERRATA_A520_3631357
 # revisions r0p0, r0p1, r0p2, r0p3, r0p4 of the Cortex-A520 cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A520_3685825
 
+CPU_FLAG_LIST += ERRATA_A520_4491980
+
 # Flag to apply erratum 2394277 workaround during reset. This erratum applies to
 # revision r0p0 of the Neoverse V2 cpu and is fixed in r0p1.
 CPU_FLAG_LIST += ERRATA_V2_2394277
