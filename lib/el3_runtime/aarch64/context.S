@@ -676,9 +676,9 @@ sve_not_enabled:
 
 	restore_ptw_el1_sys_regs
 
-#if IMAGE_BL31 && ERRATA_A510_4568615
+#if IMAGE_BL31 && (ERRATA_A510_4568615 || ERRATA_A520_4491980)
 	bl	apply_faulting_side_channel_wa
-#endif /* IMAGE_BL31 && ERRATA_A510_4568615 */
+#endif /* IMAGE_BL31 && (ERRATA_A510_4568615 || ERRATA_A520_4491980) */
 
 	/* ----------------------------------------------------------
 	 * Restore general purpose (including x30), PMCR_EL0 and
