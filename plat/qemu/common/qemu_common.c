@@ -202,6 +202,16 @@ int plat_spmc_shmem_reclaim(struct ffa_mtd *desc)
 {
 	return 0;
 }
+
+/*
+ * Allow the platform to validate the memory regions supplied for the
+ * RX/TX buffers.
+ */
+bool plat_spmc_rxtx_validate(uintptr_t rx_address, uintptr_t tx_address,
+			size_t buffer_size)
+{
+	return true;
+}
 #endif
 
 #if defined(SPD_spmd)

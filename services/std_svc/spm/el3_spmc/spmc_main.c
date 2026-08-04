@@ -997,6 +997,13 @@ static uint64_t rxtx_map_handler(uint32_t smc_fid,
 	/* Obtain the RX/TX buffer pair descriptor. */
 	mbox = spmc_get_mbox_desc(secure_origin);
 
+	/* Validate the memory ranges provided. */
+	if (!plat_spmc_rxtx_validate(rx_address, tx_address, buf_size)) {
+		WARN("Invalid memory ranges provided for the RX/TX buffers.\n");
+		return spmc_ffa_error_return(handle,
+					     FFA_ERROR_INVALID_PARAMETER);
+	}
+
 	spin_lock(&mbox->lock);
 
 	/* Check if buffers have already been mapped. */

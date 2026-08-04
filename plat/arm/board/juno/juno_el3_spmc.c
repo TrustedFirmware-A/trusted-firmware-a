@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -37,6 +37,16 @@ int plat_spmc_shmem_reclaim(struct ffa_mtd *desc)
 	return 0;
 }
 
+/*
+ * Allow the platform to validate the memory regions supplied for the
+ * RX/TX buffers.
+ */
+bool plat_spmc_rxtx_validate(uintptr_t rx_address, uintptr_t tx_address,
+			size_t buffer_size)
+{
+	return true;
+}
+
 int plat_spmd_handle_group0_interrupt(uint32_t intid)
 {
 	/*
@@ -46,4 +56,3 @@ int plat_spmd_handle_group0_interrupt(uint32_t intid)
 	(void)intid;
 	return -1;
 }
-
