@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <arch.h>
+#include <asm_macros.S>
+#include <common/bl_common.h>
+#include <venom.h>
+#include <cpu_macros.S>
+#include <plat_macros.S>
+
+/* Hardware handled coherency */
+#if HW_ASSISTED_COHERENCY == 0
+#error "Venom AE must be compiled with HW_ASSISTED_COHERENCY enabled"
+#endif
+
+/* 64-bit only core */
+#if CTX_INCLUDE_AARCH32_REGS == 1
+#error "Venom AE supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
+#endif
+
+cpu_reset_prologue venomae
+
+cpu_reset_func_start venomae
+	/* ----------------------------------------------------
+	 * Disable speculative loads
+	 * ----------------------------------------------------
+	 */
+	msr	SSBS, xzr
+	enable_mpmm
+cpu_reset_func_end venomae
+
+func venomae_core_pwr_dwn
+	/* ---------------------------------------------------
+	 * Flip CPU power down bit in power control register.
+	 * It will be set on powerdown and cleared on wakeup
+	 * ---------------------------------------------------
+	 */
+	sysreg_bit_toggle VENOM_IMP_CPUPWRCTLR_EL1, \
+		VENOM_IMP_CPUPWRCTLR_EL1_CORE_PWRDN_EN_BIT
+	isb
+	signal_pabandon_handled
+	ret
+endfunc venomae_core_pwr_dwn
+
+.section .rodata.venomae_regs, "aS"
+venomae_regs: /* The ASCII list of register names to be reported */
+	.asciz	"cpuectlr_el1", ""
+
+func venomae_cpu_reg_dump
+	adr 	x6, venomae_regs
+	mrs	x8, VENOM_IMP_CPUECTLR_EL1
+	ret
+endfunc venomae_cpu_reg_dump
+
+declare_cpu_ops venomae, VENOM_AE_MIDR, \
+	venomae_reset_func, \
+	venomae_core_pwr_dwn

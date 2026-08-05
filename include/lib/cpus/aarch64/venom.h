@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,7 @@
 #define VENOM_H
 
 #define VENOM_MIDR		                        U(0x410FD980)
+#define VENOM_AE_MIDR		                        U(0x410FD970)
 
 /*******************************************************************************
  * CPU Extended Control register specific definitions
