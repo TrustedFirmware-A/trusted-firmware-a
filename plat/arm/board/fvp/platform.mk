@@ -191,6 +191,7 @@ else
 					lib/cpus/aarch64/cortex_a320.S		\
 					lib/cpus/aarch64/cortex_a510.S		\
 					lib/cpus/aarch64/cortex_a520.S		\
+					lib/cpus/aarch64/cortex_a520ae.S	\
 					lib/cpus/aarch64/cortex_a725.S		\
 					lib/cpus/aarch64/cortex_x1.S		\
 					lib/cpus/aarch64/cortex_x3.S		\

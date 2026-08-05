@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,7 @@
 #define CORTEX_A520_H
 
 #define CORTEX_A520_MIDR					U(0x410FD800)
+#define CORTEX_A520_AE_MIDR					U(0x410FD880)
 
 /*******************************************************************************
  * CPU Extended Control register specific definitions
