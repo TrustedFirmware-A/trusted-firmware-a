@@ -1,0 +1,197 @@
+/*
+ * Copyright (c) 2022-2024, Google LLC. All rights reserved.
+ * Copyright (c) 2026, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * TRM: https://developer.arm.com/documentation/101968/latest
+ * SDEN: https://developer.arm.com/documentation/SDEN-1707914/latest
+ */
+
+#include <asm_macros.S>
+#include <cortex_x1.h>
+#include <cpu_macros.S>
+#include "wa_cve_2022_23960_bhb_vector.S"
+
+/* Hardware handled coherency */
+#if HW_ASSISTED_COHERENCY == 0
+#error "Cortex-X1C must be compiled with HW_ASSISTED_COHERENCY enabled"
+#endif
+
+/* 64-bit only core */
+#if CTX_INCLUDE_AARCH32_REGS == 1
+#error "Cortex-X1C supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
+#endif
+
+#if WORKAROUND_CVE_2022_23960
+	wa_cve_2022_23960_bhb_vector_table CORTEX_X1_BHB_LOOP_COUNT, cortex_x1c
+#endif /* WORKAROUND_CVE_2022_23960 */
+
+cpu_reset_prologue cortex_x1c
+
+workaround_reset_start cortex_x1c, ERRATUM(1827430), ERRATA_X1C_1827430
+	sysreg_bit_set CORTEX_X1_CPUECTLR_EL1, BIT(53)
+workaround_reset_end cortex_x1c, ERRATUM(1827430)
+
+check_erratum_ls cortex_x1c, ERRATUM(1827430), CPU_REV(0, 0)
+
+workaround_reset_start cortex_x1c, ERRATUM(1827440), ERRATA_X1C_1827440
+	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(2)
+workaround_reset_end cortex_x1c, ERRATUM(1827440)
+
+check_erratum_ls cortex_x1c, ERRATUM(1827440), CPU_REV(0, 0)
+
+workaround_reset_start cortex_x1c, ERRATUM(1941499), ERRATA_X1C_1941499
+	sysreg_bit_set CORTEX_X1_CPUECTLR_EL1, BIT(8)
+workaround_reset_end cortex_x1c, ERRATUM(1941499)
+
+check_erratum_ls cortex_x1c, ERRATUM(1941499), CPU_REV(0, 0)
+
+workaround_reset_start cortex_x1c, ERRATUM(1951501), ERRATA_X1C_1951501
+	ldr x0, =0x0
+	msr s3_6_c15_c8_0, x0
+	ldr x0, =0x10e3900002
+	msr s3_6_c15_c8_2, x0
+	ldr x0, =0x10fff00083
+	msr s3_6_c15_c8_3, x0
+	ldr x0, =0x2001003ff
+	msr s3_6_c15_c8_1, x0
+	ldr x0, =0x1
+	msr s3_6_c15_c8_0, x0
+	ldr x0, =0x10e3800082
+	msr s3_6_c15_c8_2, x0
+	ldr x0, =0x10fff00083
+	msr s3_6_c15_c8_3, x0
+	ldr x0, =0x2001003ff
+	msr s3_6_c15_c8_1, x0
+	ldr x0, =0x2
+	msr s3_6_c15_c8_0, x0
+	ldr x0, =0x10e3800200
+	msr s3_6_c15_c8_2, x0
+	ldr x0, =0x10fff003e0
+	msr s3_6_c15_c8_3, x0
+	ldr x0, =0x2001003ff
+	msr s3_6_c15_c8_1, x0
+workaround_reset_end cortex_x1c, ERRATUM(1951500)
+
+check_erratum_range cortex_x1c, ERRATUM(1951500), CPU_REV(1, 0), CPU_REV(1, 1)
+
+workaround_reset_start cortex_x1c, ERRATUM(1952683), ERRATA_X1_1952683
+	ldr x0, =0x5
+	msr s3_6_c15_c8_0, x0
+	ldr x0, =0xeee10a10
+	msr s3_6_c15_c8_2, x0
+	ldr x0, =0xffef0fff
+	msr s3_6_c15_c8_3, x0
+	ldr x0, =0x0010f000
+	msr s3_6_c15_c8_4, x0
+	ldr x0, =0x0010f000
+	msr s3_6_c15_c8_5, x0
+	ldr x0, =0x40000080023ff
+	msr s3_6_c15_c8_1, x0
+	ldr x0, =0x6
+	msr s3_6_c15_c8_0, x0
+	ldr x0, =0xee640f34
+	msr s3_6_c15_c8_2, x0
+	ldr x0, =0xffef0fff
+	msr s3_6_c15_c8_3, x0
+	ldr x0, =0x40000080023ff
+	msr s3_6_c15_c8_1, x0
+workaround_reset_end cortex_x1c, ERRATUM(1952683)
+
+check_erratum_ls cortex_x1c, ERRATUM(1952683), CPU_REV(0, 0)
+
+workaround_reset_start cortex_x1c, ERRATUM(2376745), ERRATA_X1_2376745
+	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(0)
+workaround_reset_end cortex_x1c, ERRATUM(2376745)
+
+check_erratum_chosen cortex_x1c, ERRATUM(2376745), ERRATA_X1_2376745
+
+workaround_reset_start cortex_x1c, ERRATUM(2395406), ERRATA_X1_2395406
+	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(40)
+workaround_reset_end cortex_x1c, ERRATUM(2395406)
+
+check_erratum_chosen cortex_x1c, ERRATUM(2395406), ERRATA_X1_2395406
+
+workaround_reset_start cortex_x1c, ERRATUM(2742426), ERRATA_X1_2742426
+	sysreg_bit_set CORTEX_X1_ACTLR5_EL1, BIT(55)
+	sysreg_bit_clear CORTEX_X1_ACTLR5_EL1, BIT(56)
+workaround_reset_end cortex_x1c, ERRATUM(2742426)
+
+check_erratum_chosen cortex_x1c, ERRATUM(2742426), ERRATA_X1_2742426
+
+workaround_reset_start cortex_x1c, ERRATUM(2779479), ERRATA_X1_2779479
+	sysreg_bit_set CORTEX_X1_ACTLR3_EL1, BIT(47)
+workaround_reset_end cortex_x1c, ERRATUM(2779479)
+
+check_erratum_chosen cortex_x1c, ERRATUM(2779479), ERRATA_X1_2779479
+
+workaround_reset_start cortex_x1c, ERRATUM(3888017), ERRATA_X1_3888017
+	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(22)
+workaround_reset_end cortex_x1c, ERRATUM(3888017)
+
+check_erratum_chosen cortex_x1c, ERRATUM(3888017), ERRATA_X1_3888017
+
+workaround_reset_start cortex_x1c, ERRATUM(4302972), ERRATA_X1_4302972
+	sysreg_bit_set CORTEX_X1_ACTLR5_EL1, BIT(50)
+workaround_reset_end cortex_x1c, ERRATUM(4302972)
+
+check_erratum_chosen cortex_x1c, ERRATUM(4302972), ERRATA_X1_4302972
+
+check_erratum_chosen cortex_x1c, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
+
+workaround_reset_start cortex_x1c, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
+#ifdef IMAGE_BL31
+	/*
+	 * The Cortex-X1C generic vectors are overridden to apply errata
+	 * mitigation on exception entry from lower ELs.
+	 */
+	override_vector_table wa_cve_vbar_cortex_x1c
+#endif /* IMAGE_BL31 */
+workaround_reset_end cortex_x1c, CVE(2022, 23960)
+
+/* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
+workaround_reset_start cortex_x1c, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
+	sysreg_bit_set CORTEX_X1_CPUECTLR_EL1, BIT(46)
+workaround_reset_end cortex_x1c, CVE(2024, 5660)
+
+check_erratum_chosen cortex_x1c, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
+
+add_erratum_entry cortex_x1c, CVE(2025, 10263), WORKAROUND_CVE_2025_10263
+check_erratum_chosen cortex_x1c, CVE(2025, 10263), WORKAROUND_CVE_2025_10263
+
+cpu_reset_func_start cortex_x1c
+cpu_reset_func_end cortex_x1c
+
+	/* ---------------------------------------------
+	 * HW will do the cache maintenance while powering down
+	 * ---------------------------------------------
+	 */
+func cortex_x1c_core_pwr_dwn
+	sysreg_bit_set CORTEX_X1_CPUPWRCTLR_EL1, CORTEX_X1_CORE_PWRDN_EN_MASK
+	isb
+	ret
+endfunc cortex_x1c_core_pwr_dwn
+
+       /* ---------------------------------------------
+	* This function provides Cortex-X1C specific
+	* register information for crash reporting.
+	* It needs to return with x6 pointing to
+	* a list of register names in ascii and
+	* x8 - x15 having values of registers to be
+	* reported.
+	* ---------------------------------------------
+	*/
+.section .rodata.cortex_x1c_regs, "aS"
+cortex_x1c_regs:  /* The ascii list of register names to be reported */
+	.asciz	"cpuectlr_el1", ""
+
+func cortex_x1c_cpu_reg_dump
+	adr	x6, cortex_x1c_regs
+	mrs	x8, CORTEX_X1_CPUECTLR_EL1
+	ret
+endfunc cortex_x1c_cpu_reg_dump
+
+declare_cpu_ops cortex_x1c, CORTEX_X1C_MIDR, \
+	cortex_x1c_reset_func, \
+	cortex_x1c_core_pwr_dwn

@@ -673,6 +673,48 @@ For Cortex-X1 CPU, the following errata build flags are defined:
    CPU. This needs to be enabled for revisions r0p0, r1p0, r1p1, r1p2 of the CPU.
    It is still open.
 
+For Cortex-X1C CPU, the following errata build flags are defined:
+
+- ``ERRATA_X1C_1827430``: This applies erratum 1827430 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revision r0p0 of the CPU. It is
+   fixed in r0p1.
+
+- ``ERRATA_X1C_1827440``: This applies erratum 1827440 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revision r0p0 of the CPU. It is
+   fixed in r0p1.
+
+- ``ERRATA_X1C_1941499``: This applies erratum 1941499 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revision r0p0 of the CPU. It is
+   fixed in r0p1.
+
+- ``ERRATA_X1C_1951501``: This applies erratum 1951501 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revision r0p0 of the CPU. It is
+   fixed in r0p1.
+
+- ``ERRATA_X1C_2376746``: This applies erratum 2376746 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p0, r0p1 and r0p2 of
+   the CPU. It is still open.
+
+- ``ERRATA_X1C_2395407``: This applies erratum 2395407 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p0, r0p1 and r0p2 of
+   the CPU. It is still open.
+
+- ``ERRATA_X1C_2743232``: This applies erratum 2743232 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p1 and r0p2 of the
+   CPU. It is fixed in r0p3.
+
+- ``ERRATA_X1C_2779483``: This applies erratum 2779483 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p0, r0p1 and r0p2 of
+   the CPU. It is still open.
+
+- ``ERRATA_X1C_3888019``: This applies erratum 3888019 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p0, r0p1 and r0p2 of
+   the CPU. It is still open.
+
+- ``ERRATA_X1C_4302974``: This applies erratum 4302974 workaround to
+   Cortex-X1C CPU. This needs to be enabled for revisions r0p0, r0p1 and r0p2 of
+   the CPU. It is still open.
+
 For Neoverse N1, the following errata build flags are defined :
 
 - ``ERRATA_N1_925373``: This applies erratum 925373 workaround to Neoverse N1
