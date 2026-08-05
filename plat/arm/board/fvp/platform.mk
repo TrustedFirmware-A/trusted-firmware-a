@@ -198,6 +198,7 @@ else
 					lib/cpus/aarch64/neoverse_n3.S		\
 					lib/cpus/aarch64/neoverse_v2.S		\
 					lib/cpus/aarch64/neoverse_v3.S		\
+					lib/cpus/aarch64/neoverse_v3ae.S	\
 					lib/cpus/aarch64/c1_pro.S		\
 					lib/cpus/aarch64/c1_nano.S		\
 					lib/cpus/aarch64/c1_ultra.S		\
