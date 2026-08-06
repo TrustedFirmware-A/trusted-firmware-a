@@ -14,6 +14,9 @@
 #include "agilex3_power_manager.h"
 #include "agilex3_system_manager.h"
 #include <platform_def.h>
+#include "scsr/socfpga_scsr_mailbox.h"
+
+/* SCSR mailbox backend vtable. */
 
 /* Platform Setting */
 #define PLATFORM_MODEL						PLAT_SOCFPGA_AGILEX3
@@ -23,8 +26,8 @@
 #define CACHE_FLUSH							1
 #define MMC_DEVICE_TYPE						1  /* MMC = 0, SD = 1 */
 #define XLAT_TABLES_V2						U(1)
-#define PLAT_PRIMARY_CPU_A55					0x000
-#define PLAT_PRIMARY_CPU_A76					0x200
+#define PLAT_PRIMARY_CPU_A55				U(0x0)
+#define PLAT_PRIMARY_CPU_A76				U(0x200)
 #define PLAT_CLUSTER_ID_MPIDR_AFF_SHIFT				MPIDR_AFF2_SHIFT
 #define PLAT_CPU_ID_MPIDR_AFF_SHIFT				MPIDR_AFF1_SHIFT
 #define PLAT_L2_RESET_REQ					0xB007C0DE

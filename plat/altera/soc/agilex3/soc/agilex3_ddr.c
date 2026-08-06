@@ -13,11 +13,11 @@
 
 #include "agilex3_ddr.h"
 #include "agilex3_iossm_mailbox.h"
-#include "socfpga_mailbox.h"
+#include "mailbox/socfpga_mailbox.h"
 
 /*
  * TODO: We need to leverage the legacy products DDR drivers and consider
- * the upcoming products like KM and then come up with common source code/driver
+ * the upcoming products like Agilex3 and then come up with common source code/driver
  * architecture to address all the products in one view.
  */
 
