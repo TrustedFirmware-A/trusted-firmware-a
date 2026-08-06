@@ -764,7 +764,7 @@ STMicroelectronics platform ports
 :|M|: Yann Gautier <yann.gautier@st.com>
 :|M|: Maxime Méré <maxime.mere@foss.st.com>
 :|C|: Manish Pandey <manish.pandey2@arm.com>
-:|F|: docs/plat/st/*
+:|F|: docs/plat/st/\*
 :|F|: docs/plat/stm32mp1.rst
 :|F|: drivers/st/
 :|F|: fdts/stm32\*
@@ -790,7 +790,6 @@ Texas Instruments platform port
 
 UniPhier platform port
 ^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Orphan
 :|F|: docs/plat/socionext-uniphier.rst
 :|F|: plat/socionext/uniphier/
 
