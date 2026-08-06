@@ -9,6 +9,7 @@ information about code reviews in TF-A project, please refer to the :ref:`Code
 Review Guidelines`.
 
 .. |M| replace:: **Mail**
+.. |C| replace:: **CC**
 .. |F| replace:: **Files**
 
 .. _maintainers:
@@ -472,6 +473,7 @@ Arm Morello and N1SDP Platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Anurag Koul <anurag.koul@arm.com>
 :|M|: Chandni Cherukuri <chandni.cherukuri@arm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: plat/arm/board/morello
 :|F|: plat/arm/board/n1sdp
 
@@ -479,6 +481,7 @@ Arm Rich IoT Platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 :|M|: Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: plat/arm/board/corstone700
 :|F|: plat/arm/board/corstone1000
 
@@ -487,6 +490,7 @@ Arm Reference Design platform ports
 :|M|: Thomas Abraham <thomas.abraham@arm.com>
 :|M|: Vijayenthiran Subramaniam <vijayenthiran.subramaniam@arm.com>
 :|M|: Rohit Mathew <Rohit.Mathew@arm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: plat/arm/board/neoverse_rd/common
 :|F|: plat/arm/board/neoverse_rd/platform/rdn2/
 :|F|: plat/arm/board/neoverse_rd/platform/rdv3/
@@ -495,6 +499,7 @@ Arm Total Compute platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Artem Kopotev <artem.kopotev@arm.com>
 :|M|: Oleksandr Tarhunakov <Oleksandr.Tarhunakov@arm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: plat/arm/board/tc
 
 Arm Automotive RD platform port
@@ -502,8 +507,8 @@ Arm Automotive RD platform port
 :|M|: Diego Sueiro <diego.sueiro@arm.com>
 :|M|: Peter Hoyes <peter.hoyes@arm.com>
 :|M|: Divin Raj <divin.raj@arm.com>
-:|F|: plat/arm/board/automotive_rd
 :|M|: Ahmed Azeem <ahmed.azeem@arm.com>
+:|F|: plat/arm/board/automotive_rd
 :|F|: plat/arm/board/automotive_rd/rdaspen
 
 Aspeed platform port
@@ -538,6 +543,7 @@ Marvell platform ports and SoC drivers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Jaiprakash Singh <jaiprakashs@marvell.com>
 :|M|: George Cherian <george.cherian@marvell.com>
+:|C|: Vincent Jardin <vjardin@free.fr>
 :|F|: docs/plat/marvell/
 :|F|: plat/marvell/
 :|F|: drivers/marvell/
@@ -554,6 +560,7 @@ MediaTek platform ports
 :|M|: Leon Chen <leon.chen@mediatek.com>
 :|M|: Jason-CH Chen <jason-ch.chen@mediatek.com>
 :|M|: Yidi Lin <yidilin@chromium.org>
+:|C|: Olivier Deprez <olivier.deprez@arm.com>
 :|F|: docs/plat/mt\*.rst
 :|F|: plat/mediatek/
 
@@ -570,6 +577,7 @@ Nuvoton npcm845x platform port
 NVidia platform ports
 ^^^^^^^^^^^^^^^^^^^^^
 :|M|: Varun Wadekar <vwadekar@nvidia.com>
+:|C|: Manish Pandey <manish.pandey2@arm.com>
 :|F|: docs/plat/nvidia-tegra.rst
 :|F|: include/lib/cpus/aarch64/denver.h
 :|F|: lib/cpus/aarch64/denver.S
@@ -682,6 +690,7 @@ QTI platform port and SoC drivers
 :|M|: Sumit Garg <sumit.garg@oss.qualcomm.com>
 :|M|: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
 :|M|: Sreevyshanavi Kare <skare@qti.qualcomm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: docs/plat/qti/
 :|F|: plat/qti/
 :|F|: drivers/qti/
@@ -698,6 +707,7 @@ QTI MSM8916 platform port
 Raspberry Pi 3 platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Ying-Chun Liu (PaulLiu) <paul.liu@linaro.org>
+:|C|: Joanna Farley <joanna.farley@arm.com>
 :|F|: docs/plat/rpi3.rst
 :|F|: plat/rpi/rpi3/
 :|F|: plat/rpi/common/
@@ -707,6 +717,7 @@ Raspberry Pi 3 platform port
 Raspberry Pi 4 platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Andre Przywara <andre.przywara@arm.com>
+:|C|: Joanna Farley <joanna.farley@arm.com>
 :|F|: docs/plat/rpi4.rst
 :|F|: plat/rpi/rpi4/
 :|F|: plat/rpi/common/
@@ -716,6 +727,7 @@ Raspberry Pi 4 platform port
 Renesas R-Car Gen3, Gen4, Gen5 platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Marek Vasut <marek.vasut+renesas@mailbox.org>
+:|C|: Sandrine Bailleux <sandrine.bailleux@arm.com>
 :|F|: docs/plat/rcar-gen3.rst
 :|F|: drivers/renesas/common
 :|F|: drivers/renesas/rcar\*
@@ -737,6 +749,7 @@ Renesas RZ/G2 platform port
 :|M|: Biju Das <biju.das.jz@bp.renesas.com>
 :|M|: Marek Vasut <marek.vasut@gmail.com>
 :|M|: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+:|C|: Sandrine Bailleux <sandrine.bailleux@arm.com>
 :|F|: docs/plat/rz-g2.rst
 :|F|: plat/renesas/common
 :|F|: plat/renesas/rzg
@@ -748,12 +761,14 @@ RockChip platform port
 ^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Tony Xie <tony.xie@rock-chips.com>
 :|M|: Heiko Stuebner <heiko@sntech.de>
+:|C|: Olivier Deprez <olivier.deprez@arm.com>
 :|F|: plat/rockchip/
 
 STMicroelectronics platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Yann Gautier <yann.gautier@st.com>
 :|M|: Maxime Méré <maxime.mere@foss.st.com>
+:|C|: Manish Pandey <manish.pandey2@arm.com>
 :|F|: docs/plat/st/*
 :|F|: docs/plat/stm32mp1.rst
 :|F|: drivers/st/
@@ -768,6 +783,7 @@ Synquacer platform port
 ^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Sumit Garg <sumit.garg@kernel.org>
 :|M|: Masahisa Kojima <kojima.masahisa@socionext.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: docs/plat/synquacer.rst
 :|F|: plat/socionext/synquacer/
 
@@ -788,6 +804,7 @@ AMD-Xilinx platform port
 :|M|: Michal Simek <michal.simek@amd.com>
 :|M|: Akshay Belsare <akshay.belsare@amd.com>
 :|M|: Maheedhar Sai Bollapalli <maheedharsai.bollapalli@amd.com>
+:|C|: Joanna Farley <joanna.farley@arm.com>
 :|F|: docs/plat/amd\*
 :|F|: docs/plat/xilinx\*
 :|F|: plat/amd/
@@ -861,6 +878,7 @@ Build system
 ^^^^^^^^^^^^
 :|M|: Chris Kay <chris.kay@arm.com>
 :|M|: Harrison Mutai <harrison.mutai@arm.com>
+:|C|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|F|: Makefile
 :|F|: make_helpers/
 
