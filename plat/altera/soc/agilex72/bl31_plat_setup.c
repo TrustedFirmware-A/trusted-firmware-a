@@ -25,6 +25,7 @@
 #include "agilex72_clock_manager.h"
 #include "agilex72_power_manager.h"
 #include "ccu/ncore_ccu.h"
+#include "config_dma/socfpga_config_dma.h"
 #include "mailbox/socfpga_mailbox_core.h"
 #include "socfpga_dt.h"
 #include "socfpga_private.h"
@@ -66,6 +67,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	console_set_scope(&console, (CONSOLE_FLAG_BOOT |
 				     CONSOLE_FLAG_RUNTIME |
 				     CONSOLE_FLAG_CRASH));
+
+	/* Initialize Config DMA controller. */
+	NOTICE("SOCFPGA: Initializing Config DMA controller at 0x%x\n", DMAC_BASE);
+	dw_dma_init(DMAC_BASE);
+	NOTICE("SOCFPGA: Config DMA initialized\n");
 
 #if RESET_TO_BL31
 	/* There are no parameters from BL2 if BL31 is a reset vector */
