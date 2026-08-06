@@ -67,11 +67,6 @@ Armv7-A architecture port
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Etienne Carriere <etienne.carriere@linaro.org>
 
-Build Definitions for CMake Build System
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Chris Kay <chris.kay@arm.com>
-:|F|: /
-
 Software Delegated Exception Interface (SDEI)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Jayanth Dodderi Chidanand <jayanthdodderi.chidanand@arm.com>
