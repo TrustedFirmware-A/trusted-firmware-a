@@ -115,8 +115,6 @@ Trusted Boot
 :|G|: `sandrine-bailleux-arm`_
 :|M|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|G|: `ManishVB-Arm`_
-:|M|: Lauren Wehrmeister <Lauren.Wehrmeister@arm.com>
-:|G|: `laurenw-arm`_
 :|F|: drivers/auth/
 
 Secure Partition Manager Core (EL3 FF-A SPMC)
@@ -131,8 +129,8 @@ Secure Partition Manager Dispatcher (SPMD)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Olivier Deprez <olivier.deprez@arm.com>
 :|G|: `odeprez`_
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
+:|M|: Manish Pandey <manish.pandey2@arm.com>
+:|G|: `manish-pandey-arm`_
 :|F|: services/std_svc/spmd/\*
 :|F|: plat/common/plat_spmd_manifest.c
 :|F|: include/services/ffa_svc.h
@@ -145,6 +143,8 @@ Exception Handling Framework (EHF)
 :|G|: `manish-pandey-arm`_
 :|M|: Boyan Karatotev <boyan.karatotev@arm.com>
 :|G|: `loosper-arm`_
+:|M|: Manish Badarkhe <manish.badarkhe@arm.com>
+:|G|: `ManishVB-Arm`_
 :|F|: bl31/ehf.c
 
 Runtime Exceptions and Interrupt Management
@@ -189,8 +189,6 @@ Activity Monitors Unit (AMU) extensions
 
 Arm CPU libraries
 ^^^^^^^^^^^^^^^^^
-:|M|: Bipin Ravi <bipin.ravi@arm.com>
-:|G|: `bipinravi-arm`_
 :|M|: Boyan Karatotev <boyan.karatotev@arm.com>
 :|G|: `loosper-arm`_
 :|F|: lib/cpus/
@@ -279,19 +277,13 @@ eMMC/UFS drivers
 
 Errata Management
 ^^^^^^^^^^^^^^^^^
-:|M|: Bipin Ravi <bipin.ravi@arm.com>
-:|G|: `bipinravi-arm`_
 :|M|: Boyan Karatotev <boyan.karatotev@arm.com>
 :|G|: `loosper-arm`_
 
 Firmware Configuration Framework (FCONF)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
 :|M|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|G|: `ManishVB-Arm`_
-:|M|: Lauren Wehrmeister <Lauren.Wehrmeister@arm.com>
-:|G|: `laurenw-arm`_
 :|F|: lib/fconf/
 :|F|: plat/arm/common/fconf/
 :|F|: include/lib/fconf/
@@ -319,10 +311,10 @@ GIC driver
 ^^^^^^^^^^
 :|M|: Manish Pandey <manish.pandey2@arm.com>
 :|G|: `manish-pandey-arm`_
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
 :|M|: Olivier Deprez <olivier.deprez@arm.com>
 :|G|: `odeprez`_
+:|M|: Alexei Fedorov <Alexei.Fedorov@arm.com>
+:|G|: `AlexeiFedorov`_
 :|M|: Boyan Karatotev <boyan.karatotev@arm.com>
 :|G|: `loosper-arm`_
 :|F|: drivers/arm/gic/
@@ -365,16 +357,12 @@ JTAG DCC console driver
 
 Libfdt wrappers
 ^^^^^^^^^^^^^^^
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
 :|M|: Manish Badarkhe <manish.badarkhe@arm.com>
 :|G|: `ManishVB-Arm`_
 :|F|: common/fdt_wrappers.c
 
 Library At ROM (ROMlib)
 ^^^^^^^^^^^^^^^^^^^^^^^
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
 :|F|: lib/romlib/
 
 Live Firmware Activation Service
@@ -397,6 +385,12 @@ Measured Boot
 :|G|: `ManishVB-Arm`_
 :|M|: Harrison Mutai <harrison.mutai@arm.com>
 :|G|: `harrisonmutai-arm`_
+:|M|: Javier Almansa Sobrino <javier.almansasobrino@arm.com>
+:|G|: `javieralso-arm`_
+:|M|: Alexei Fedorov <Alexei.Fedorov@arm.com>
+:|G|: `AlexeiFedorov`_
+:|M|: Sandrine Bailleux <sandrine.bailleux@arm.com>
+:|G|: `sandrine-bailleux-arm`_
 :|F|: drivers/measured_boot
 :|F|: include/drivers/measured_boot
 :|F|: docs/components/measured_boot
@@ -458,6 +452,8 @@ Power State Coordination Interface (PSCI)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Manish Pandey <manish.pandey2@arm.com>
 :|G|: `manish-pandey-arm`_
+:|M|: Javier Almansa Sobrino <javier.almansasobrino@arm.com>
+:|G|: `javieralso-arm`_
 :|M|: Boyan Karatotev <boyan.karatotev@arm.com>
 :|G|: `loosper-arm`_
 :|F|: lib/psci/
@@ -505,8 +501,8 @@ Standard C library
 ^^^^^^^^^^^^^^^^^^
 :|M|: Chris Kay <chris.kay@arm.com>
 :|G|: `CJKay`_
-:|M|: Madhukar Pappireddy <Madhukar.Pappireddy@arm.com>
-:|G|: `madhukar-Arm`_
+:|M|: Alexei Fedorov <Alexei.Fedorov@arm.com>
+:|G|: `AlexeiFedorov`_
 :|F|: lib/libc/
 
 Statistical Profiling Extension (SPE)
@@ -532,6 +528,8 @@ Translation tables (``xlat_tables``) library
 :|G|: `ManishVB-Arm`_
 :|M|: Harrison Mutai <harrison.mutai@arm.com>
 :|G|: `harrisonmutai-arm`_
+:|M|: Javier Almansa Sobrino <javier.almansasobrino@arm.com>
+:|G|: `javieralso-arm`_
 :|F|: lib/xlat\_tables_\*/
 
 Platform Ports
