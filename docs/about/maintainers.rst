@@ -780,6 +780,16 @@ QTI chipinfo, clock and platform info drivers
 :|F|: include/drivers/qti/clock/
 :|F|: include/drivers/qti/platforminfo/
 
+QTI ICB and core initialization drivers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:|M|: Navaneeth Reddy Padhuri <npadhuri@qti.qualcomm.com>
+:|M|: Sithi Fathima <sithsm@qti.qualcomm.com>
+:|M|: Odelu Kukatla <okukatla@qti.qualcomm.com>
+:|F|: drivers/qti/icb/
+:|F|: include/drivers/qti/icb/
+:|F|: drivers/qti/coreinit/
+:|F|: include/drivers/qti/coreinit/
+
 QTI power drivers
 ^^^^^^^^^^^^^^^^^
 :|M|: Dinesh Choudhary <idinesh@qti.qualcomm.com>
