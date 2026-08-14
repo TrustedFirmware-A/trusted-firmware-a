@@ -70,6 +70,48 @@ void plat_fpga_gic_init(void)
 		 */
 		gicr_base = fpga_gicv3_driver_data.gicd_base + (4U << 16);
 
+		/*
+		 * On some images there is an ITS, but it's not powered, so any
+		 * MMIO accesses hang the system. Peek ahead four 64K pages to
+		 * check if the following frame belongs to the *first*
+		 * redistributor; PIDR4 always reads 0x44 so cannot be used to
+		 * detect this. If yes, there might be such a problematic ITS,
+		 * so better skip that.  There are added complications with the
+		 * frame size, see this table of possible combinations:
+		 *
+		 * ofs  |  GICv4.0   |   GICV4.1   |  GICv4.0   |  GICv4.1   |
+		 * pages|  no ITS    |   no ITS    |  w/ ITS    |  w/ ITS    |
+		 * -----+------------+-------------+------------+------------+
+		 * +0	|                       GICD                         |
+		 * 	|                       ...                          |
+		 * -----+------------+-------------+------------+------------+
+		 * +4	| RD v4.0 #0 |             | ITS v4.0   | XXXXX      |
+		 * -----+------------+ RD v4.1 #0  +------------+ *ITS* v4.1 +
+		 * +6	| RD v4.0 #1 |             | RD v4.0 #0 | XXXXX      |
+		 * -----+------------+-------------+------------+------------+
+		 *>+8 <-| GICDA	     |             | RD v4.0 #1 |            |
+		 * -----+------------+ RD v4.1 #1  +------------+ RD v4.1 #0 +
+		 * +10	|	-    |             | GICDA      |            |
+		 * -----+------------+-------------+------------+------------+
+		 */
+		frame_id = gicv3_get_component_partnum(gicr_base + (4U << 16));
+		if (frame_id == PIDR_COMPONENT_ARM_REDIST) {
+			unsigned int procnum;
+			uint32_t typer;
+
+			typer = mmio_read_32(gicr_base + (4U << 16) +
+					     GICR_TYPER);
+			procnum = (typer >> TYPER_PROC_NUM_SHIFT) &
+				  TYPER_PROC_NUM_MASK;
+			if (procnum == 0) {		// first redistributor
+				INFO("Skipping potentially unpowered ITS\n");
+				gicr_base += 4U << 16;
+			} else if ((((typer >> TYPER_VSGI_SHIFT) & 0x1) == 0U) &&
+				   (procnum == 1)) {
+				gicr_base += 2U << 16;
+			}
+		}
+
 		do {
 			uint64_t its_typer;
 
@@ -77,8 +119,8 @@ void plat_fpga_gic_init(void)
 			frame_id = gicv3_get_component_partnum(gicr_base);
 
 			if (frame_id == PIDR_COMPONENT_ARM_REDIST) {
-				INFO("Found %d ITSes, redistributors start at 0x%llx\n",
-				     nr_itses, (unsigned long long)gicr_base);
+				INFO("redistributors start at 0x%llx\n",
+				     (unsigned long long)gicr_base);
 				break;
 			}
 

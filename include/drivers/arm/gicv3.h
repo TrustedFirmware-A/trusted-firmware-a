@@ -220,6 +220,7 @@
 #define WAKER_PS_BIT		BIT_32(WAKER_PS_SHIFT)
 
 /* GICR_TYPER bit definitions */
+#define TYPER_VSGI_SHIFT	26
 #define TYPER_AFF_VAL_SHIFT	32
 #define TYPER_PROC_NUM_SHIFT	8
 #define TYPER_LAST_SHIFT	4
