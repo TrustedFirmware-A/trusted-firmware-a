@@ -19,6 +19,7 @@
 #include <drivers/qti/pdc/pdc.h>
 #include <drivers/qti/pwr_utils/pwr_utils.h>
 #include <drivers/qti/qtimer/qtimer.h>
+#include <drivers/qti/rpmh/rpmh.h>
 #include <drivers/qti/sec_core/sec_core.h>
 #include <drivers/qti/smem/smem.h>
 #include <drivers/qti/smmu/smmu.h>
@@ -110,6 +111,7 @@ void bl31_platform_setup(void)
 	qti_pdc_init();
 	qti_pwr_utils_init();
 	qti_smem_init();
+	qti_rpmh_init();
 
 	if (qti_chipinfo_init() != CHIPINFO_SUCCESS) {
 		WARN("ChipInfo initialization error\n");
@@ -123,6 +125,7 @@ void bl31_platform_setup(void)
 	}
 
 	qti_clock_init(clocked_boot_init);
+	qti_rpmh_deinit();
 
 	plat_qti_bl31_setup_post();
 }

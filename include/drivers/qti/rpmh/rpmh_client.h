@@ -17,10 +17,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/* Number of commands that fit in a single TCS. */
-#ifndef IMAGE_TCS_SIZE
-#define IMAGE_TCS_SIZE	16U
-#endif
+#include <drivers/qti/rpmh/rpmh.h>
+
+#include <rpmh_target.h>
 
 /* The "set" a request belongs to. */
 enum rpmh_set {
@@ -48,18 +47,11 @@ struct rpmh_command_set {
 	enum rpmh_set	set;
 	uint32_t	num_commands;
 	uint32_t	reserved;
-	struct rpmh_command	commands[IMAGE_TCS_SIZE];
+	struct rpmh_command	commands[TCS_SIZE];
 };
 
 /* Opaque per-client handle. */
 struct rpmh_client;
-
-/*
- * rpmh_client_init - one time initialisation of the RPMh driver.
- *
- * Must be called once before any other RPMh API is used.
- */
-void rpmh_client_init(void);
 
 /*
  * rpmh_create_handle - create a client handle for the given RSC+DRV mapping.
