@@ -15,6 +15,7 @@
 #include <drivers/generic_delay_timer.h>
 #include <lib/extensions/spe.h>
 #include <lib/mmio.h>
+#include <lib/xlat_tables/xlat_tables_v2.h>
 #include <libfdt.h>
 
 #include "fpga_private.h"
@@ -24,6 +25,41 @@
 static entry_point_info_t bl33_image_ep_info;
 static unsigned int system_freq;
 volatile uint32_t secondary_core_spinlock;
+
+#define MAP_BL31_TOTAL		MAP_REGION_FLAT(			\
+					BL31_START,			\
+					BL31_END - BL31_START,		\
+					MT_MEMORY | MT_RW | EL3_PAS)
+
+#if SEPARATE_CODE_AND_RODATA
+#define ARM_MAP_BL_RO	MAP_REGION_FLAT(			\
+				BL_CODE_BASE,			\
+				BL_CODE_END - BL_CODE_BASE,	\
+				MT_CODE | EL3_PAS),		\
+			MAP_REGION_FLAT(			\
+				BL_RO_DATA_BASE,		\
+				BL_RO_DATA_END - BL_RO_DATA_BASE,\
+				MT_RO_DATA | EL3_PAS)
+#else
+#define ARM_MAP_BL_RO	MAP_REGION_FLAT(			\
+				BL_CODE_BASE,			\
+				BL_CODE_END - BL_CODE_BASE,	\
+				MT_CODE | EL3_PAS)
+#endif
+
+static const mmap_region_t arm_fpga_plat_mmap[] = {
+	MAP_REGION_FLAT(FPGA_PRELOADED_CMD_LINE, 0x1000,
+			MT_DEVICE | MT_RO | EL3_PAS | MT_EXECUTE_NEVER),
+	MAP_REGION_FLAT(ARM_FPGA_DEVICES, ARM_FPGA_DEVICES_SIZE,
+			MT_DEVICE | MT_RW | EL3_PAS | MT_EXECUTE_NEVER),
+	MAP_REGION_FLAT(ARM_FPGA_GIC, ARM_FPGA_GIC_SIZE,
+			MT_DEVICE | MT_RW | EL3_PAS | MT_EXECUTE_NEVER),
+	MAP_REGION_FLAT(ARM_FPGA_UART, ARM_FPGA_UART_SIZE,
+			MT_DEVICE | MT_RW | EL3_PAS | MT_EXECUTE_NEVER),
+	MAP_REGION_FLAT(FPGA_PRELOADED_DTB_BASE, 65536,
+			MT_RW_DATA | MT_NS),
+	{},
+};
 
 uintptr_t plat_get_ns_image_entrypoint(void)
 {
@@ -66,8 +102,20 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	bl33_image_ep_info.args.arg3 = 0U;
 }
 
-void bl31_plat_arch_setup(void)
+void __init bl31_plat_arch_setup(void)
 {
+	const mmap_region_t bl_regions[] = {
+		MAP_BL31_TOTAL,
+		ARM_MAP_BL_RO,
+#if USE_COHERENT_MEM
+		ARM_MAP_BL_COHERENT_RAM,
+#endif
+		{0}
+	};
+
+	setup_page_tables(bl_regions, arm_fpga_plat_mmap);
+
+	enable_mmu_el3(0);
 }
 
 void bl31_platform_setup(void)

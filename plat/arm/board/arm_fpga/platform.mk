@@ -5,6 +5,7 @@
 #
 
 include common/fdt_wrappers.mk
+include lib/xlat_tables_v2/xlat_tables.mk
 include lib/libfdt/libfdt.mk
 
 RESET_TO_BL31 := 1
@@ -111,7 +112,8 @@ FDT_SOURCES		:=	fdts/arm_fpga.dts
 
 PLAT_INCLUDES		:=	-Iplat/arm/board/arm_fpga/include
 
-PLAT_BL_COMMON_SOURCES	:=	plat/arm/board/arm_fpga/${ARCH}/fpga_helpers.S
+PLAT_BL_COMMON_SOURCES	:=	plat/arm/board/arm_fpga/${ARCH}/fpga_helpers.S	\
+				${XLAT_TABLES_LIB_SRCS}
 
 BL31_SOURCES		+=	common/fdt_fixup.c				\
 				drivers/delay_timer/delay_timer.c		\
