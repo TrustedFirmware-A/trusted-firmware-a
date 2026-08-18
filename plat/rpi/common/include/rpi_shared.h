@@ -12,6 +12,7 @@
 
 #include <drivers/console.h>
 
+struct bl_mem_params_node;
 struct transfer_list_header;
 
 /*******************************************************************************
@@ -68,5 +69,7 @@ static inline void rpi3_bl2_sync_transfer_list(void)
 #endif
 void rpi_bl2_prepare_spmd_manifest(size_t manifest_size);
 struct transfer_list_header *rpi_bl2_relocate_transfer_list(void);
+
+int rpi_bl2_parse_optee_header(struct bl_mem_params_node *bl_mem_params);
 
 #endif /* RPI3_SHARED_H */

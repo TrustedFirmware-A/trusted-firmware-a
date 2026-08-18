@@ -14,7 +14,6 @@
 #include <common/bl_common.h>
 #include <common/debug.h>
 #include <common/desc_image_load.h>
-#include <lib/optee_utils.h>
 #include <lib/xlat_tables/xlat_mmu_helpers.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include <drivers/generic_delay_timer.h>
@@ -133,10 +132,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
 	int err = 0;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
-#if defined(SPD_opteed) || defined(SPD_spmd)
-	bl_mem_params_node_t *pager_mem_params = NULL;
-	bl_mem_params_node_t *paged_mem_params = NULL;
-#endif /* defined(SPD_opteed) || defined(SPD_spmd) */
 #if TRANSFER_LIST
 	struct transfer_list_header *ns_tl;
 #endif
@@ -167,17 +162,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 #endif
 	case BL32_IMAGE_ID:
 #if defined(SPD_opteed) || defined(SPD_spmd)
-		pager_mem_params = get_bl_mem_params_node(BL32_EXTRA1_IMAGE_ID);
-		assert(pager_mem_params);
-
-		paged_mem_params = get_bl_mem_params_node(BL32_EXTRA2_IMAGE_ID);
-		assert(paged_mem_params);
-
-		err = parse_optee_header(&bl_mem_params->ep_info,
-				&pager_mem_params->image_info,
-				&paged_mem_params->image_info);
-		if (err != 0)
-			WARN("OPTEE header parse error.\n");
+		err = rpi_bl2_parse_optee_header(bl_mem_params);
 #endif /* defined(SPD_opteed) || defined(SPD_spmd) */
 		bl_mem_params->ep_info.spsr = rpi3_get_spsr_for_bl32_entry();
 #if defined(SPD_spmd)

@@ -227,7 +227,8 @@ endif
 
 ifeq (${SPD},opteed)
 BL2_SOURCES	+=							\
-		lib/optee/optee_utils.c
+		lib/optee/optee_utils.c				\
+		plat/rpi/common/rpi_optee.c
 endif
 
 ifeq (${SPD},spmd)
@@ -236,7 +237,8 @@ ifeq ($(ARM_SPMC_MANIFEST_DTS),)
 ARM_SPMC_MANIFEST_DTS	:=	plat/rpi/rpi3/fdts/spmc_el1_partitions_manifest.dts
 endif
 
-BL2_SOURCES		+=	lib/optee/optee_utils.c
+BL2_SOURCES		+=	lib/optee/optee_utils.c			\
+				plat/rpi/common/rpi_optee.c
 BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c      \
 					${FDT_WRAPPERS_SOURCES}
 
