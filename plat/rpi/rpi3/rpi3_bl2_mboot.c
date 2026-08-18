@@ -8,27 +8,20 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include <plat/common/common_def.h>
-#include <plat/common/platform.h>
-#include <platform_def.h>
-
-#include <drivers/auth/crypto_mod.h>
-#include <drivers/delay_timer.h>
-#include <drivers/gpio_spi.h>
-#include <drivers/measured_boot/metadata.h>
-#include <drivers/tpm/tpm2_slb9670/slb9670_gpio.h>
 #include <event_measure.h>
 #include <event_print.h>
-#if DISCRETE_TPM
-#include <tpm2.h>
-#include <tpm2_chip.h>
-#endif
 #if TRANSFER_LIST
 #include <tpm_event_log.h>
 #include <transfer_list.h>
 #endif
+
+#include <drivers/auth/crypto_mod.h>
+#include <drivers/measured_boot/metadata.h>
+#include <plat/common/common_def.h>
+#include <plat/common/platform.h>
 #include <tools_share/tbbr_oid.h>
 
+#include <platform_def.h>
 #include <rpi3_measured_boot.h>
 #include <rpi_shared.h>
 
@@ -48,36 +41,6 @@ const event_log_metadata_t rpi3_event_log_metadata[] = {
 	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) } /* Terminator */
 };
 
-#if DISCRETE_TPM
-extern struct tpm_chip_data tpm_chip_data;
-
-static void rpi3_bl2_tpm_early_interface_setup(void)
-{
-#if TPM_INTERFACE_FIFO_SPI
-	struct tpm_spi_plat *spidev;
-	const struct tpm_timeout_ops timeout_ops = {
-		.timeout_init_us = timeout_init_us,
-		.timeout_elapsed = timeout_elapsed
-	};
-
-	const struct gpio_spi_config *tpm_rpi3_gpio_data =
-		tpm2_slb9670_get_config();
-	int rc;
-
-	tpm2_slb9670_gpio_init(tpm_rpi3_gpio_data);
-
-	spidev = gpio_spi_init(tpm_rpi3_gpio_data);
-
-	rc = tpm_interface_init(spidev, &timeout_ops, &tpm_chip_data, 0);
-	if (rc != 0) {
-		ERROR("BL2: TPM interface init failed\n");
-		panic();
-	}
-
-#endif
-}
-#endif
-
 static uint8_t *event_log_start;
 static size_t event_log_size;
 static uint8_t *event_log_base;
@@ -91,7 +54,7 @@ void bl2_plat_mboot_init(void)
 	struct transfer_list_header *bl2_tl = rpi_bl2_get_transfer_list();
 #endif
 #if DISCRETE_TPM
-	rpi3_bl2_tpm_early_interface_setup();
+	rpi_bl2_tpm_setup();
 #endif
 
 #if TRANSFER_LIST
@@ -191,10 +154,6 @@ void bl2_plat_mboot_finish(void)
 
 #if DISCRETE_TPM
 	/* relinquish control of TPM locality 0 and close interface */
-	rc = tpm_interface_close(&tpm_chip_data, 0);
-	if (rc != 0) {
-		ERROR("BL2: TPM interface close failed\n");
-		panic();
-	}
+	rpi_tpm_close();
 #endif
 }

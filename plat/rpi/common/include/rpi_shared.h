@@ -72,4 +72,9 @@ struct transfer_list_header *rpi_bl2_relocate_transfer_list(void);
 
 int rpi_bl2_parse_optee_header(struct bl_mem_params_node *bl_mem_params);
 
+void rpi_bl1_tpm_setup(void);
+void rpi_bl1_tpm_validate(uint32_t required_pcr_mask);
+void rpi_bl2_tpm_setup(void);
+void rpi_tpm_close(void);
+
 #endif /* RPI3_SHARED_H */

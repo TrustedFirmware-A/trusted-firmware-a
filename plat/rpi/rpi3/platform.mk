@@ -26,9 +26,9 @@ ifeq (${DISCRETE_TPM},1)
 TPM2_MK := drivers/tpm/tpm2.mk
 $(info Including ${TPM2_MK})
 include ${TPM2_MK}
-ifeq (${RPI3_PROVISION_TPM},1)
-$(eval $(call add_define,RPI3_PROVISION_TPM))
-endif
+RPI3_PROVISION_TPM	?=	0
+$(eval $(call assert_boolean,RPI3_PROVISION_TPM))
+$(eval $(call add_define_val,RPI_TPM_PROVISION,$(RPI3_PROVISION_TPM)))
 endif
 
 ifeq (${TPM_INTERFACE},FIFO_SPI)
@@ -70,6 +70,11 @@ BL2_SOURCES		+= 	plat/rpi/rpi3/rpi3_bl2_mboot.c		\
 				plat/rpi/rpi3/rpi3_dyn_cfg_helpers.c	\
 				common/fdt_wrappers.c			\
 				common/fdt_fixup.c
+
+ifeq (${DISCRETE_TPM},1)
+BL1_SOURCES		+=	plat/rpi/common/rpi_tpm.c
+BL2_SOURCES		+=	plat/rpi/common/rpi_tpm.c
+endif
 
 CRYPTO_SOURCES		:=	drivers/auth/crypto_mod.c
 
