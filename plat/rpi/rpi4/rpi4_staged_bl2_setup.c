@@ -45,6 +45,9 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 void bl2_platform_setup(void)
 {
+#if defined(SPD_spmd) && defined(PLAT_RPI3_SPMC_SP_MANIFEST_SIZE)
+	rpi_bl2_prepare_spmd_manifest(PLAT_RPI3_SPMC_SP_MANIFEST_SIZE);
+#endif
 }
 
 void bl2_plat_arch_setup(void)
@@ -99,9 +102,16 @@ static uintptr_t rpi4_staged_get_dtb_address(void)
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
+	int err = 0;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
 
 	assert(bl_mem_params != NULL);
+
+#if TRANSFER_LIST
+	if (image_id == TOS_FW_CONFIG_ID) {
+		rpi3_bl2_sync_transfer_list();
+	}
+#endif
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
@@ -111,6 +121,17 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 				TRANSFER_LIST_HANDOFF_X1_VALUE(
 					REGISTER_CONVENTION_VERSION);
 		}
+		bl_mem_params->ep_info.args.arg3 =
+			(uintptr_t)rpi_bl2_get_transfer_list();
+#endif
+		break;
+
+	case BL32_IMAGE_ID:
+#ifdef SPMC_OPTEE
+		err = rpi_bl2_parse_optee_header(bl_mem_params);
+#endif
+		bl_mem_params->ep_info.spsr = rpi3_get_spsr_for_bl32_entry();
+#if TRANSFER_LIST
 		bl_mem_params->ep_info.args.arg3 =
 			(uintptr_t)rpi_bl2_get_transfer_list();
 #endif
@@ -142,5 +163,5 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		break;
 	}
 
-	return 0;
+	return err;
 }

@@ -83,6 +83,9 @@ static void reserve_runtime_memory(void *dtb)
 	reserve_memory(dtb, "atf-mailbox@0", PLAT_RPI_STUB_HEADER_BASE,
 		       PLAT_RPI_STUB_HEADER_SIZE);
 	reserve_memory(dtb, "tf-a@10000000", SEC_SRAM_BASE, SEC_SRAM_SIZE);
+#ifdef BL32_BASE
+	reserve_memory(dtb, "bl32@10100000", BL32_MEM_BASE, BL32_MEM_SIZE);
+#endif
 #endif
 }
 

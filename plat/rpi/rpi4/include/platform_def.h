@@ -148,9 +148,34 @@
 #define FW_HANDOFF_BASE			BL31_LIMIT
 #define FW_HANDOFF_LIMIT		(FW_HANDOFF_BASE + FW_HANDOFF_SIZE)
 #define FW_HANDOFF_SIZE			SZ_8K
+
+#if defined(SPD_spmd)
+#define PLAT_RPI3_SPMC_SP_MANIFEST_SIZE	SZ_4K
+#define PLAT_ARM_TB_FW_CONFIG_SIZE	UL(0x0)
+#else
+#define PLAT_ARM_SPMC_SP_MANIFEST_SIZE	UL(0x0)
+#define PLAT_ARM_TB_FW_CONFIG_SIZE	UL(0x0)
+#endif /* SPD_spmd */
 #else
 #define FW_HANDOFF_SIZE			0
 #endif /* TRANSFER_LIST */
+
+#define BL32_MEM_BASE			SEC_DRAM0_BASE
+#define BL32_MEM_SIZE			SEC_DRAM0_SIZE
+#define BL32_BASE			SEC_DRAM0_BASE
+#define BL32_LIMIT			(SEC_DRAM0_BASE + SEC_DRAM0_SIZE)
+#define BL32_SIZE			(BL32_LIMIT - BL32_BASE)
+
+#if defined(SPD_spmd)
+/* Load pageable part of OP-TEE at end of allocated DRAM space for BL32. */
+#define RPI3_OPTEE_PAGEABLE_LOAD_SIZE		SZ_512K
+#define RPI3_OPTEE_PAGEABLE_LOAD_BASE		(BL32_LIMIT - \
+					 RPI3_OPTEE_PAGEABLE_LOAD_SIZE)
+#endif /* SPD_spmd */
+
+#ifdef SPD_none
+#undef BL32_BASE
+#endif /* SPD_none */
 
 #endif /* RESET_TO_BL31 */
 
@@ -195,7 +220,12 @@
 #define PLAT_PHY_ADDR_SPACE_SIZE	(ULL(1) << 32)
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(ULL(1) << 32)
 
+#if RESET_TO_BL31
 #define MAX_MMAP_REGIONS		8
+#else
+#define MAX_MMAP_REGIONS		12
+#endif
+
 #if RESET_TO_BL31
 #define MAX_XLAT_TABLES			4
 #else

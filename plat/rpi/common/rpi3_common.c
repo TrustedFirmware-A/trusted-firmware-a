@@ -249,6 +249,7 @@ int plat_get_mbedtls_heap(void **heap_addr, size_t *heap_size)
 #endif
 
 #if defined(SPD_spmd)
+#ifndef RPI_HAVE_GIC
 unsigned int plat_ic_acknowledge_interrupt(void)
 {
 	return INTR_ID_UNAVAILABLE;
@@ -263,6 +264,7 @@ void plat_ic_end_of_interrupt(uint32_t id)
 {
 
 }
+#endif /* !RPI_HAVE_GIC */
 
 #if (SPMC_AT_EL3 == 0)
 /*

@@ -218,14 +218,64 @@ $(eval $(call add_define,RPI3_PRELOADED_DTB_BASE))
 endif
 $(eval $(call add_define,RPI3_RUNTIME_UART))
 $(eval $(call add_define,RPI3_USE_UEFI_MAP))
+ifeq (${SPD},spmd)
+ifeq (${SPMC_OPTEE},1)
+$(eval $(call add_define,SPMC_OPTEE))
+endif
+endif
 
 ifeq (${ARCH},aarch32)
   $(error Error: AArch32 not supported on rpi4)
 endif
 
+ifeq (${SPD},spmd)
+ifneq (${SPMD_SPM_AT_SEL2},0)
+  $(error Error: rpi4 SPMD requires SPMD_SPM_AT_SEL2=0)
+endif
+ifneq (${SPMC_OPTEE},1)
+  $(error Error: rpi4 SPMD requires SPMC_OPTEE=1)
+endif
+ifneq (${SPMC_AT_EL3},0)
+  $(error Error: rpi4 SPMD does not support SPMC_AT_EL3=1)
+endif
+ifneq (${RESET_TO_BL31},0)
+  $(error Error: rpi4 SPMD requires RESET_TO_BL31=0)
+endif
+ifneq (${TRANSFER_LIST},1)
+  $(error Error: rpi4 SPMD requires TRANSFER_LIST=1)
+endif
+endif
+
 ifneq ($(ENABLE_STACK_PROTECTOR), 0)
 PLAT_BL_COMMON_SOURCES	+=	drivers/rpi3/rng/rpi3_rng.c		\
 				plat/rpi/common/rpi3_stack_protector.c
+endif
+
+ifeq (${SPD},spmd)
+ifeq (${SPMC_OPTEE},1)
+BL2_SOURCES		+=	lib/optee/optee_utils.c		\
+				plat/rpi/common/rpi_optee.c
+endif
+endif
+
+ifeq (${SPD},spmd)
+BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c
+
+ifeq (${ARM_SPMC_MANIFEST_DTS},)
+ARM_SPMC_MANIFEST_DTS	:=	plat/rpi/rpi4/fdts/rpi4_spmc_el1_optee_manifest.dts
+endif
+
+FDT_SOURCES		+=	${ARM_SPMC_MANIFEST_DTS}
+RPI4_TOS_FW_CONFIG	:=	${BUILD_PLAT}/fdts/$(notdir $(basename ${ARM_SPMC_MANIFEST_DTS})).dtb
+
+$(eval $(call TOOL_ADD_PAYLOAD,${RPI4_TOS_FW_CONFIG},--tos-fw-config,${RPI4_TOS_FW_CONFIG}))
+
+ifneq ($(BL32_EXTRA1),)
+$(eval $(call TOOL_ADD_IMG,BL32_EXTRA1,--tos-fw-extra1))
+endif
+ifneq ($(BL32_EXTRA2),)
+$(eval $(call TOOL_ADD_IMG,BL32_EXTRA2,--tos-fw-extra2))
+endif
 endif
 
 ifeq ($(SMC_PCI_SUPPORT), 1)
