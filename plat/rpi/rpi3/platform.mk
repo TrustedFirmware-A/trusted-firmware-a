@@ -38,6 +38,8 @@ endif
 
 ifeq (${TRANSFER_LIST}, 1)
 include lib/transfer_list/transfer_list.mk
+BL1_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
+BL2_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
 endif
 
 ifeq (${MEASURED_BOOT},1)

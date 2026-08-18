@@ -26,11 +26,11 @@
 #if TRANSFER_LIST
 #include <tpm_event_log.h>
 #include <transfer_list.h>
-extern struct transfer_list_header *bl2_tl;
 #endif
 #include <tools_share/tbbr_oid.h>
 
-#include "./include/rpi3_measured_boot.h"
+#include <rpi3_measured_boot.h>
+#include <rpi_shared.h>
 
 /* RPI3 table with platform specific image IDs, names and PCRs */
 const event_log_metadata_t rpi3_event_log_metadata[] = {
@@ -87,6 +87,9 @@ void bl2_plat_mboot_init(void)
 {
 	struct transfer_list_entry *te __unused;
 	int rc;
+#if TRANSFER_LIST
+	struct transfer_list_header *bl2_tl = rpi_bl2_get_transfer_list();
+#endif
 #if DISCRETE_TPM
 	rpi3_bl2_tpm_early_interface_setup();
 #endif
@@ -95,7 +98,7 @@ void bl2_plat_mboot_init(void)
 	if (bl2_tl != NULL &&
 	    transfer_list_check_header(bl2_tl) != TL_OPS_NON) {
 		event_log_start = transfer_list_event_log_extend(
-			bl2_tl, PLAT_ARM_EVENT_LOG_MAX_SIZE);
+				bl2_tl, PLAT_ARM_EVENT_LOG_MAX_SIZE);
 		flush_dcache_range((uintptr_t)bl2_tl, bl2_tl->size);
 		/*
 	 * Retrieve the extend event log entry from the transfer list, the API above
@@ -132,6 +135,7 @@ void bl2_plat_mboot_finish(void)
 	size_t event_log_cur_size;
 #if TRANSFER_LIST
 	struct transfer_list_header *ns_tl = NULL;
+	struct transfer_list_header *bl2_tl = rpi_bl2_get_transfer_list();
 	uint8_t *cursor;
 	uint8_t *base_after_finish;
 
@@ -143,14 +147,12 @@ void bl2_plat_mboot_finish(void)
 		WARN("BL2: Failed to finalize TL Event Log\n");
 	} else {
 		flush_dcache_range((uintptr_t)bl2_tl, bl2_tl->size);
-		transfer_list_update_checksum(bl2_tl);
+		rpi3_bl2_sync_transfer_list();
 		event_log_start = base_after_finish;
 		event_log_cur_size = event_log_get_cur_size(event_log_start);
 #ifdef FW_NS_HANDOFF_BASE
 		/* Update contents in NS Transfer List at FW_NS_HANDOFF_BASE */
-		ns_tl = transfer_list_relocate(
-			bl2_tl, (void *)(uintptr_t)FW_NS_HANDOFF_BASE,
-			bl2_tl->max_size);
+		ns_tl = rpi_bl2_relocate_transfer_list();
 		if (!ns_tl) {
 			ERROR("Relocate TL to 0x%lx failed\n",
 			      (unsigned long)FW_NS_HANDOFF_BASE);
