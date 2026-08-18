@@ -215,9 +215,6 @@ DISCRETE_TPM			:= 0
 # Option to enable the DICE Protection Environmnet as a Measured Boot backend
 DICE_PROTECTION_ENVIRONMENT	:=0
 
-# NS timer register save and restore (deprecated)
-NS_TIMER_SWITCH			:= 0
-
 # Include lib/libc in the final image
 OVERRIDE_LIBC			:= 0
 

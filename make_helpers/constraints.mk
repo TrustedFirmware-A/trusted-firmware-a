@@ -575,9 +575,6 @@ endif
 
 # Handle all deprecated build options.
 ifeq (${ERROR_DEPRECATED}, 1)
-    ifneq (${NS_TIMER_SWITCH},0)
-        $(error "NS_TIMER_SWITCH breaks Linux preemption model, hence deprecated")
-    endif
     ifneq (${SPM_MM},0)
         $(error "SPM_MM build option is deprecated")
     endif

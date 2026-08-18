@@ -60,12 +60,6 @@ typedef struct el1_aarch32_regs {
 } el1_aarch32_regs_t;
 
 typedef struct el1_arch_timer_regs {
-#if NS_TIMER_SWITCH
-	uint64_t cntp_ctl_el0;
-	uint64_t cntp_cval_el0;
-	uint64_t cntv_ctl_el0;
-	uint64_t cntv_cval_el0;
-#endif
 	uint64_t cntkctl_el1;
 } el1_arch_timer_regs_t;
 
