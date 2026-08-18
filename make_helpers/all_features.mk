@@ -21,15 +21,13 @@ ENABLE_FEAT_RAS				:= 2
 ENABLE_FEAT_SB				:= 2
 
 ifeq (${ARCH},aarch64)
-    ifeq (${SPM_MM},0)
-        ifeq (${CTX_INCLUDE_FPREGS},0)
-            ENABLE_SME_FOR_NS		:= 2
-            ENABLE_SME2_FOR_NS		:= 2
-        else
-            ENABLE_SVE_FOR_NS		:= 0
-            ENABLE_SME_FOR_NS		:= 0
-            ENABLE_SME2_FOR_NS		:= 0
-        endif
+    ifeq (${CTX_INCLUDE_FPREGS},0)
+        ENABLE_SME_FOR_NS		:= 2
+        ENABLE_SME2_FOR_NS		:= 2
+    else
+        ENABLE_SVE_FOR_NS		:= 0
+        ENABLE_SME_FOR_NS		:= 0
+        ENABLE_SME2_FOR_NS		:= 0
     endif
 
     ENABLE_BRBE_FOR_NS			:= 2

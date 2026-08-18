@@ -95,28 +95,6 @@ LR_RO_DATA +0
 	/* cpu_ops must always be defined */
 	ScatterAssert(ImageLength(__CPU_OPS__) > 0)
 
-#if SPM_MM
-LR_SPM +0
-{
-	/*
-	 * Exception vectors of the SPM shim layer. They must be aligned to a 2K
-	 * address, but we need to place them in a separate page so that we can set
-	 * individual permissions to them, so the actual alignment needed is 4K.
-	 *
-	 * There's no need to include this into the RO section of BL31 because it
-	 * doesn't need to be accessed by BL31.
-	 */
-	__SPM_SHIM_EXCEPTIONS__ AlignExpr(ImageLimit(LR_RO_DATA), PAGE_SIZE) FIXED
-	{
-		*(.spm_shim_exceptions)
-	}
-
-	__SPM_SHIM_EXCEPTIONS_EPILOGUE__ AlignExpr(ImageLimit(__SPM_SHIM_EXCEPTIONS__), PAGE_SIZE) FIXED
-	{
-		/* placeholder */
-	}
-}
-#endif
 
 LR_RW_DATA +0
 {

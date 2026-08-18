@@ -52,7 +52,7 @@
 #define NRD_CSS_NS_RAM_ECC_CE_INT		U(87)
 #define NRD_CSS_NS_RAM_ECC_UE_INT		U(88)
 
-#if (SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP))			\
+#if (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP)			\
 	&& ENABLE_FEAT_RAS && FFH_SUPPORT
 /*
  * CPER buffer memory of 128KB is reserved and it is placed adjacent to the
@@ -61,7 +61,7 @@
 #define NRD_CSS_SP_CPER_BUF_BASE	(PLAT_SP_IMAGE_NS_BUF_BASE +	\
 					 PLAT_SP_IMAGE_NS_BUF_SIZE)
 #define NRD_CSS_SP_CPER_BUF_SIZE	UL(0x10000)
-#endif /* SPM_MM && ENABLE_FEAT_RAS && FFH_SUPPORT */
+#endif /* SPMC_AT_EL3 && ENABLE_FEAT_RAS && FFH_SUPPORT */
 
 /*******************************************************************************
  * MMU mapping
@@ -81,7 +81,7 @@
 			NRD_CSS_PERIPH_SIZE,				\
 			MT_DEVICE | MT_RW | MT_SECURE)
 
-#if (SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP)) &&			\
+#if (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP) &&			\
 ENABLE_FEAT_RAS && FFH_SUPPORT
 /*
  * CPER buffer memory of 128KB is reserved and it is placed adjacent to the
@@ -94,14 +94,6 @@ ENABLE_FEAT_RAS && FFH_SUPPORT
 			NRD_CSS_SP_CPER_BUF_SIZE,			\
 			MT_RW_DATA | MT_NS | MT_USER,			\
 			PAGE_SIZE)
-#endif
-
-#if SPM_MM
-#define NRD_CSS_SECURE_UART_USER_MMAP					\
-		MAP_REGION_FLAT(					\
-			NRD_CSS_SEC_UART_BASE,				\
-			NRD_CSS_UART_SIZE,				\
-			MT_DEVICE | MT_RW | MT_SECURE | MT_USER)
 #endif
 
 #endif /* NRD_CSS_FW_DEF2_H */

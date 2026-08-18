@@ -23,7 +23,6 @@
 #include <services/pfdi_svc.h>
 #include <services/rmmd_svc.h>
 #include <services/sdei.h>
-#include <services/spm_mm_svc.h>
 #include <services/spmc_svc.h>
 #include <services/spmd_svc.h>
 #include <services/std_svc.h>
@@ -64,12 +63,6 @@ static int32_t std_svc_setup(void)
 	 * SPM is initialized, as it would prevent PSCI operations
 	 */
 	pfdi_init();
-#endif
-
-#if SPM_MM
-	if (spm_mm_setup() != 0) {
-		ret = 1;
-	}
 #endif
 
 #if defined(SPD_spmd)
@@ -176,16 +169,6 @@ static uintptr_t std_svc_smc_handler(uint32_t smc_fid,
 		SMC_RET1(handle, ret);
 	}
 
-#if SPM_MM
-	/*
-	 * Dispatch SPM calls to SPM SMC handler and return its return
-	 * value
-	 */
-	if (is_spm_mm_fid(smc_fid)) {
-		return spm_mm_smc_handler(smc_fid, x1, x2, x3, x4, cookie,
-					  handle, flags);
-	}
-#endif
 
 #if defined(SPD_spmd)
 	/*

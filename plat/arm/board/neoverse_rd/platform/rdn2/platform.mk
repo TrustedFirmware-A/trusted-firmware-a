@@ -75,9 +75,7 @@ endif
 
 ifeq (${HANDLE_EA_EL3_FIRST_NS},1)
 BL31_SOURCES		+=	${RDN2_BASE}/rdn2_ras.c			\
-				${NRD_COMMON_BASE}/ras/nrd_ras_common.c	\
-				${NRD_COMMON_BASE}/ras/nrd_ras_sram.c	\
-				${NRD_COMMON_BASE}/ras/nrd_ras_cpu.c
+				${NRD_COMMON_BASE}/ras/nrd_ras_common.c
 endif
 
 # Add the FDT_SOURCES and options for Dynamic Config

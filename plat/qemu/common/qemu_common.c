@@ -99,11 +99,7 @@ static const mmap_region_t plat_qemu_mmap[] = {
 	MAP_DEVICE2,
 #endif
 	MAP_NS_DRAM0,
-#if SPM_MM
-	QEMU_SP_IMAGE_MMAP,
-#else
 	MAP_BL32_MEM,
-#endif
 #ifdef MAP_FW_HANDOFF
 	MAP_FW_HANDOFF,
 #endif
@@ -126,10 +122,7 @@ static const mmap_region_t plat_qemu_mmap[] = {
 #ifdef MAP_FW_NS_HANDOFF
 	MAP_FW_NS_HANDOFF,
 #endif
-#if SPM_MM
-	MAP_NS_DRAM0,
-	QEMU_SPM_BUF_EL3_MMAP,
-#elif !SPMC_AT_EL3
+#if !SPMC_AT_EL3
 	MAP_BL32_MEM,
 #endif
 	{0}

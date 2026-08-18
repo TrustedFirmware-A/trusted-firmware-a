@@ -22,10 +22,6 @@ struct nrd_ras_ev_map plat_ras_map[] = {
 
 /* RAS error record list definition, used by the common RAS framework. */
 struct err_record_info plat_err_records[] = {
-	/* Base element RAM Non-secure error record. */
-	ERR_RECORD_MEMMAP_V1(NRD_CSS_NS_RAM_ERR_REC_BASE, 4, NULL,
-				&nrd_ras_sram_intr_handler, 0),
-	ERR_RECORD_SYSREG_V1(0, 1, NULL, &nrd_ras_cpu_intr_handler, 0),
 };
 
 /* RAS error interrupt list definition, used by the common RAS framework. */

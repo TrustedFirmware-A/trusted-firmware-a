@@ -142,15 +142,8 @@
  * plat_arm_mmap array defined for each BL stage.
  */
 #if defined(IMAGE_BL31)
-# if SPM_MM
-#  define PLAT_ARM_MMAP_ENTRIES		9
-#  define MAX_XLAT_TABLES		7
-#  define PLAT_SP_IMAGE_MMAP_REGIONS	7
-#  define PLAT_SP_IMAGE_MAX_XLAT_TABLES	10
-# else
-#  define PLAT_ARM_MMAP_ENTRIES		8
-#  define MAX_XLAT_TABLES		8
-# endif
+# define PLAT_ARM_MMAP_ENTRIES		8
+# define MAX_XLAT_TABLES		8
 #elif defined(IMAGE_BL32)
 # define PLAT_ARM_MMAP_ENTRIES		8
 # define MAX_XLAT_TABLES		5
@@ -206,11 +199,7 @@
 #elif defined(IMAGE_BL2U)
 # define PLATFORM_STACK_SIZE		0x400
 #elif defined(IMAGE_BL31)
-# if SPM_MM
-#  define PLATFORM_STACK_SIZE		0x500
-# else
-#  define PLATFORM_STACK_SIZE		0xb00
-# endif
+# define PLATFORM_STACK_SIZE		0xb00
 #elif defined(IMAGE_BL32)
 # define PLATFORM_STACK_SIZE		0x440
 #endif

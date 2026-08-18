@@ -29,11 +29,6 @@ else # if AArch64
         $(error "Trusty requires functionality from the dynamic translation \
                  library and is incompatible with ALLOW_RO_XLAT_TABLES.")
     endif
-    ifeq (${SPM_MM},1)
-        $(error "SPM_MM requires functionality to change memory region \
-                 attributes, which is not possible once the translation tables \
-                 have been made read-only.")
-    endif
     ifeq (${SPMC_AT_EL3},1)
         $(error "EL3 SPMC requires functionality from the dynamic translation \
                  library and is incompatible with ALLOW_RO_XLAT_TABLES.")

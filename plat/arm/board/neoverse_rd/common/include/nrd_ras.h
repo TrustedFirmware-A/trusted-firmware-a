@@ -45,14 +45,4 @@ struct nrd_ras_ev_map *nrd_find_ras_event_map_by_intr(uint32_t intr_num);
  */
 int nrd_ras_platform_setup(struct plat_nrd_ras_config *config);
 
-/* Base element RAM RAS interrupt handler function. */
-int nrd_ras_sram_intr_handler(const struct err_record_info *err_rec,
-				int probe_data,
-				const struct err_handler_data *const data);
-
-/* CPU RAS interrupt handler */
-int nrd_ras_cpu_intr_handler(const struct err_record_info *err_rec,
-				int probe_data,
-				const struct err_handler_data *const data);
-
 #endif /* NRD_RAS_H */

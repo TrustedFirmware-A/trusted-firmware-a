@@ -12,11 +12,6 @@ CRASH_REPORTING		:= 1
 SEPARATE_CODE_AND_RODATA := 1
 ENABLE_STACK_PROTECTOR	 := 0
 
-ifeq (${SPM_MM},1)
-NEED_BL32		:=	yes
-EL3_EXCEPTION_HANDLING	:=	1
-endif
-
 include plat/qemu/common/common.mk
 
 # Enable new version of image loading on QEMU platforms
@@ -57,10 +52,6 @@ BL31_SOURCES		+=	${PLAT_QEMU_PATH}/sbsa_gic.c 			\
 				${PLAT_QEMU_PATH}/sbsa_topology.c
 
 BL31_SOURCES		+=	${FDT_WRAPPERS_SOURCES}
-
-ifeq (${SPM_MM},1)
-	BL31_SOURCES		+=	${PLAT_QEMU_COMMON_PATH}/qemu_spm.c
-endif
 
 ifeq (${SPD},spmd)
 BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c	\

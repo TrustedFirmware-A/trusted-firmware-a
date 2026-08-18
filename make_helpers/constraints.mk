@@ -39,10 +39,6 @@ ifneq (${ENABLE_FEAT_RME},0)
 		endif
 	endif
 
-	ifeq ($(SPM_MM),1)
-                $(error SPM_MM and ENABLE_FEAT_RME cannot both be enabled.)
-	endif
-
         $(warning "FEAT_RME is an experimental feature")
 else
 	ifeq (${ENABLE_FEAT_RME_GDI},1)
@@ -571,13 +567,6 @@ ifneq (${ENABLE_FEAT_TRBE_EXC},0)
         ifeq (${ENABLE_FEAT_TRBE},0)
                 $(error "ENABLE_FEAT_TRBE_EXC requires ENABLE_FEAT_TRBE")
         endif
-endif
-
-# Handle all deprecated build options.
-ifeq (${ERROR_DEPRECATED}, 1)
-    ifneq (${SPM_MM},0)
-        $(error "SPM_MM build option is deprecated")
-    endif
 endif
 
 ifneq (${ENABLE_FEAT_IDTE3},0)

@@ -809,12 +809,6 @@ subsections:
           - title: SPMD
             scope: spmd
 
-          - title: SPM MM
-            scope: spm-mm
-
-            deprecated:
-              - spm_mm
-
       - title: DRTM
         scope: drtm
 

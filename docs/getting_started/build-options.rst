@@ -635,8 +635,7 @@ Common build options
    the path to the directory containing the SPD source, relative to
    ``services/spd/``; the directory is expected to contain a makefile called
    ``<spd-value>.mk``. The SPM Dispatcher standard service is located in
-   services/std_svc/spmd and enabled by ``SPD=spmd``. The SPM Dispatcher
-   cannot be enabled when the ``SPM_MM`` option is enabled.
+   services/std_svc/spmd and enabled by ``SPD=spmd``.
 
 -  ``SPIN_ON_BL1_EXIT``: This option introduces an infinite loop in BL1. It can
    take either 0 (no loop) or 1 (add a loop). 0 is the default. This loop stops
@@ -667,11 +666,6 @@ Common build options
    state or at EL3 if ``SPMC_AT_EL3`` is enabled. The latter configurations
    support pre-Armv8.4 platforms (aka not implementing the ``FEAT_SEL2``
    extension).
-
--  ``SPM_MM`` : Boolean option to enable the Management Mode (MM)-based Secure
-   Partition Manager (SPM) implementation. The default value is ``0``
-   (disabled). This option cannot be enabled (``1``) when SPM Dispatcher is
-   enabled (``SPD=spmd``).
 
 -  ``SP_LAYOUT_FILE``: Platform provided path to JSON file containing the
    description of secure partitions. The build system will parse this file and
@@ -1333,8 +1327,7 @@ flags support :ref:`enable_feat_mechanism` and take numeric values from 0 to 2.
 
 -  ``ENABLE_SVE_FOR_NS``: Enables Scalable Vector Extension
    (SVE) for the Non-secure world only. SVE is an optional architectural feature
-   for AArch64. At this time, this build option cannot be used on systems that
-   have SPM_MM enabled. The default value is 2.
+   for AArch64. The default value is 2.
 
    Note that when SVE is enabled for the Non-secure world, access
    to SVE, SIMD and floating-point functionality from the Secure world is
@@ -1395,7 +1388,7 @@ flags support :ref:`enable_feat_mechanism` and take numeric values from 0 to 2.
    world to trap to EL3. Requires ``ENABLE_SVE_FOR_NS`` to be set as SME is a
    superset of SVE. SME is an optional architectural feature for AArch64.
    At this time, this build option cannot be used on systems that have
-   SPD=spmd/SPM_MM and atempting to build with this option will fail.
+   SPD=spmd and attempting to build with this option will fail.
    Default is 0.
 
 -  ``ENABLE_SME2_FOR_NS``: Enables Scalable Matrix Extension

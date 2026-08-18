@@ -36,7 +36,7 @@ Vendor-specific EL3 monitor services are as follows:
 +-----------------------------------+ Compliance Suite) SMC | | 1 - 15 are reserved for future expansion. |
 | 0xC7000030 - 0xC700003F (SMC64)   | handler               |                                             |
 +-----------------------------------+-----------------------+---------------------------------------------+
-| 0x87000040 - 0x8700004F (SMC32)   | TPM Start method      | | 0 is in use.                              |
+| 0x87000040 - 0x8700004F (SMC32)   | TPM Start method      | | 0 is in use but not currently implemented.|
 +-----------------------------------+                       | | 1 - 15 are reserved for future expansion. |
 | 0xC7000040 - 0xC700004F (SMC64)   |                       |                                             |
 +-----------------------------------+-----------------------+---------------------------------------------+

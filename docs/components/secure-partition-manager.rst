@@ -39,8 +39,6 @@ codebase:
    the secure world, managing multiple S-EL1 or S-EL0 partitions `[5]`_.
 #. EL3 SPMC based on the FF-A specification, managing a single S-EL1 partition
    without virtualization in the secure world `[6]`_.
-#. EL3 SPM based on the MM specification, legacy implementation managing a
-   single S-EL0 partition `[2]`_.
 
 These implementations differ in their respective SW architecture and only one
 can be selected at build time.
@@ -291,10 +289,6 @@ References
 .. _[1]:
 
 [1] `Arm Firmware Framework for Arm A-profile <https://developer.arm.com/docs/den0077/latest>`__
-
-.. _[2]:
-
-[2] :ref:`Secure Partition Manager using MM interface<Secure Partition Manager (MM)>`
 
 .. _[3]:
 

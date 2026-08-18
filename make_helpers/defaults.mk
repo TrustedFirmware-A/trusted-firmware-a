@@ -285,9 +285,6 @@ RECLAIM_INIT_CODE		:= 0
 # SPD choice
 SPD				:= none
 
-# Enable the Management Mode (MM)-based Secure Partition Manager implementation
-SPM_MM				:= 0
-
 # Use the FF-A SPMC implementation in EL3.
 SPMC_AT_EL3			:= 0
 

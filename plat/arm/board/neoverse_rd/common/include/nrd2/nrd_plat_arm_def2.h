@@ -59,7 +59,7 @@
  ******************************************************************************/
 
 #if defined(IMAGE_BL31)
-# if SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP)
+# if SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP
 #  define PLAT_ARM_MMAP_ENTRIES		(10  + ((NRD_CHIP_COUNT - 1) * 3))
 #  define MAX_XLAT_TABLES		(8  + ((NRD_CHIP_COUNT - 1) * 3))
 #  define PLAT_SP_IMAGE_MMAP_REGIONS	U(12)
@@ -141,17 +141,13 @@
 #elif defined(IMAGE_BL2U)
 # define PLATFORM_STACK_SIZE		UL(0x400)
 #elif defined(IMAGE_BL31)
-# if SPM_MM
-#  define PLATFORM_STACK_SIZE		UL(0x500)
-# else
-#  define PLATFORM_STACK_SIZE		UL(0x400)
-# endif
+# define PLATFORM_STACK_SIZE		UL(0x400)
 #elif defined(IMAGE_BL32)
 # define PLATFORM_STACK_SIZE		UL(0x440)
 #endif
 
-#if (SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP)) &&			\
-ENABLE_FEAT_RAS && FFH_SUPPORT
+#if SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP
+# if ENABLE_FEAT_RAS && FFH_SUPPORT
 /*
  * Secure partition stack follows right after the memory space reserved for
  * CPER buffer memory.
@@ -159,14 +155,15 @@ ENABLE_FEAT_RAS && FFH_SUPPORT
 #define PLAT_ARM_SP_IMAGE_STACK_BASE	(PLAT_SPM_BUF_BASE +   \
 					 PLAT_SPM_BUF_SIZE +   \
 					 NRD_CSS_SP_CPER_BUF_SIZE)
-#elif (SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP))
+# endif /* ENABLE_FEAT_RAS && FFH_SUPPORT */
+#else /* SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP */
 /*
  * Secure partition stack follows right after the memory region that is shared
  * between EL3 and S-EL0.
  */
 #define PLAT_ARM_SP_IMAGE_STACK_BASE	(PLAT_SPM_BUF_BASE +	\
 					 PLAT_SPM_BUF_SIZE)
-#endif /* SPM_MM && ENABLE_FEAT_RAS && FFH_SUPPORT */
+#endif /* SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP */
 
 /*******************************************************************************
  * Console config

@@ -4,22 +4,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-################################################################################
-# Include Makefile for the SPM-MM implementation
-################################################################################
 ifeq (${SUPPORT_UNKNOWN_MPID},1)
   ifeq (${DEBUG},0)
     $(warning WARNING: SUPPORT_UNKNOWN_MPID enabled)
-  endif
-endif
-
-ifeq (${SPM_MM},1)
-  ifeq (${EL3_EXCEPTION_HANDLING},0)
-    $(error EL3_EXCEPTION_HANDLING must be 1 for SPM-MM support)
-  else
-    $(info Including SPM Management Mode (MM) makefile)
-    include services/std_svc/spm/common/spm.mk
-    include services/std_svc/spm/spm_mm/spm_mm.mk
   endif
 endif
 
@@ -52,7 +39,6 @@ BL31_SOURCES		+=	bl31/bl31_main.c				\
 				lib/el3_runtime/simd_ctx.c			\
 				${PSCI_LIB_SOURCES}				\
 				${SPMD_SOURCES}					\
-				${SPM_MM_SOURCES}				\
 				${SPMC_SOURCES}					\
 				${SPM_SOURCES}
 
