@@ -138,12 +138,19 @@ Board policy deviations from the LX2160A reference boards
 Building
 --------
 
+The ``fip_ddr`` target packs the Synopsys DDR PHY training firmware.
+Get it using a NXP clone of ``ddr-phy-binary`` repository into the TF-A
+root so the default ``DDR_PHY_BIN_PATH`` (``./ddr-phy-binary/lx2160a``)
+resolves::
+
+    git clone https://github.com/NXP/ddr-phy-binary
+
 Production XIP BL2 + FIP (embedded in the PBL at NOR offset 0x9000):
 
 .. code:: shell
 
     make PLAT=nbxv3 BOOT_MODE=flexspi_nor RCW=$RCW_BIN BL33=$UBOOT_BIN \
-         pbl fip fip-ddr
+         pbl fip fip_ddr
 
 Bootstrap BL2 (build, loaded by OpenOCD into OCRAM, resolves staged
 images over ARM semihosting):
