@@ -87,6 +87,38 @@ U-Boot + kernel + ramdisk. Smaller manifests provision faster over the
 JTAG semihosting link. The schema is documented in
 ``plat/nxp/soc-lx2160a/nbxv3/MANIFEST.md``.
 
+RCW build stamp (PBL -> BL2)
+----------------------------
+
+The RCW carries no version which prevents the software identification.
+On this board, this identification is set into one of the LX2160A DCFG
+general-purpose scratch registers, ``SCRATCHRW13``.
+
+The PBI command block embedded in the PBL writes it while the boot
+Service Processor processes the RCW, and the DCFG
+``SCRATCHRW`` registers survive the hand-off to BL2 (they are cleared
+only by a power-on reset).
+
+The 32-bit word is packed, all-BCD::
+
+    31   28 27   24 23   16 15    8 7     0
+   +-------+-------+-------+-------+-------+
+   |CARRIER|  TAG  |  YY   |  MM   |  DD   |   all BCD
+   +-------+-------+-------+-------+-------+
+
+- **CARRIER** identifies the carrier board the CPU module is plugged into.
+- **TAG** is a fixed marker, ``0xB``
+- **YY / MM / DD** are the RCW build date in BCD
+
+The first boot lines based on the RCW shall be some of the following::
+
+     NOTICE  Iliad nbxv32 RCW v.20260820
+     NOTICE  Iliad nbxv3 (bring-up, no IO) RCW v.20260820
+
+This pairs with the ``MEM_PLL_RAT`` probe: that register tells BL2
+*whether* a production RCW is live, while ``SCRATCHRW13`` tells it
+*which* one, and on *which* carrier.
+
 Board policy deviations from the LX2160A reference boards
 ---------------------------------------------------------
 
