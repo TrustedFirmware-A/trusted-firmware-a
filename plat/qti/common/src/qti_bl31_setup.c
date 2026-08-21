@@ -15,6 +15,7 @@
 #include <drivers/qti/accesscontrol/accesscontrol.h>
 #include <drivers/qti/accesscontrol/xpu.h>
 #include <drivers/qti/chipinfo/chipinfo.h>
+#include <drivers/qti/ipcc/ipcc.h>
 #include <drivers/qti/pdc/pdc.h>
 #include <drivers/qti/pwr_utils/pwr_utils.h>
 #include <drivers/qti/qtimer/qtimer.h>
@@ -98,6 +99,7 @@ void bl31_platform_setup(void)
 	plat_qti_gic_init();
 	qti_pdc_init();
 	qti_pwr_utils_init();
+	qti_ipcc_init();
 
 	if (qti_chipinfo_init() != CHIPINFO_SUCCESS) {
 		WARN("ChipInfo initialization error\n");
