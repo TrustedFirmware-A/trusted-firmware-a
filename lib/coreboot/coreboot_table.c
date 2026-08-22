@@ -141,6 +141,10 @@ void coreboot_table_setup(void *base)
 
 		switch (read_le32(&entry->tag)) {
 		case CB_TAG_MEMORY:
+			if (read_le32(&entry->size) < offsetof(cb_entry_t, memranges)) {
+				ERROR("coreboot memory entry too small!\n");
+				break;
+			}
 			size = read_le32(&entry->size) -
 			       offsetof(cb_entry_t, memranges);
 			if (size > sizeof(coreboot_memranges)) {
