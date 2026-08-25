@@ -94,6 +94,12 @@ static int32_t is_node_reserved(const char *node_name, uint64_t base, uint64_t l
 
 		/* Covered by any existing reserved no-map node? */
 		fdt_for_each_subnode(node, dtb, rm) {
+			if (!fdt_node_is_enabled(dtb, node)) {
+				WARN("Reserved-memory subnode %s is disabled, skipping\n",
+				     fdt_get_name(dtb, node, NULL));
+				continue;
+			}
+
 			if (!fdt_getprop(dtb, node, "no-map", NULL)) {
 				continue;
 			}
@@ -313,15 +319,97 @@ struct reserve_mem_range *get_reserved_entries_fdt(uint32_t *reserve_nodes)
 	return rsvmr;
 }
 
-/* TODO: Parse TL overlays for updated tf-a and op-tee reserved nodes */
+static void parse_reserved_subnodes(const void *fdt, int rsv_mem,
+				    uint32_t *idx)
+{
+	const fdt32_t *reg_prop;
+	int node;
+	uint32_t i = *idx;
+
+	fdt_for_each_subnode(node, fdt, rsv_mem) {
+		if (!fdt_node_is_enabled(fdt, node)) {
+			WARN("Reserved-memory subnode %s is disabled, skipping\n",
+			     fdt_get_name(fdt, node, NULL));
+			continue;
+		}
+
+		if (fdt_getprop(fdt, node, "no-map", NULL) == NULL) {
+			continue;
+		}
+
+		if (i == MAX_RESERVE_ADDR_INDICES) {
+			break;
+		}
+
+		reg_prop = fdt_getprop(fdt, node, "reg", NULL);
+		if (reg_prop == NULL) {
+			INFO("No valid reg prop found for subnode\n");
+			continue;
+		}
+
+		rsvnodes[i].base = (((uint64_t)fdt32_to_cpu(reg_prop[0]) << 32) |
+				fdt32_to_cpu(reg_prop[1]));
+		rsvnodes[i].size = (((uint64_t)fdt32_to_cpu(reg_prop[2]) << 32) |
+				fdt32_to_cpu(reg_prop[3]));
+		i++;
+	}
+
+	*idx = i;
+}
+
+static bool parse_tl_overlay_reserved_nodes(uint32_t *idx)
+{
+	struct transfer_list_entry *ote = NULL;
+	bool found = false;
+	void *ovrly_fdt;
+	uint32_t i = *idx, prev_i;
+	int frag, overlay, rsv_mem;
+
+	while ((ovrly_fdt = tl_get_next_fdt_overlay(&ote)) != NULL) {
+		/*
+		 * Walk every fragment@N to handle overlays from different
+		 * producers (e.g. TF-A, OP-TEE) regardless of fragment index.
+		 */
+		fdt_for_each_subnode(frag, ovrly_fdt, 0) {
+			overlay = fdt_subnode_offset(ovrly_fdt, frag, "__overlay__");
+			if (overlay < 0) {
+				continue;
+			}
+
+			rsv_mem = fdt_subnode_offset(ovrly_fdt, overlay,
+						     "reserved-memory");
+			if (rsv_mem < 0) {
+				continue;
+			}
+
+			prev_i = i;
+			parse_reserved_subnodes(ovrly_fdt, rsv_mem, &i);
+			if (i > prev_i) {
+				found = true;
+			}
+
+			if (i >= MAX_RESERVE_ADDR_INDICES) {
+				WARN("TL overlay: reserved node table full at %u entries\n", i);
+				goto done;
+			}
+		}
+	}
+done:
+	*idx = i;
+	return found;
+}
+
+/*
+ * Populate rsvnodes[] from base DTB /reserved-memory nodes and TL overlays.
+ * Returns 0 if at least one reserved-memory entry is added from any source,
+ * 1 if no reserved-memory entries are added.
+ */
 uint32_t retrieve_reserved_entries(void)
 {
 	uint32_t ret = 1;
 	void *dtb = NULL;
-	int offset, node;
-	uint32_t i = 0;
-	const fdt32_t *reg_prop;
-
+	int offset;
+	uint32_t i = 0, prev_i;
 
 	/* Get DT blob address */
 	dtb = (void *)plat_retrieve_dt_addr();
@@ -331,33 +419,18 @@ uint32_t retrieve_reserved_entries(void)
 		/* Find reserved memory node */
 		offset = fdt_path_offset(dtb, "/reserved-memory");
 		if (offset >= 0) {
-
-			/* Parse subnodes of reserved-memory */
-			fdt_for_each_subnode(node, dtb, offset) {
-				if (fdt_getprop(dtb, node, "no-map", NULL) == NULL) {
-					continue;
-				}
-
-				if (i == MAX_RESERVE_ADDR_INDICES) {
-					break;
-				}
-
-				reg_prop = fdt_getprop(dtb, node, "reg", NULL);
-				if (reg_prop == NULL) {
-					INFO("No valid reg prop found for subnode\n");
-					continue;
-				}
-
-				rsvnodes[i].base = (((uint64_t)fdt32_to_cpu(reg_prop[0]) << 32) |
-						fdt32_to_cpu(reg_prop[1]));
-				rsvnodes[i].size = (((uint64_t)fdt32_to_cpu(reg_prop[2]) << 32) |
-						fdt32_to_cpu(reg_prop[3]));
-				i++;
+			prev_i = i;
+			parse_reserved_subnodes(dtb, offset, &i);
+			if (i > prev_i) {
+				ret = 0;
 			}
-			ret = 0;
-			rsv_count = i;
 		}
 	}
 
+	if (parse_tl_overlay_reserved_nodes(&i)) {
+		ret = 0;
+	}
+
+	rsv_count = i;
 	return ret;
 }
