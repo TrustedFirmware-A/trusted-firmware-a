@@ -9,6 +9,7 @@
 
 /* Cortex-X1 MIDR for r1p0 */
 #define CORTEX_X1_MIDR			U(0x411fd440)
+#define CORTEX_X1C_MIDR			U(0x411fd4c0)
 
 /* Cortex-X1 loop count for CVE-2022-23960 mitigation */
 #define CORTEX_X1_BHB_LOOP_COUNT	U(32)

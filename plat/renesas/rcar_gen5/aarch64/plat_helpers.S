@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2025-2026, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -9,7 +9,7 @@
 #include <asm_macros.S>
 #include <common/bl_common.h>
 #include <common/runtime_svc.h>
-#include <cortex_a720_ae.h>
+#include <cortex_a720ae.h>
 #include <platform_def.h>
 
 #include "rcar_def.h"

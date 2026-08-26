@@ -171,17 +171,17 @@ else
 	ifeq (${CTX_INCLUDE_AARCH32_REGS}, 0)
 	# AArch64-only cores
 		FVP_CPU_LIBS	+=	lib/cpus/aarch64/cortex_a65.S		\
-					lib/cpus/aarch64/cortex_a65ae.S		\
+					lib/cpus/aarch64/cortex_a65ae.S	\
 					lib/cpus/aarch64/cortex_a76.S		\
-					lib/cpus/aarch64/cortex_a76ae.S		\
+					lib/cpus/aarch64/cortex_a76ae.S	\
 					lib/cpus/aarch64/cortex_a77.S		\
 					lib/cpus/aarch64/cortex_a78.S		\
-					lib/cpus/aarch64/cortex_a78_ae.S	\
+					lib/cpus/aarch64/cortex_a78ae.S	\
 					lib/cpus/aarch64/cortex_a78c.S		\
 					lib/cpus/aarch64/cortex_a710.S		\
 					lib/cpus/aarch64/cortex_a715.S		\
 					lib/cpus/aarch64/cortex_a720.S		\
-					lib/cpus/aarch64/cortex_a720_ae.S	\
+					lib/cpus/aarch64/cortex_a720ae.S	\
 					lib/cpus/aarch64/neoverse_n1.S		\
 					lib/cpus/aarch64/neoverse_n2.S		\
 					lib/cpus/aarch64/neoverse_v1.S		\
@@ -191,6 +191,7 @@ else
 					lib/cpus/aarch64/cortex_a320.S		\
 					lib/cpus/aarch64/cortex_a510.S		\
 					lib/cpus/aarch64/cortex_a520.S		\
+					lib/cpus/aarch64/cortex_a520ae.S	\
 					lib/cpus/aarch64/cortex_a725.S		\
 					lib/cpus/aarch64/cortex_x1.S		\
 					lib/cpus/aarch64/cortex_x3.S		\
@@ -198,6 +199,7 @@ else
 					lib/cpus/aarch64/neoverse_n3.S		\
 					lib/cpus/aarch64/neoverse_v2.S		\
 					lib/cpus/aarch64/neoverse_v3.S		\
+					lib/cpus/aarch64/neoverse_v3ae.S	\
 					lib/cpus/aarch64/c1_pro.S		\
 					lib/cpus/aarch64/c1_nano.S		\
 					lib/cpus/aarch64/c1_ultra.S		\
@@ -208,6 +210,7 @@ else
 					lib/cpus/aarch64/veymont.S		\
 					lib/cpus/aarch64/dionysus.S		\
 					lib/cpus/aarch64/venom.S		\
+					lib/cpus/aarch64/venomae.S		\
 					lib/cpus/aarch64/lsc25_p_core.S		\
 					lib/cpus/aarch64/lsc25_e_core.S
 		endif

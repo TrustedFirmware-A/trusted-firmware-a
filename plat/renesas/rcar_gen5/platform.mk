@@ -107,7 +107,7 @@ GICV3_SUPPORT_GIC600	:= 1
 USE_GIC_DRIVER		:= 3
 
 BL31_SOURCES	+=	${RCAR_GIC_SOURCES}				\
-			lib/cpus/aarch64/cortex_a720_ae.S		\
+			lib/cpus/aarch64/cortex_a720ae.S		\
 			plat/common/plat_psci_common.c			\
 			plat/renesas/rcar_gen5/plat_topology.c		\
 			plat/renesas/rcar_gen5/aarch64/plat_helpers.S	\
