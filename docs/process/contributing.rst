@@ -4,8 +4,8 @@ Contributor's Guide
 Getting Started
 ===============
 
--  Make sure you have a Github account and you are logged on both
-   `developer.trustedfirmware.org`_ and `review.trustedfirmware.org`_.
+-  Make sure you have a Github account and you are logged on to
+   `review.trustedfirmware.org`_.
 
 -  If you plan to contribute a major piece of work, it is usually a good idea to
    start a discussion around it on the mailing list. This gives everyone
@@ -316,10 +316,9 @@ Binary Components
 
 *Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.*
 
-.. _developer.trustedfirmware.org: https://developer.trustedfirmware.org
 .. _review.trustedfirmware.org: https://review.trustedfirmware.org
 .. _Trusted Firmware-A: https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git
-.. _Git guidelines: http://git-scm.com/book/ch5-2.html
+.. _Git guidelines: https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project
 .. _Gerrit Uploading Changes documentation: https://review.trustedfirmware.org/Documentation/user-upload.html
 .. _TF-A Tests: https://trustedfirmware-a-tests.readthedocs.io
 .. _Trusted Firmware binary repository: https://review.trustedfirmware.org/admin/repos/tf-binaries
