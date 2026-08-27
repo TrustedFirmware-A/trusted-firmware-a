@@ -1574,6 +1574,8 @@ CPU_FLAG_LIST += ERRATA_A510_3672349
 # cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A510_3704847
 
+CPU_FLAG_LIST += ERRATA_A510_4568615
+
 # Flag to apply erratum 2630792 workaround during reset. This erratum applies
 # to revisions r0p0, r0p1 of the Cortex-A520 cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A520_2630792
@@ -1597,6 +1599,8 @@ CPU_FLAG_LIST += ERRATA_A520_3631357
 # Flag to apply erratum 3685825 workaround during reset. This erratum applies to
 # revisions r0p0, r0p1, r0p2, r0p3, r0p4 of the Cortex-A520 cpu and is still open.
 CPU_FLAG_LIST += ERRATA_A520_3685825
+
+CPU_FLAG_LIST += ERRATA_A520_4491980
 
 # Flag to apply erratum 2394277 workaround during reset. This erratum applies to
 # revision r0p0 of the Neoverse V2 cpu and is fixed in r0p1.
@@ -1860,6 +1864,8 @@ CPU_FLAG_LIST += ERRATA_C1PRO_3706576
 # to revisions r0p0 and r1p0 of the C1-Pro cpu and is fixed in r1p1.
 CPU_FLAG_LIST += ERRATA_C1PRO_3300099
 
+CPU_FLAG_LIST += ERRATA_C1PRO_3773617
+
 # Flag to apply erratum 3392149 workaround during reset. This erratum applies
 # to revision r0p0 of C1-Nano cpu and is fixed in r0p1.
 CPU_FLAG_LIST += ERRATA_C1NANO_3392149
@@ -1887,6 +1893,8 @@ CPU_FLAG_LIST += ERRATA_C1NANO_3630925
 # Flag to apply erratum 3754876 workaround during runtime. This erratum applies
 # to revision r0p0 and r0p1 of C1-Nano cpu and is fixed in r0p2.
 CPU_FLAG_LIST += ERRATA_C1NANO_3754876
+
+CPU_FLAG_LIST += ERRATA_C1NANO_4497400
 
 # Flag to apply DSU erratum 798953. This erratum applies to DSUs revision r0p0.
 # Applying the workaround results in higher DSU power consumption on idle.

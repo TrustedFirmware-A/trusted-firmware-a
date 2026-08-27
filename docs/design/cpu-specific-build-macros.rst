@@ -1530,6 +1530,9 @@ For Cortex-A510, the following errata build flags are defined :
    Cortex-A510 CPU. This needs to be applied to revisions r0p1, r0p2, r0p3,
    r1p0, r1p1, r1p2 and r1p3 and is still open.
 
+-  ``ERRATA_A510_4568615``: This applies erratum 4568615 workaround to
+   Cortex-A510 CPU. This needs to be applied to all revisions and is still open.
+
 For Cortex-A520, the following errata build flags are defined :
 
 -  ``ERRATA_A520_2630792``: This applies errata 2630792 workaround to
@@ -1555,6 +1558,9 @@ For Cortex-A520, the following errata build flags are defined :
 - ``ERRATA_A520_3685825``: This applies erratum 3685825 workaround to
    Cortex-A520 CPU. This needs to be enabled for revisions r0p0, r0p1, r0p2, r0p3,
    r0p4 of the CPU. It is still open.
+
+- ``ERRATA_A520_4491980``: This applies erratum 4491980 workaround to
+   Cortex-A520 CPU. This needs to be applied to all revisions and is still open.
 
 For Cortex-A715, the following errata build flags are defined :
 
@@ -1772,6 +1778,10 @@ For C1-Pro, the following errata build flags are defined :
    CPU. This needs to be enabled for revisions r0p0 and r1p0 of the CPU, it
    is fixed in r1p1.
 
+-  ``ERRATA_C1PRO_3773617``: This applies errata 3773617 workaround to C1-Pro
+   CPU. This needs to be enabled for revision r1p1 of the CPU, it is fixed in
+   r1p2.
+
 For C1-Nano, the following errata build flags are defined :
 
 -  ``ERRATA_C1NANO_3392149``: This applies errata 3392149 workaround to
@@ -1801,6 +1811,10 @@ For C1-Nano, the following errata build flags are defined :
 -  ``ERRATA_C1NANO_3754876``: This applies errata 3754876 workaround to
    C1-Nano CPU. This needs to be enabled for revisions r0p0 and r0p1, and
    is fixed in r0p2.
+
+-  ``ERRATA_C1NANO_4497400``: This applies errata 4497400 workaround to
+   C1-Nano CPU. This needs to be enabled for revisions r0p0, r0p1, r0p2. It is
+   fixed in r0p3.
 
 DSU Errata Workarounds
 ----------------------
