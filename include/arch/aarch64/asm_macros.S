@@ -358,4 +358,13 @@
 	blr	x2
 #endif
 .endm
+
+	/*
+	 * Helper macro to instruction adr <reg>, <symbol> where <symbol> is
+	 * within the range +/- 4 GB.
+	 */
+	.macro adr_l, dst, sym
+	adrp	\dst, \sym
+	add	\dst, \dst, :lo12:\sym
+	.endm
 #endif /* ASM_MACROS_S */
