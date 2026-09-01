@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
- * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+ * Copyright (c) 2024-2026, Altera Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -38,5 +38,6 @@ uint32_t intel_hps_get_jtag_id(void);
 bool is_agilex5_A5C0(void);
 bool is_agilex5_A5C4(void);
 bool is_agilex5_A5F4(void);
+bool is_agilex5_SM7_A0(void);
 
 #endif /* SOCFPGA_SYSTEMMANAGER_H */

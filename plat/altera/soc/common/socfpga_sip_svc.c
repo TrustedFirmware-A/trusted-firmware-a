@@ -794,7 +794,7 @@ void intel_smmu_hps_remapper_init(uint64_t *mem)
 int intel_smmu_hps_remapper_config(uint32_t remapper_bypass)
 {
 	/* Read out the JTAG-ID from boot scratch register */
-	if (is_agilex5_A5F0() || is_agilex5_A5F4()) {
+	if (!is_agilex5_A36F0()) {
 		if (remapper_bypass == 0x01) {
 			g_remapper_bypass = remapper_bypass;
 			mmio_write_32(SOCFPGA_SYSMGR(SDM_BE_ARADDR_REMAP), 0);
