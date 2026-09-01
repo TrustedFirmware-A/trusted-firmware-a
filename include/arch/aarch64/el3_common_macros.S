@@ -86,6 +86,10 @@
 	/* ---------------------------------------------------------------------
 	 * Initialise MDCR_EL3, setting all fields rather than relying on hw.
 	 * Some fields are architecturally UNKNOWN on reset.
+	 * Future feature enablement code must only set ETADE, EDADE, and EPMADE
+	 * when FEAT_RME is implemented and enabled. This preserves access to
+	 * externally accessible debug registers as required by C1-Ultra erratum
+	 * 4015814.
 	 *
 	 * MDCR_EL3.SDD: Set to one to disable AArch64 Secure self-hosted debug.
 	 *  Debug exceptions, other than Breakpoint Instruction exceptions, are
