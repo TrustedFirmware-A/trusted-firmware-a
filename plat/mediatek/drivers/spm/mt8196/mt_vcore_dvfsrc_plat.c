@@ -5,6 +5,7 @@
  */
 
 #include <errno.h>
+#include <stdbool.h>
 
 #include <common/debug.h>
 #include <drivers/delay_timer.h>
@@ -56,7 +57,7 @@
 #define VCORE_OPP3_UV		625000
 #define VCORE_OPP4_UV		600000
 
-static unsigned int v_opp_uv[VCORE_MAX_OPP] = {
+static const unsigned int v_opp_uv_default[VCORE_MAX_OPP] = {
 	VCORE_OPP0_UV,
 	VCORE_OPP0_UV,
 	VCORE_OPP1_UV,
@@ -76,16 +77,7 @@ static unsigned int v_opp_uv[VCORE_MAX_OPP] = {
 #define VCORE_OPP4_UV		600000
 #define VCORE_OPP5_UV		575000
 
-static unsigned int v_opp_uv[VCORE_MAX_OPP] = {
-	VCORE_OPP0_UV,
-	VCORE_OPP1_UV,
-	VCORE_OPP2_UV,
-	VCORE_OPP3_UV,
-	VCORE_OPP4_UV,
-	VCORE_OPP5_UV,
-};
-
-static unsigned int v_opp_df_uv[VCORE_MAX_OPP] = {
+static const unsigned int v_opp_uv_default[VCORE_MAX_OPP] = {
 	VCORE_OPP0_UV,
 	VCORE_OPP1_UV,
 	VCORE_OPP2_UV,
@@ -94,6 +86,9 @@ static unsigned int v_opp_df_uv[VCORE_MAX_OPP] = {
 	VCORE_OPP5_UV,
 };
 #endif
+
+static unsigned int v_opp_uv[ARRAY_SIZE(v_opp_uv_default)];
+static bool vcorefs_init_done;
 
 #ifdef CONFIG_MTK_VCOREDVFS_SUPPORT
 static int opp_type;
@@ -195,6 +190,9 @@ static void spm_vcorefs_vcore_setting(void)
 	dvfsrc_rsrv = mmio_read_32(DVFSRC_RSRV_4);
 	dvfs_v_mode = (dvfsrc_rsrv >> V_VMODE_SHIFT) & V_VMODE_MASK;
 
+	for (i = 0; i < VCORE_MAX_OPP; i++)
+		v_opp_uv[i] = v_opp_uv_default[i];
+
 	if (dvfs_v_mode == 3) {	/* LV */
 		for (i = 0; i < VCORE_MAX_OPP; i++)
 			v_opp_uv[i] =
@@ -215,7 +213,7 @@ static void spm_vcorefs_vcore_setting(void)
 		v_opp_uv[1] = VCORE_PMIC_TO_UV(((rsrv0 >> 16) & 0xFF) + 3);
 		v_opp_uv[0] = VCORE_PMIC_TO_UV((rsrv0 & 0xFF) + 3);
 		for (i = 0; i < VCORE_MAX_OPP; i++)
-			v_opp_uv[i] = v_min(v_opp_uv[i], v_opp_df_uv[i]);
+			v_opp_uv[i] = v_min(v_opp_uv[i], v_opp_uv_default[i]);
 	}
 #endif
 #ifdef MT8196_VCORE_SUPPORT
@@ -243,6 +241,8 @@ static void spm_vcorefs_vcore_setting(void)
 	spm_vcorefs_pwarp_cmd(CMD_13, VCORE_UV_TO_PMIC(v_opp_uv[1]));
 	spm_vcorefs_pwarp_cmd(CMD_14, VCORE_UV_TO_PMIC(v_opp_uv[0]));
 #endif
+
+	vcorefs_init_done = true;
 }
 
 int spm_vcorefs_plat_init(uint32_t dvfsrc_flag,
@@ -331,6 +331,12 @@ void spm_vcorefs_plat_resume(void)
 
 int spm_vcorefs_get_vcore_uv(uint32_t gear, uint32_t *val)
 {
+	if (!vcorefs_init_done) {
+		ERROR("spm_vcorefs: GET_UV called before VCORE_DVFS_INIT\n");
+		*val = 0;
+		return VCOREFS_E_NOT_SUPPORTED;
+	}
+
 	if (gear < VCORE_MAX_OPP)
 		*val = v_opp_uv[VCORE_MAX_OPP - gear - 1];
 	else
