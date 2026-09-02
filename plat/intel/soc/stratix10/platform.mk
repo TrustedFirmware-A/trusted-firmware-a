@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019-2023, ARM Limited and Contributors. All rights reserved.
 # Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-# Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+# Copyright (c) 2024-2026, Altera Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -84,6 +84,11 @@ ARM_LINUX_KERNEL_AS_BL33	:=	0
 $(call assert_boolean,ARM_LINUX_KERNEL_AS_BL33)
 $(eval $(call add_define,ARM_LINUX_KERNEL_AS_BL33))
 $(eval $(call add_define,ARM_PRELOADED_DTB_BASE))
+
+# Configs for UART0/1 Configuration
+SOCFPGA_UART_CONFIG  := 	0
+$(call assert_boolean,SOCFPGA_UART_CONFIG)
+$(eval $(call add_define,SOCFPGA_UART_CONFIG))
 
 # Configs for Boot Source
 SOCFPGA_BOOT_SOURCE_SDMMC		?=	0

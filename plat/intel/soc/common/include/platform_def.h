@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019-2022, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
- * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+ * Copyright (c) 2024-2026, Altera Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -152,8 +152,13 @@
 /*******************************************************************************
  * UART related constants
  ******************************************************************************/
+#if SOCFPGA_UART_CONFIG
+#define CRASH_CONSOLE_BASE			PLAT_UART1_BASE
+#define PLAT_INTEL_UART_BASE			PLAT_UART1_BASE
+#else
 #define CRASH_CONSOLE_BASE			PLAT_UART0_BASE
 #define PLAT_INTEL_UART_BASE			PLAT_UART0_BASE
+#endif
 
 #define PLAT_BAUDRATE				(115200)
 #define PLAT_UART_CLOCK				(100000000)
