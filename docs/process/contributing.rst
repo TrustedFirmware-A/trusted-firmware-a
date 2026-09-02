@@ -360,7 +360,7 @@ Binary Components
 *Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.*
 
 .. _review.trustedfirmware.org: https://review.trustedfirmware.org
-.. _Git guidelines: http://git-scm.com/book/ch5-2.html
+.. _Git guidelines: https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project
 .. _Gerrit Uploading Changes documentation: https://review.trustedfirmware.org/Documentation/user-upload.html
 .. _TF-A Tests: https://trustedfirmware-a-tests.readthedocs.io
 .. _Trusted Firmware binary repository: https://review.trustedfirmware.org/admin/repos/tf-binaries

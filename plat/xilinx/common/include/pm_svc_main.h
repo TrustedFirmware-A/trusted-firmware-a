@@ -8,11 +8,16 @@
 #ifndef PM_SVC_MAIN_H
 #define PM_SVC_MAIN_H
 
+#include <lib/cassert.h>
 #include <pm_common.h>
 
 extern bool pwrdwn_req_received;
 
 #define PASS_THROUGH_FW_CMD_ID	U(0xfff)
+
+/* volatile in the pointee is significant to type-compatibility */
+#define IS_VOLATILE(x) \
+	__builtin_types_compatible_p(__typeof__(&(x)), volatile __typeof__(x) *)
 
 /******************************************************************************/
 /**
@@ -20,9 +25,11 @@ extern bool pwrdwn_req_received;
  *			     avoid glitches which can skip a function call
  *			     and cause altering of the code flow in security
  *			     critical functions.
- * @status: Variable which holds the return value of function executed
+ * @status: Variable which holds the return value of function executed. Must
+ *	    be declared volatile by the caller, or the build fails.
  * @status_tmp: Variable which holds the return value of redundant function
- *		call executed
+ *		call executed. Must be declared volatile by the caller, or
+ *		the build fails.
  * @function: Function to be executed
  *
  * Return: None
@@ -30,6 +37,8 @@ extern bool pwrdwn_req_received;
  ******************************************************************************/
 #define SECURE_REDUNDANT_CALL(status, status_tmp, function, ...)   \
 	{ \
+		CASSERT(IS_VOLATILE(status) && IS_VOLATILE(status_tmp), \
+			secure_redundant_call_requires_volatile_status); \
 		status = function(__VA_ARGS__); \
 		status_tmp = function(__VA_ARGS__); \
 	}

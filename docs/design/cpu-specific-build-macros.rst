@@ -52,6 +52,11 @@ vulnerability workarounds should be applied at runtime.
    of this workaround it cannot be checked at runtime so should not be enabled
    unless needed by the platform.
 
+-  ``WORKAROUND_CVE_2026-0995``: Enables mitigation for `CVE-2026-0995`_.
+   This build option should be set to 1 if the target platform contains at least
+   1 C1 Pro CPU. Platforms should also inlcude lib/cpus/aarch64/c1_pro_pubsub.c
+   in BL31_SOURCES. Defaults to 0.
+
 .. _arm_cpu_macros_errata_workarounds:
 
 CPU Errata Workarounds
@@ -60,10 +65,7 @@ CPU Errata Workarounds
 TF-A exports a series of build flags which control the errata workarounds that
 are applied to each CPU by the reset handler. The errata details can be found
 in the CPU specific errata documents published by Arm:
-
--  `Cortex-A53 MPCore Software Developers Errata Notice`_
--  `Cortex-A57 MPCore Software Developers Errata Notice`_
--  `Cortex-A72 MPCore Software Developers Errata Notice`_
+For example: `Cortex-A72 MPCore Software Developers Errata Notice`_
 
 The errata workarounds are implemented for a particular revision or a set of
 processor revisions. This is checked by the reset handler at runtime. Each
@@ -1922,11 +1924,10 @@ GIC Errata Workarounds
 .. _CVE-2017-5715: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5715
 .. _CVE-2018-3639: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3639
 .. _CVE-2022-23960: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23960
-.. _Cortex-A53 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm048406/index.html
-.. _Cortex-A57 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm049219/index.html
-.. _Cortex-A72 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm012079/index.html
-.. _Cortex-A57 Software Optimization Guide: http://infocenter.arm.com/help/topic/com.arm.doc.uan0015b/Cortex_A57_Software_Optimization_Guide_external.pdf
-.. _Arm DSU Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm138168/index.html
 .. _CVE-2024-5660: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-5660
 .. _CVE-2024-7881: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-7881
 .. _CVE-2025-10263: https://www.cve.org/CVERecord?id=CVE-2025-10263
+.. _CVE-2026-0995: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0995
+.. _Cortex-A72 MPCore Software Developers Errata Notice: https://developer.arm.com/documentation/epm012079/latest
+.. _Cortex-A57 Software Optimization Guide: https://developer.arm.com/documentation/uan0015
+.. _Arm DSU Software Developers Errata Notice: https://developer.arm.com/documentation/SDEN854652
