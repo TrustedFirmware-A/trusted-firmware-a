@@ -72,8 +72,9 @@ typedef struct spmd_spm_core_context {
 #define SPMD_FWK_MSG_FFA_VERSION_RESP		U(0x9)
 
 /* Function to build SPMD to SPMC message */
-void spmd_build_spmc_message(gp_regs_t *gpregs, uint8_t target,
-			     unsigned long long message);
+void spmd_build_spmc_message(gp_regs_t *gpregs, uint8_t target_func,
+			     unsigned long long x3_payload,
+			     unsigned long long x4_payload);
 
 /* Functions used to enter/exit SPMC synchronously */
 uint64_t spmd_spm_core_sync_entry(spmd_spm_core_context_t *ctx);
