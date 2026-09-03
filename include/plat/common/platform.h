@@ -492,6 +492,8 @@ struct ffa_mtd;
 int plat_spmc_shmem_datastore_get(uint8_t **datastore, size_t *size);
 int plat_spmc_shmem_begin(struct ffa_mtd *desc);
 int plat_spmc_shmem_reclaim(struct ffa_mtd *desc);
+bool plat_spmc_rxtx_validate(uintptr_t rx_address, uintptr_t tx_address,
+			size_t buffer_size);
 #endif
 
 /*******************************************************************************

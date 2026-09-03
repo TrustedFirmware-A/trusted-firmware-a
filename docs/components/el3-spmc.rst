@@ -84,15 +84,18 @@ Platform Guide
 
   - plat_spmc_shmem_begin
   - plat_spmc_shmem_reclaim
+  - plat_spmc_rxtx_validate
 
 SPMC provides platform hooks related to memory management interfaces.
+Platforms enabling ``SPMC_AT_EL3`` must implement all the hooks.
 These hooks can be used for platform specific implementations such as
 managing access control, programming TZ Controllers or MPUs, and
 validating ownership and security state of memory regions supplied
-through FFA_MEM_SHARE and FFA_MEM_LEND requests.
+during FF-A ABI calls such as FFA_RXTX_MAP, FFA_MEM_SHARE and
+FFA_MEM_LEND requests.
 
 Platform implementations are expected to ensure that memory regions
-accepted for sharing or lending comply with the platform security model
+provided for FF-A ABI calls comply with the platform security model
 and enforce any ownership, access control, and security-state checks
 required by the platform.
 
