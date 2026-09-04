@@ -3,6 +3,100 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.10.34](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.33..refs/tags/lts-v2.10.34) (2026-09-04)
+
+### Documentation
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add erratum 4015814 comments ([34bfdd5](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/34bfdd5548d4c23e7f030110b59965d700939a3f))
+
+  - **Translation Tables**
+
+    - add erratum 3683289 comments ([8ec5a9c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8ec5a9cfdb75c1a11312c542037306fdf089c6d1))
+
+### Resolved Issues
+
+- **Platforms**
+
+  - **Arm**
+
+    - bound backup GPT spec length ([0283e9a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0283e9aedf8ac44bb6de4e994b35b6a482cbd60f))
+
+    - **Juno**
+
+      - raise BL2 max size for hardened IO checks ([e8a8256](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e8a8256992c6fdf533c4af079d06898ca353c869))
+
+- **Services**
+
+  - **SPM**
+
+    - **EL3 SPMC**
+
+      - prevent integer overflow in memory overlap validation ([6c442cc](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6c442cce06028c11cbd3c22d19a33b2a0c8c2c55))
+
+  - **DRTM**
+
+    - validate NWd DCE region size to prevent overflow ([df7d1dd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/df7d1ddd03e822808dd9b5051cae86a13904f824))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add workaround for C1-Nano erratum 4497400 ([0a51e19](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0a51e190aa4192c1dc442be93327113658e81cf8))
+    - add workaround for Cortex-A510 erratum 4568615 ([5d532c6](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5d532c641550bbc9d76157daf87284e0abee5a30))
+    - add workaround for Cortex-A520 erratum 4491980 ([b67de0e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b67de0e12a17b8bbd48f53e6e4928a1754b48696))
+    - remove duplicate comments from lib/cpus/cpu-ops.mk ([8f5659d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8f5659d9488fce1c0d28c9e358cca7031be45791))
+    - workaround for C1-Pro erratum 3773617 ([9e6d902](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9e6d9023f81e308787e93ec061176daf3424cfd9))
+
+- **Drivers**
+
+  - **I/O**
+
+    - validate FIP ToC bounds and catch short reads ([d8ba113](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d8ba11315a9f06177865bb0e4d5228fd9348d034))
+
+  - **GUID Partition Tables Support**
+
+    - harden backup GPT loading ([f008370](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f008370f454de15e59851f9932c4c49879bc2292))
+
+- **Documentation**
+
+  - fix some broken links ([1b24797](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1b24797944d9d3999dbbec64de0575a7eb8c8c19))
+
+### New Features
+
+- **Libraries**
+
+  - add u64 overflow helper ([875bdcc](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/875bdcc65cb3cea13f44b148c27d1e8cabba7099))
+  - introduce check_size_t_overflow ([f2d1c76](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f2d1c7636da29a022424a26bba170975c94d414d))
+
+### Code Refactoring
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - replace adr with adr_l ([0f52796](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0f52796db2f5bba6d3173b02d25fedbe9a34a5db))
+
+- **Drivers**
+
+  - **I/O**
+
+    - use check_size_t_overflow ([169e5b0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/169e5b0bb630e2059d98210e034a0ee8fabb2c4b))
+
+- **Build System**
+
+  - introduce adr_l macro ([6b54860](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6b548602a3dbb657ec494e95109e1abaed36dc38))
+
+### Build System
+
+- **Dependencies**
+
+  - bump commitizen ([8433e1a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8433e1ab50e07fd3d5d692fd624bc4da5e6d3660))
+  - bump js-yaml from 4.1.1 to 4.3.2 ([7846146](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/78461464a19749437129fec32eb6d4b82c758bb4))
+
 ## [lts-2.10.33](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.10.32..refs/tags/lts-v2.10.33) (2026-07-31)
 
 ### Resolved Issues
