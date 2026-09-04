@@ -10,14 +10,18 @@
 
 void *memrchr(const void *src, int c, size_t len)
 {
-	const unsigned char *s = src + (len - 1);
+	if (len > 0) {
+		const unsigned char *s = (const unsigned char *)src + (len - 1);
 
-	while (len--) {
-		if (*s == (unsigned char)c) {
-			return (void*) s;
+		while (len--) {
+			if (*s == (unsigned char)c) {
+				return (void*) s;
+			}
+
+			if (s != src) {
+				s--;
+			}
 		}
-
-		s--;
 	}
 
 	return NULL;
