@@ -5,6 +5,8 @@
  * Platform overrides for the LX2160A shared soc.c weak hooks.
  */
 
+#include <stdint.h>
+
 #include <common/debug.h>
 #include <lib/mmio.h>
 #include <nxp_smmu.h>
@@ -14,6 +16,51 @@
 #include <soc.h>
 
 /*
+ * RCW build stamp, written by the PBI into DCFG SCRATCHRW13:
+ *
+ *   31   28 27   24 23   16 15    8 7     0
+ *  +-------+-------+-------+-------+-------+
+ *  |CARRIER|  TAG  |  YY   |  MM   |  DD   |   all BCD
+ *  +-------+-------+-------+-------+-------+
+ *
+ * e.g. 0x2B260820 -> "Iliad nbxv32 RCW v.20260820".
+ */
+#define NBXV3_DCFG_SCRATCHRW13_OFFSET	0x230U
+#define NBXV3_STAMP_TAG			0xBU
+#define NBXV3_STAMP_TAG_SHIFT		24U
+#define NBXV3_STAMP_CARRIER_SHIFT	28U
+#define NBXV3_STAMP_DATE_MASK		0x00FFFFFFU
+#define NBXV3_STAMP_BRINGUP		0xFU
+
+static void nbxv3_print_rcw_stamp(void)
+{
+	uint32_t stamp = mmio_read_32(NXP_DCFG_ADDR +
+				      NBXV3_DCFG_SCRATCHRW13_OFFSET);
+	uint32_t carrier;
+
+	if (stamp == 0U) {
+		NOTICE("Iliad nbxv3 RCW v.<none> (PBL missing build stamp)\n");
+		return;
+	}
+
+	if (((stamp >> NBXV3_STAMP_TAG_SHIFT) & 0xFU) != NBXV3_STAMP_TAG) {
+		NOTICE("Iliad nbxv3 RCW v.<unknown format 0x%08X>\n", stamp);
+		return;
+	}
+
+	carrier = stamp >> NBXV3_STAMP_CARRIER_SHIFT;
+
+	if (carrier == NBXV3_STAMP_BRINGUP) {
+		NOTICE("Iliad nbxv3 (bring-up, no IO) RCW v.20%06X\n",
+		       stamp & NBXV3_STAMP_DATE_MASK);
+		return;
+	}
+
+	NOTICE("Iliad nbxv3%u RCW v.20%06X\n", carrier,
+	       stamp & NBXV3_STAMP_DATE_MASK);
+}
+
+/*
  * Called near the end of soc_early_init()
  *
  * nbxv3-specific platform overrides go here.
@@ -21,6 +68,8 @@
 void plat_soc_early_init_hook(void)
 {
 	nbxv3_mode_t mode = nbxv3_runtime_mode();
+
+	nbxv3_print_rcw_stamp();
 
 	NOTICE("nbxv3: runtime mode = %s\n", nbxv3_mode_name(mode));
 
