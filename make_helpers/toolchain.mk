@@ -404,8 +404,8 @@ ifndef toolchain-mk
 
         target-arch-aarch32-arm-clang := arm-arm-none-eabi
         target-arch-aarch64-arm-clang := aarch64-arm-none-eabi
-        target-arch-aarch32-llvm-clang := arm-arm-none-eabi
-        target-arch-aarch64-llvm-clang := aarch64-arm-none-elf
+        target-arch-aarch32-llvm-clang := arm-none-eabi
+        target-arch-aarch64-llvm-clang := aarch64-none-elf
 
         target-flag-aarch32-arm-clang := -target $(target-arch-aarch32-arm-clang)
         target-flag-aarch64-arm-clang := -target $(target-arch-aarch64-arm-clang)
