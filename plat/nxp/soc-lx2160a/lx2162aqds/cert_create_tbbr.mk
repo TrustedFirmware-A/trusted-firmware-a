@@ -16,16 +16,12 @@ CRTTOOL_DEFINES += PDEF_CERTS
 CRTTOOL_DEFINES += PDEF_EXTS
 
 
-CRTTOOL_INCLUDE_DIRS		+=	${PLAT_DIR}/../common/fip_handler/common/
+CRTTOOL_INCLUDE_DIRS		+=	${PLAT_DIR}../../common/fip_handler/common/
 
-PDEF_CERT_TOOL_PATH		:=	${PLAT_DIR}/cert_create_helper
+PDEF_CERT_TOOL_PATH		:=	${PLAT_DIR}cert_create_helper
 CRTTOOL_INCLUDE_DIRS		+=	${PDEF_CERT_TOOL_PATH}/include
 
-PLAT_OBJECTS			+=	${PDEF_CERT_TOOL_PATH}/src/pdef_tbb_cert.c \
+CRTTOOL_SOURCES			+=	${PDEF_CERT_TOOL_PATH}/src/pdef_tbb_cert.c \
 					${PDEF_CERT_TOOL_PATH}/src/pdef_tbb_ext.c \
 					${PDEF_CERT_TOOL_PATH}/src/pdef_tbb_key.c
-
-$(shell rm ${PLAT_OBJECTS})
-
-CRTTOOL_SOURCES			+= ${PLAT_OBJECTS}
 endif
