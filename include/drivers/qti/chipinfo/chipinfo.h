@@ -38,6 +38,43 @@ enum chipinfo_result {
 };
 
 /*
+ * Hardware part identifiers, used to query whether a subsystem is fused off.
+ * Values match the SMEM disabled-features table layout and must not be reordered.
+ */
+enum chipinfo_part {
+	CHIPINFO_PART_UNKNOWN   = 0,
+	CHIPINFO_PART_GPU       = 1,
+	CHIPINFO_PART_VIDEO     = 2,
+	CHIPINFO_PART_CAMERA    = 3,
+	CHIPINFO_PART_DISPLAY   = 4,
+	CHIPINFO_PART_AUDIO     = 5,
+	CHIPINFO_PART_MODEM     = 6,
+	CHIPINFO_PART_WLAN      = 7,
+	CHIPINFO_PART_NSP       = 8,
+	CHIPINFO_PART_SENSORS   = 9,
+	CHIPINFO_PART_NPU       = 10,
+	CHIPINFO_PART_SPSS      = 11,
+	CHIPINFO_PART_NAV       = 12,
+	CHIPINFO_PART_COMPUTE_1 = 13,
+	CHIPINFO_PART_DISPLAY_1 = 14,
+	CHIPINFO_PART_NSP_1     = 15,
+	CHIPINFO_PART_EVA       = 16,
+	CHIPINFO_PART_PCIE      = 17,
+	CHIPINFO_PART_CPU       = 18,
+	CHIPINFO_PART_DDR       = 19,
+	CHIPINFO_PART_SLC       = 20,
+	CHIPINFO_PART_APSS_COMMON = 21,
+	CHIPINFO_PART_OOB       = 22,
+	CHIPINFO_PART_LSR       = 23,
+
+	CHIPINFO_NUM_PARTS,
+	CHIPINFO_PART_32BITS    = 0x7FFFFFFF
+};
+
+/* Cap on entries in the per-instance table (format >= 23). */
+#define CHIPINFO_MAX_PART_INSTANCES	32U
+
+/*
  * Chip identification type.  Any new ids must be added to the end.
  */
 enum chipinfo_id {
@@ -1039,5 +1076,13 @@ enum chipinfo_family chipinfo_get_chip_family(void);
  * Initialize the ChipInfo driver
  */
 enum chipinfo_result qti_chipinfo_init(void);
+
+/*
+ * Returns true if the given part instance is fused off on this SKU. part_idx 0
+ * checks the flat disabled-features table; part_idx > 0 searches the
+ * per-instance table (SMEM format >= 23). Returns false (assume present) when
+ * uninitialized, out of range, or no matching entry exists.
+ */
+bool chipinfo_is_part_disabled(enum chipinfo_part part, uint32_t part_idx);
 
 #endif /* CHIPINFO_H */
