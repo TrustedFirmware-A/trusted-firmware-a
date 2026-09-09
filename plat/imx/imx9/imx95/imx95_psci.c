@@ -98,7 +98,7 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 	struct scmi_lpm_config cpu_lpm_cfg[] = {
 		{
 			SCMI_PWR_MIX_SLICE_IDX_A55P,
-			SCMI_CPU_PD_LPM_ON_ALWAYS,
+			SCMI_CPU_PD_LPM_ON_RUN,
 			BIT_32(SCMI_PWR_MEM_SLICE_IDX_A55L3)
 		},
 		{

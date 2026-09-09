@@ -15,7 +15,7 @@
 #include <imx_scmi_client.h>
 #include <plat_imx8.h>
 
-#define IRQ_MASK(x)	irq_mask[(x) / 32U]
+#define IRQ_MASK(x)	((x) / 32U)
 #define IRQ_SHIFT(x)	(1U << (x) % 32U)
 
 static uint32_t irq_mask[IMR_NUM] = { 0x0 };
@@ -25,12 +25,15 @@ static const uint32_t gpio_ctrl_offset[GPIO_CTRL_REG_NUM] = {
 	 0xc, 0x10, 0x14, 0x18, 0x1c, 0x40, 0x54, 0x58
 };
 
+/* for GIC context save/restore if NIC lost power */
+struct plat_gic_ctx imx_gicv3_ctx;
+
 bool has_netc_irq;
-static bool has_wakeup_irq;
+static uint32_t wakeup_mark_count;
 static bool gpio_wakeup;
 bool keep_wakeupmix_on;
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 static uint32_t xspi_mto[2];
 
 static void xspi_save(void)
@@ -134,7 +137,7 @@ static void wdog_restore(struct wdog_ctx *wdog)
 
 static inline bool active_wakeup_irq(uint32_t irq)
 {
-	return !(IRQ_MASK(irq) & IRQ_SHIFT(irq));
+	return !(irq_mask[IRQ_MASK(irq)] & IRQ_SHIFT(irq));
 }
 
 /*
@@ -148,6 +151,14 @@ static void peripheral_qchannel_hsk(bool en)
 	uint32_t num_hsks = 0U;
 
 	for (uint32_t i = 0U; i < ARRAY_SIZE(per_hsk_cfg); i++) {
+		/*
+		 * We assume the per_hsk_cfg array valid entry ends
+		 * if wakeup_irq = 0
+		 */
+		if (per_hsk_cfg[i].wakeup_irq == 0U) {
+			break;
+		}
+
 		if (active_wakeup_irq(per_hsk_cfg[i].wakeup_irq)) {
 			per_lpm[num_hsks].perId = per_hsk_cfg[i].per_idx;
 			per_lpm[num_hsks].lpmSetting = en ? SCMI_CPU_PD_LPM_ON_RUN_WAIT_STOP :
@@ -163,6 +174,11 @@ static void peripheral_qchannel_hsk(bool en)
 void imx_set_sys_wakeup(uint32_t last_core, bool pdn)
 {
 	uintptr_t gicd_base = PLAT_GICD_BASE;
+	uint32_t mask;
+
+	/* Clear the wakeup and netc irq enabled flags */
+	wakeup_mark_count = 0;
+	has_netc_irq = false;
 
 	/* Set the GPC IMRs based on GIC IRQ mask setting */
 	for (uint32_t i = 0U; i < IMR_NUM; i++) {
@@ -174,13 +190,25 @@ void imx_set_sys_wakeup(uint32_t last_core, bool pdn)
 			irq_mask[i] = 0xFFFFFFFF;
 		}
 
-		if (~irq_mask[i] & wakeup_irq_mask[i]) {
-			if (i == IRQ_MASK(NETC_IREC_PCI_INT_X0) &&
-			    (wakeup_irq_mask[i] & IRQ_SHIFT(NETC_IREC_PCI_INT_X0))) {
-				has_netc_irq = true;
-			} else {
-				has_wakeup_irq = true;
+		mask = ~irq_mask[i] & wakeup_irq_mask[i];
+
+		if (!mask) {
+			continue;
+		}
+
+		/* If mask is not zero, increase the mark_count */
+		wakeup_mark_count++;
+
+		if (i == IRQ_MASK(NETC_IREC_PCI_INT_X0) &&
+		    (mask & IRQ_SHIFT(NETC_IREC_PCI_INT_X0))) {
+			/*
+			 * If only this NETC interrupt in the mask, no need
+			 * enable wakeupmix wakeup
+			 */
+			if (mask == IRQ_SHIFT(NETC_IREC_PCI_INT_X0)) {
+				wakeup_mark_count--;
 			}
+			has_netc_irq = true;
 		}
 	}
 
@@ -198,7 +226,7 @@ void imx_set_sys_wakeup(uint32_t last_core, bool pdn)
 void imx9_sys_sleep_prepare(uint32_t core_id)
 {
 	/* Save the gic context */
-	gic_save();
+	plat_gic_save(core_id, &imx_gicv3_ctx);
 
 	/* Save contex of gpios in wakeupmix */
 	for (uint32_t i = 0U; i < GPIO_NUM; i++) {
@@ -210,20 +238,25 @@ void imx9_sys_sleep_prepare(uint32_t core_id)
 		wdog_save(&wdogs[i]);
 	}
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 	xspi_save();
 #endif
 	imx_set_sys_wakeup(core_id, true);
 
-	keep_wakeupmix_on = gpio_wakeup || has_wakeup_irq;
+	keep_wakeupmix_on = gpio_wakeup || wakeup_mark_count;
+
+#if IMX_CRRM
+	/* Keep XSPI always on to avoid setting lost */
+	keep_wakeupmix_on = true;
+#endif
 }
 
 void imx9_sys_sleep_unprepare(uint32_t core_id)
 {
 	/* Restore the gic context */
-	gic_resume();
+	plat_gic_restore(core_id, &imx_gicv3_ctx);
 
-#if HAS_XSPI_SUPPORT
+#if HAS_XSPI_SUPPORT && !IMX_CRRM
 	xspi_restore();
 #endif
 	/* Restore contex of gpios in wakeupmix */
@@ -237,6 +270,4 @@ void imx9_sys_sleep_unprepare(uint32_t core_id)
 	}
 
 	imx_set_sys_wakeup(core_id, false);
-
-	has_wakeup_irq = false;
 }

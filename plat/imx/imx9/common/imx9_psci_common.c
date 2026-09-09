@@ -220,14 +220,14 @@ void imx_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 
 	/* system level */
 	if (is_local_state_off(SYSTEM_PWR_STATE(target_state))) {
-		imx9_sys_sleep_unprepare(core_id);
-
 		sys_mode = SCMI_IMX_SYS_POWER_STATE_MODE_MASK;
 		if (has_netc_irq) {
 			scmi_sys_pwr_state_set(imx9_scmi_handle,
 					       SCMI_SYS_PWR_FORCEFUL_REQ,
 					       sys_mode);
 		}
+
+		imx9_sys_sleep_unprepare(core_id);
 
 		/* switch to GIC wakeup source, config the target mode to WAIT */
 		scmi_core_set_sleep_mode(imx9_scmi_handle, SCMI_CPU_A55_ID(core_id),
