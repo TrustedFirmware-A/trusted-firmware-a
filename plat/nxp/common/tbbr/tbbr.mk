@@ -71,15 +71,15 @@ ifeq (${NXP_TBBR_USE_X509},1)
 	ROT_KEY		= $(BUILD_PLAT)/rot_key.pem
     endif
 
+    ifeq (${TRUSTED_WORLD_KEY},)
+        TRUSTED_WORLD_KEY = ${BUILD_PLAT}/trusted.pem
+    endif
+
+    ifeq (${NON_TRUSTED_WORLD_KEY},)
+        NON_TRUSTED_WORLD_KEY = ${BUILD_PLAT}/non-trusted.pem
+    endif
+
     ifeq (${SAVE_KEYS},1)
-
-        ifeq (${TRUSTED_WORLD_KEY},)
-            TRUSTED_WORLD_KEY = ${BUILD_PLAT}/trusted.pem
-        endif
-
-        ifeq (${NON_TRUSTED_WORLD_KEY},)
-            NON_TRUSTED_WORLD_KEY = ${BUILD_PLAT}/non-trusted.pem
-        endif
 
         ifeq (${BL31_KEY},)
             BL31_KEY = ${BUILD_PLAT}/soc.pem
@@ -101,10 +101,10 @@ ifeq (${NXP_TBBR_USE_X509},1)
 
     $(BUILD_PLAT)/bl2/nxp_rotpk.o: $(ROTPK_HASH)
 
-    certificates: $(ROT_KEY)
-    $(ROT_KEY): | $$(@D)/
+    certificates: $(ROT_KEY) $(TRUSTED_WORLD_KEY) $(NON_TRUSTED_WORLD_KEY)
+    $(ROT_KEY) $(TRUSTED_WORLD_KEY) $(NON_TRUSTED_WORLD_KEY): | $$(@D)/
 	$(s)echo "  OPENSSL $@"
-	$(q)if [ ! -f $(ROT_KEY) ]; then \
+	$(q)if [ ! -f $@ ]; then \
 		${OPENSSL_BIN_PATH}/openssl genrsa 2048 > $@ 2>/dev/null; \
 	fi
 

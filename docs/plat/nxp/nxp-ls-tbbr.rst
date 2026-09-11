@@ -83,8 +83,6 @@ Additional FIP_DDR Image (For NXP platforms like lx2160a)
        make PLAT=$PLAT TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 \
        NXP_TBBR_USE_X509=1 fip_ddr
 
-      Note: make target 'fip_ddr' should never be combine with other make target 'fip', 'pbl' & 'bl2'.
-
 -------------------------------------------------------------------------
 Option 2: CoT using NXP CSF headers.
 -------------------------------------------------------------------------
