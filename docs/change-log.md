@@ -3,6 +3,44 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.8.46](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.45..refs/tags/lts-v2.8.46) (2026-09-11)
+
+### Resolved Issues
+
+- **tools:** change data type to size_t for doimage ([fc38a9d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fc38a9df1ef7dd96e8a8ad9a77a78004bf7509a8))
+
+- **Platforms**
+
+  - **Intel**
+
+    - update fcs crypto init code to check for mode ([1a52c07](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/1a52c0761d34c19c94f802fe83b0fe1d55fc11e5))
+
+  - **NXP**
+
+    - **i.MX**
+
+      - **i.MX 8M**
+
+        - don't reconfigure default region0 ([e576443](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/e576443dd84dd8795217ba8f7cac609e41a23c75))
+
+  - **Xilinx**
+
+    - enforce volatile call status vars ([4c689a4](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4c689a4d74be9bfc871c49771064d570f5a43d90))
+
+- **Services**
+
+  - **SPM**
+
+    - **EL3 SPMC**
+
+      - prevent integer overflow in memory overlap validation ([b741ab0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b741ab0454ab9f7fbdb5199bf7d17361c447ff91))
+
+- **Drivers**
+
+  - **GUID Partition Tables Support**
+
+    - harden backup GPT loading ([8efc140](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8efc140e0bc7ff718a67a0ec9643882a287c5a0e))
+
 ## [lts-2.8.45](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.44..refs/tags/lts-v2.8.45) (2026-07-31)
 
 ### Style
