@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026, Qualcomm Technologies, Inc. and/or its subsidiaries.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <stddef.h>
+#include <stdint.h>
+
+#include <drivers/qti/sec_core/sec_core.h>
+#include <lib/utils_def.h>
+
+#include <sec_core_defs.h>
+
+#define APSS_ALIAS_APC_SECURE(n)					\
+	{ APSS_ALIAS_0_APC_SECURE_ADDR +				\
+		  ((n) * APSS_ALIASn_APC_SECURE_OFFSET_TO_NEXT),	\
+	  APSS_ALIAS_0_APC_SECURE_RMSK }
+
+const struct sec_core_cfg_s qti_sec_core_cfg[] = {
+	{APSS_WDT_TMR1_WDOG_SECURE_ADDR, APSS_WDT_TMR1_WDOG_SECURE_RMSK},
+	APSS_ALIAS_APC_SECURE(0),
+	APSS_ALIAS_APC_SECURE(1),
+	APSS_ALIAS_APC_SECURE(2),
+	APSS_ALIAS_APC_SECURE(3),
+	APSS_ALIAS_APC_SECURE(4),
+	APSS_ALIAS_APC_SECURE(5),
+	APSS_ALIAS_APC_SECURE(6),
+	APSS_ALIAS_APC_SECURE(7),
+	{APSS_ALIAS_0_CL_SECURE_ADDR, APSS_ALIAS_0_CL_SECURE_RMSK},
+	{APSS_ALIAS_1_CL_SECURE_ADDR, APSS_ALIAS_1_CL_SECURE_RMSK},
+	{APSS_BANKED_APC_SECURE_ADDR, APSS_BANKED_APC_SECURE_RMSK},
+	{APSS_SHARED_SHR_SECURE_ADDR, 0x0},
+	{GOLD_SAW4_SECURE_ADDR, GOLD_SAW4_SECURE_RMSK},
+	{APSS_PWR_APM_SECURE_ADDR, APSS_PWR_APM_SECURE_RMSK},
+	{APSS_PWR_MAS_SECURE_ADDR, APSS_PWR_MAS_SECURE_RMSK},
+	{CL0_GOLD_PLL_SECURE_ADDR, CL0_GOLD_PLL_SECURE_RMSK},
+	{CL1_GOLD_PLL_SECURE_ADDR, CL1_GOLD_PLL_SECURE_RMSK},
+	{CL0_L3_PLL_SECURE_ADDR, CL0_L3_PLL_SECURE_RMSK},
+	{CL1_L3_PLL_SECURE_ADDR, CL1_L3_PLL_SECURE_RMSK},
+	{APSS_MISC_CLK_SECURE_ADDR, APSS_MISC_CLK_SECURE_RMSK},
+};
+
+const size_t qti_sec_core_cfg_count = ARRAY_SIZE(qti_sec_core_cfg);
+
+const uintptr_t qti_sec_core_rvbaraddr_lo = APSS_SHARED_KRYO_RVBARADDR_LO_ADDR;
+const uintptr_t qti_sec_core_rvbaraddr_hi = APSS_SHARED_KRYO_RVBARADDR_HI_ADDR;
