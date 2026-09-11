@@ -3,6 +3,48 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.14.7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.14.6..refs/tags/lts-v2.14.7) (2026-09-11)
+
+### Resolved Issues
+
+- **Platforms**
+
+  - **QTI**
+
+    - disallow secure IO accesses from secure world callers ([5b7e825](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5b7e825cc2f18b47ea25159173a86c7d23e3c57e))
+    - do not map secure regions ([8afa01f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8afa01feb84e77369df950a73905472e20e22e2a))
+    - harden mem_assign parameter handling ([ebe3bfd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ebe3bfdd32bff04b78f142669bb383f13e6cf374))
+    - pull in access-control backend for mem_assign ([72d0f09](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/72d0f09eded1312bc01983f43180c2230aabb2c0))
+    - restrict EUD register r/w to debug builds only ([670b014](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/670b014e93f90259e1afb440235ba0dd1eb2fb07))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add workaround for C1-Nano erratum 4497400 ([fc7017a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fc7017a817287ec509c6492c22086c46fc233509))
+    - add workaround for Cortex-A510 erratum 4568615 ([9d56fd1](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9d56fd1454106aeb5bab6f4f1d1ce6f6e0c718a5))
+    - add workaround for Cortex-A520 erratum 4491980 ([85c5386](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/85c538676b4bf2bbfa9eb49cb5c49ca5123b3185))
+    - enable Neoverse-V2 external LLC support ([26d172b](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/26d172be27d19035e9f314fbe429cf03ab640b21))
+    - remove duplicate comments from lib/cpus/cpu-ops.mk ([521c2a0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/521c2a0b8b3ed076eb8a5d508c6b49e5aa1aab47))
+    - workaround for C1-Pro erratum 3773617 ([508e466](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/508e466c08e753f8956926d3da4b9973d8c7307c))
+    - workaround for Neoverse V2 erratum 2394277 ([329b63a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/329b63a1e54b95b126be61d785abf37d5a4692b8))
+
+- **Build System**
+
+  - fix misapplication of errata A53 843419 ([9b42e88](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9b42e88ad5c2253ca6002752a0116d84ee4c96b5))
+
+### Documentation
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add erratum 4015814 comments ([a0cf2df](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a0cf2dfbacb7096bd18a6343217a2d0416abb434))
+
+  - **Translation Tables**
+
+    - add erratum 3683289 comments ([306b567](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/306b56722304df34f01ec9db619e6730863f8214))
+
 ## [lts-2.14.6](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.14.5..refs/tags/lts-v2.14.6) (2026-07-31)
 
 ### New Features
