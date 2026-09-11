@@ -378,6 +378,7 @@ int psci_system_suspend(uintptr_t entrypoint, u_register_t context_id);
 int psci_cpu_off(void);
 int psci_affinity_info(u_register_t target_affinity,
 		       unsigned int lowest_affinity_level);
+aff_info_state_t psci_get_aff_by_idx(unsigned int cpu_idx);
 int psci_migrate(u_register_t target_cpu);
 int psci_migrate_info_type(void);
 u_register_t psci_migrate_info_up_cpu(void);

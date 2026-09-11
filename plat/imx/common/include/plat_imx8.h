@@ -32,4 +32,7 @@ bool imx_is_wakeup_src_irqsteer(void);
 void plat_gic_save(unsigned int proc_num, struct plat_gic_ctx *ctx);
 void plat_gic_restore(unsigned int proc_num, struct plat_gic_ctx *ctx);
 
+void imx_gicv3_distif_cpu_clear(void);
+void imx_gicv3_rdistif_cpu_clear(unsigned int proc_num);
+
 #endif /* PLAT_IMX8_H */

@@ -227,6 +227,33 @@ int psci_cpu_off(void)
 	return rc;
 }
 
+/*
+ * Return the PSCI affinity info of a CPU identified by its
+ * core index. Useful for platform code that need to query the
+ * status of a core.
+ */
+aff_info_state_t psci_get_aff_by_idx(unsigned int cpu_idx)
+{
+	/*
+	 * Generic management:
+	 * Perform cache maintanence ahead of reading the target CPU state to
+	 * ensure that the data is not stale.
+	 * There is a theoretical edge case where the cache may contain stale
+	 * data for the target CPU data - this can occur under the following
+	 * conditions:
+	 * - the target CPU is in another cluster from the current
+	 * - the target CPU was the last CPU to shutdown on its cluster
+	 * - the cluster was removed from coherency as part of the CPU shutdown
+	 *
+	 * In this case the cache maintenace that was performed as part of the
+	 * target CPUs shutdown was not seen by the current CPU's cluster. And
+	 * so the cache may contain stale data for the target CPU.
+	 */
+	flush_cpu_data_by_index(cpu_idx, psci_svc_cpu_data);
+
+	return psci_get_aff_info_state_by_idx(cpu_idx);
+}
+
 int psci_affinity_info(u_register_t target_affinity,
 		       unsigned int lowest_affinity_level)
 {
@@ -244,24 +271,7 @@ int psci_affinity_info(u_register_t target_affinity,
 	/* Calculate the cpu index of the target */
 	target_idx = (unsigned int) plat_core_pos_by_mpidr(target_affinity);
 
-	/*
-	 * Generic management:
-	 * Perform cache maintanence ahead of reading the target CPU state to
-	 * ensure that the data is not stale.
-	 * There is a theoretical edge case where the cache may contain stale
-	 * data for the target CPU data - this can occur under the following
-	 * conditions:
-	 * - the target CPU is in another cluster from the current
-	 * - the target CPU was the last CPU to shutdown on its cluster
-	 * - the cluster was removed from coherency as part of the CPU shutdown
-	 *
-	 * In this case the cache maintenace that was performed as part of the
-	 * target CPUs shutdown was not seen by the current CPU's cluster. And
-	 * so the cache may contain stale data for the target CPU.
-	 */
-	flush_cpu_data_by_index(target_idx, psci_svc_cpu_data);
-
-	return (int)psci_get_aff_info_state_by_idx(target_idx);
+	return (int)psci_get_aff_by_idx(target_idx);
 }
 
 int psci_migrate(u_register_t target_cpu)

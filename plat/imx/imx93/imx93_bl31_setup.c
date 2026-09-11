@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,6 +22,9 @@
 
 #include <ele_api.h>
 #include <imx8_lpuart.h>
+#include <imx_cpu_off.h>
+#include <imx_intercore_svc.h>
+#include <imx_interrupt_mgmt.h>
 #include <plat_common.h>
 #include <plat_imx8.h>
 #include <platform_def.h>
@@ -152,6 +155,10 @@ void bl31_platform_setup(void)
 
 	/* Retrieve SoC info from EdgeLock Enclave */
 	ele_get_soc_info();
+
+	imx_el3_interrupt_config();
+	imx_intercore_svc_init();
+	imx_cpuoff_init();
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(unsigned int type)
