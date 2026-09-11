@@ -3,6 +3,68 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.12.15](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.12.14..refs/tags/lts-v2.12.15) (2026-09-11)
+
+### Documentation
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add erratum 4015814 comments ([8412c28](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8412c2855ca7c48bca4b9025f46173a357eb78c3))
+
+  - **Translation Tables**
+
+    - add erratum 3683289 comments ([a1e7760](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a1e77604d546468e6ca8cfb13303803eca807492))
+
+### Resolved Issues
+
+- **Platforms**
+
+  - **Xilinx**
+
+    - enforce volatile call status vars ([8022db0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8022db0551bfc61467448be00346e9903e16280c))
+
+- **Services**
+
+  - **SPM**
+
+    - **EL3 SPMC**
+
+      - prevent integer overflow in memory overlap validation ([3263070](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/326307098b5417a3324421dc696b4592ede95617))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add workaround for C1-Nano erratum 4497400 ([0e52b50](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/0e52b50b2d66711d6c6b8f8261da7c9716646102))
+    - add workaround for Cortex-A510 erratum 4568615 ([9126701](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9126701a29ec590a448d9459f880171e60dc6e3b))
+    - add workaround for Cortex-A520 erratum 4491980 ([61553a9](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/61553a9a273de6a9dc442dbbfc77c09d6379cac1))
+    - remove duplicate comments from lib/cpus/cpu-ops.mk ([789ffc7](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/789ffc7b3c0f111c6434b3d09d84008abfb79c3d))
+    - workaround for C1-Pro erratum 3773617 ([fc6a2cb](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fc6a2cbd54792b88b1926d0fc1a3c387fa375997))
+
+- **Drivers**
+
+  - **GUID Partition Tables Support**
+
+    - harden backup GPT loading ([9cb9d6f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/9cb9d6fedfb246d493f7f64f63e51053f8f7dff4))
+
+- **Documentation**
+
+  - fix some broken links ([3ec9c78](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/3ec9c78b09bdb511fbeff3206898dd5ba258d836))
+
+### Build System
+
+- **deps-dev:** bump bandit from 1.7.9 to 1.7.10 in /tools/tlc ([8c33e76](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/8c33e76bab0b2b72a5abc300b77da6619ef15273))
+- **deps-dev:** bump commitizen ([d2eb457](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/d2eb457b2387071a1c0579cb16966723780fee80))
+- **deps-dev:** bump pytest from 8.3.3 to 8.3.5 in /tools/tlc ([fd5e53f](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fd5e53f8f5458ac0f4163aed8ed008919c42d882))
+- **deps-dev:** bump pytest from 8.3.4 to 8.3.5 in /tools/cot_dt2c ([ed3c5dd](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ed3c5dda312945c2bf7265f7ff4fa2c40b445df1))
+
+- **Dependencies**
+
+  - bump igraph from 0.11.6 to 0.11.8 in /tools/cot_dt2c ([ce11855](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ce118554951edcdbd3866c0d3da84286034df2de))
+  - bump tox from 4.20.0 to 4.25.0 in /tools/tlc ([ad69789](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ad69789cf6376ae7ab682e47ac00d7f978388e27))
+
 ## [lts-2.12.14](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.12.13..refs/tags/lts-v2.12.14) (2026-07-31)
 
 ### Documentation
