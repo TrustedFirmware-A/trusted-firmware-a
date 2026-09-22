@@ -94,6 +94,9 @@ with open(out_path, 'w') as f:
  * with the NXP Code Signing Tool (CST) 2.0 and a throw-away 2048-bit SRK.
  * Do not edit by hand. Use gen_vectors.sh
  *
+ * The SRK in these vectors is a throw-away 2048-bit development key made
+ * for this file: it is not a reference key and must never be used as one.
+ *
  * Two CSF headers in the NXP Chassis 3 format (LX2160A family), both
  * signed with the same throw-away single-entry SRK table:
  *  - csf_isbc_hdr: an ISBC header as produced for BL2 by create_hdr_isbc
