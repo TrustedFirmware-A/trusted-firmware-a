@@ -7,6 +7,8 @@
 #ifndef CDEFS_H
 #define CDEFS_H
 
+#include <sys/types.h>
+
 #define __dead2		__attribute__((__noreturn__))
 #define __deprecated	__attribute__((__deprecated__))
 #define __packed	__attribute__((__packed__))
