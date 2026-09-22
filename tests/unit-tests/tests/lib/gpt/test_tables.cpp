@@ -161,24 +161,13 @@ TEST(gpt_l0_tables, unaligned){
 	/* Determine size of table */
 	l0_mem_size = (pps / l0gptsz) * L0_ENTRY_SIZE; /* 4GB/1GB * 8 = 32B */
 
-	/* Allocate table space, unaligned */
-	bool aligned = true;
-	do {
-		l0_table = (uintptr_t)calloc(1,l0_mem_size);
-		/* if the allocated table is unaligned, stop */
-		if ((l0_table & (SIZE_4KB - 1)) && (l0_table & (l0_mem_size - 1))) {
-			aligned = false;
-		}
-		else if (l0_table) {
-			free((void*)l0_table);
-		}
-	} while (l0_table && aligned);
+	l0_table = (uintptr_t)calloc(1, l0_mem_size + 1);
 
 	if (!l0_table) {
 		FAIL("Could not allocate L0 table\n");
 	}
 
-	CHECK(rme_init_gpt_l0_tables(pps_encoding, l0_table, l0_mem_size)
+	CHECK(rme_init_gpt_l0_tables(pps_encoding, l0_table + 1, l0_mem_size)
 		== -EFAULT);
 }
 
