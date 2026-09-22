@@ -94,3 +94,4 @@ include(tests/lib/object_pool/test_object_pool.cmake)
 # present in the repository. This needs to be resolved to run the test
 # include(tests/lib/fdt/test_fdt.cmake)
 include(tests/lib/gpt/test_gpt.cmake)
+include(tests/drivers/nxp/auth/csf_hdr_parser/test_csf_hdr_parser.cmake)
