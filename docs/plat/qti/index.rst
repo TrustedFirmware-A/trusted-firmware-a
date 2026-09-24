@@ -9,6 +9,7 @@ Qualcomm Platforms
    msm8916
    rb3gen2
    lemans_evk
+   monza
 
 --------------
 
