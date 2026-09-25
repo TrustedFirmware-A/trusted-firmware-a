@@ -107,6 +107,13 @@ bool errata_ich_vmcr_el2_applies(void)
 		break;
 #endif /* ERRATA_A720_3699561 */
 
+#if ERRATA_A720_AE_3699562
+	case EXTRACT_PARTNUM(CORTEX_A720_AE_MIDR):
+		if (check_erratum_cortex_a720ae_3699562(cpu_get_rev_var()) == ERRATA_APPLIES)
+			return true;
+		break;
+#endif /* ERRATA_A720_AE_3699562 */
+
 #if ERRATA_X2_3701772
 	case EXTRACT_PARTNUM(CORTEX_X2_MIDR):
 		if (check_erratum_cortex_x2_3701772(cpu_get_rev_var()) == ERRATA_APPLIES)
@@ -144,6 +151,7 @@ bool errata_ich_vmcr_el2_applies(void)
 
 #if ERRATA_V3_3701767
 	case EXTRACT_PARTNUM(NEOVERSE_V3_MIDR):
+	case EXTRACT_PARTNUM(NEOVERSE_V3_VNAE_MIDR):
 		if (check_erratum_neoverse_v3_3701767(cpu_get_rev_var()) == ERRATA_APPLIES)
 			return true;
 		break;
