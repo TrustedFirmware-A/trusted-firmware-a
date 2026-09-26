@@ -3,6 +3,47 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.8.47](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.46..refs/tags/lts-v2.8.47) (2026-09-26)
+
+### New Features
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add links to each core's TRM and SDEN ([29c5966](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/29c5966c298829cfbcf9c6805c5e79b14f561618))
+
+### Documentation
+
+- add LTS Dependabot release step ([f7092d0](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f7092d05b7dd14c5525836433398a216e7494941))
+
+### Code Refactoring
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - align AE variant core names ([4285ff8](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/4285ff854d4f41cb81c6c7ebf430b1f2ce85d1fa))
+    - factor out Neoverse V3AE from the base Neoverse V3 file ([2b1cc89](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2b1cc89ac107b6b340b18670a1f06fe04c7f2067))
+
+### Resolved Issues
+
+- **Platforms**
+
+  - **QTI**
+
+    - disallow secure IO accesses from secure world callers ([2964705](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/29647053171bceadc6b6997a4fb48f8b0bbe1860))
+    - do not map secure regions ([516f563](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/516f5634be7d9abaab189a82b026c2a052104940))
+    - fix build without coreboot ([92de580](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/92de580f13e99f2ef00e925e955723de73f08a18))
+    - harden mem_assign parameter handling ([13a9e03](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/13a9e032df7f87ed29d6f91b57ae0a7683b20250))
+    - pull in access-control backend for mem_assign ([44e050c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/44e050ce948d7856e211055685ca5c8087a2af9d))
+
+- **Miscellaneous**
+
+  - **FDT Wrappers**
+
+    - reject negative cell counts ([439cb52](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/439cb5243bdd329548c69ad9c1b8a4bb0f761b97))
+
 ## [lts-2.8.46](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.8.45..refs/tags/lts-v2.8.46) (2026-09-11)
 
 ### Resolved Issues
