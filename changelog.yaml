@@ -578,6 +578,9 @@ subsections:
           - title: Lemans EVK
             scope: lemans_evk
 
+          - title: Monaco
+            scope: monaco
+
       - title: Raspberry Pi
         scope: rpi
 
