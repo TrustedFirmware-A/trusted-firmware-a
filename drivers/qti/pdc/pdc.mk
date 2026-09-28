@@ -10,14 +10,21 @@ $(eval $(call add_define,QTI_PDC_ENABLED))
 
 PDC_DRV_PATH := drivers/qti/pdc
 
+# Lemans and Monaco share one set of apps PDC tables.
+ifneq ($(filter lemans monaco,$(CHIPSET)),)
+PDC_TABLES := $(PDC_DRV_PATH)/hoya
+else
+PDC_TABLES := $(PDC_DRV_PATH)/$(CHIPSET)
+endif
+
 PLAT_INCLUDES += \
-	-I$(PDC_DRV_PATH)/$(CHIPSET)
+	-I$(PDC_TABLES)
 
 BL31_SOURCES += \
 	$(PDC_DRV_PATH)/pdc.c					\
 	$(PDC_DRV_PATH)/pdc_seq.c				\
 	$(PDC_DRV_PATH)/pdc_tcs.c				\
-	$(PDC_DRV_PATH)/$(CHIPSET)/pdc_seq_cfg.c		\
-	$(PDC_DRV_PATH)/$(CHIPSET)/interrupt_table.c		\
-	$(PDC_DRV_PATH)/$(CHIPSET)/gpio_table.c			\
-	$(PDC_DRV_PATH)/$(CHIPSET)/tcs_resource.c
+	$(PDC_TABLES)/pdc_seq_cfg.c				\
+	$(PDC_TABLES)/interrupt_table.c				\
+	$(PDC_TABLES)/gpio_table.c				\
+	$(PDC_TABLES)/tcs_resource.c
