@@ -120,7 +120,7 @@ include drivers/qti/clock/clock.mk
 include drivers/qti/cpucp/cpucp.mk
 
 PLAT_INCLUDES   +=      -Iinclude/drivers/qti/sec_core/${CHIPSET} \
-			-Iinclude/drivers/qti/qtimer/${CHIPSET} \
+			-Iinclude/drivers/qti/qtimer/hoya \
 			-Iinclude/drivers/qti/watchdog/${CHIPSET}
 
 BL31_SOURCES	+=	$(PLAT_PATH)/hoya/common/hoya_pm.c \

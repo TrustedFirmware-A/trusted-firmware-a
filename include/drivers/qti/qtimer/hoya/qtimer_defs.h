@@ -7,7 +7,7 @@
 #ifndef QTIMER_DEFS_H
 #define QTIMER_DEFS_H
 
-#include "kodiak_def.h"
+#include <platform_def.h>
 
 #define QTIMER0_F2V1_BASE_ADDRESS	QTI_QTIMER_BASE + 0x5000
 
