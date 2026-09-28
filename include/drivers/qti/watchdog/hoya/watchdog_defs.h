@@ -7,7 +7,7 @@
 #ifndef WATCHDOG_DEFS_H
 #define WATCHDOG_DEFS_H
 
-#include "lemans_def.h"
+#include <platform_def.h>
 
 #define WDOG_BARK_INT_ID		(0x204)
 

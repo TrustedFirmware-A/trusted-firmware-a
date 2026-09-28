@@ -121,7 +121,7 @@ include drivers/qti/cpucp/cpucp.mk
 
 PLAT_INCLUDES   +=      -Iinclude/drivers/qti/sec_core/${CHIPSET} \
 			-Iinclude/drivers/qti/qtimer/hoya \
-			-Iinclude/drivers/qti/watchdog/${CHIPSET}
+			-Iinclude/drivers/qti/watchdog/hoya
 
 BL31_SOURCES	+=	$(PLAT_PATH)/hoya/common/hoya_pm.c \
 			$(PLAT_PATH)/hoya/qtiseclib/src/qtiseclib_interface_stub.c \
