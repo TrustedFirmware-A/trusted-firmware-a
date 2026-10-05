@@ -153,7 +153,7 @@ smc_args_t *tsp_cpu_suspend_main(uint64_t arg0,
 	tsp_stats[linear_id].eret_count++;
 	tsp_stats[linear_id].cpu_suspend_count++;
 
-	INFO("TSP: cpu 0x%lx: %u smcs, %u erets %u cpu suspend requests\n",
+	VERBOSE("TSP: cpu 0x%lx: %u smcs, %u erets %u cpu suspend requests\n",
 		read_mpidr(),
 		tsp_stats[linear_id].smc_count,
 		tsp_stats[linear_id].eret_count,
@@ -187,9 +187,9 @@ smc_args_t *tsp_cpu_resume_main(uint64_t max_off_pwrlvl,
 	tsp_stats[linear_id].eret_count++;
 	tsp_stats[linear_id].cpu_resume_count++;
 
-	INFO("TSP: cpu 0x%lx resumed. maximum off power level %" PRIu64 "\n",
+	VERBOSE("TSP: cpu 0x%lx resumed. maximum off power level %" PRIu64 "\n",
 	     read_mpidr(), max_off_pwrlvl);
-	INFO("TSP: cpu 0x%lx: %u smcs, %u erets %u cpu resume requests\n",
+	VERBOSE("TSP: cpu 0x%lx: %u smcs, %u erets %u cpu resume requests\n",
 		read_mpidr(),
 		tsp_stats[linear_id].smc_count,
 		tsp_stats[linear_id].eret_count,
@@ -224,10 +224,10 @@ smc_args_t *tsp_smc_handler(uint64_t func,
 	tsp_stats[linear_id].smc_count++;
 	tsp_stats[linear_id].eret_count++;
 
-	INFO("TSP: cpu 0x%lx received %s smc 0x%" PRIx64 "\n", read_mpidr(),
+	VERBOSE("TSP: cpu 0x%lx received %s smc 0x%" PRIx64 "\n", read_mpidr(),
 		((func >> 31) & 1) == 1 ? "fast" : "yielding",
 		func);
-	INFO("TSP: cpu 0x%lx: %u smcs, %u erets\n", read_mpidr(),
+	VERBOSE("TSP: cpu 0x%lx: %u smcs, %u erets\n", read_mpidr(),
 		tsp_stats[linear_id].smc_count,
 		tsp_stats[linear_id].eret_count);
 
