@@ -27,7 +27,7 @@ Requirements
         Program          Min supported version
 ======================== =====================
 Arm Compiler             6.23
-Arm GNU Compiler         15.2
+Arm GNU Compiler         15.3
 Clang/LLVM               18.1.8
 CMake                    3.22
 Device Tree Compiler     1.6.1
