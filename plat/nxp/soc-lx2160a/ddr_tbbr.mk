@@ -38,15 +38,15 @@ ifeq (${DDR_KEY},)
 DDR_KEY=${BUILD_PLAT}/ddr.pem
 endif
 
-ifeq (${TRUSTED_KEY_CERT},)
-$(info Generating: Trusted key certificate as part of DDR cert creation)
-TRUSTED_KEY_CERT	:=	${BUILD_PLAT}/trusted_key.crt
-$(eval $(call TOOL_ADD_PAYLOAD,${TRUSTED_KEY_CERT},--trusted-key-cert,))
-$(eval $(call TOOL_ADD_PAYLOAD,${TRUSTED_KEY_CERT},--trusted-key-cert,,DDR_))
-else
-$(info Using: Trusted key certificate as part of DDR cert creation)
-DDR_FIP_ARGS += --trusted-key-cert ${TRUSTED_KEY_CERT}
-endif
+DDR_TRUSTED_KEY_CERT	:=	${BUILD_PLAT}/ddr_trusted_key.crt
+$(eval $(call TOOL_ADD_PAYLOAD,${DDR_TRUSTED_KEY_CERT},--trusted-key-cert,,DDR_))
+
+DDR_CRT_DEPS		+=	${ROT_KEY} ${TRUSTED_WORLD_KEY} ${NON_TRUSTED_WORLD_KEY} ${DDR_KEY}
+${DDR_KEY}: | $$(@D)/
+	$(s)echo "  OPENSSL $@"
+	$(q)if [ ! -f $@ ]; then \
+		${OPENSSL_BIN_PATH}/openssl genrsa 2048 > $@ 2>/dev/null; \
+	fi
 
 # Add the keys to the cert_create command line options (private keys are NOT
 # packed in the FIP). Developers can use their own keys by specifying the proper
@@ -81,9 +81,5 @@ ifneq (${GENERATE_COT},0)
         # Common cert_create options
         ifneq (${CREATE_KEYS},0)
                 DDR_CRT_ARGS += -n
-
-                ifneq (${SAVE_KEYS},0)
-                       DDR_CRT_ARGS += -k
-                endif
         endif
 endif
