@@ -34,11 +34,9 @@ uint32_t pci_write_config(uint32_t addr, uint32_t off, uint32_t sz, uint32_t val
 
 uint32_t pci_get_bus_for_seg(uint32_t seg, uint32_t *bus_range, uint32_t *nseg)
 {
-	uint32_t ret = SMC_PCI_CALL_SUCCESS;
-
 	(void)seg;
 	(void)bus_range;
 	(void)nseg;
 
-	return ret;
+	return SMC_PCI_CALL_NOT_IMPL;
 }
