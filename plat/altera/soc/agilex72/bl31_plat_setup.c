@@ -281,8 +281,7 @@ static void bl31_write_cpu_reset_entry(uintptr_t resetbase_low, uint64_t entry)
 void bl31_plat_set_secondary_cpu_entrypoint(unsigned int cpu_id)
 {
 	unsigned int pch_cpu = 0x00;
-	uint64_t entry = ((uint64_t)(uintptr_t)plat_secondary_cpus_bl31_entry) >>
-			 CPU_RESETBASELOW_CPU_SHIFT;
+	uint64_t entry = (uint64_t)(uintptr_t)plat_secondary_cpus_bl31_entry;
 
 	/* Set bit for SMP secondary cores boot */
 	mmio_clrsetbits_32(L2_RESET_DONE_REG, BS_REG_MAGIC_KEYS_MASK,
