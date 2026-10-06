@@ -10,6 +10,7 @@ include lib/libfdt/libfdt.mk
 PLAT_INCLUDES		:=	\
 			-Iplat/altera/soc/agilex3/include/		\
 			-Iplat/altera/soc/common/drivers/		\
+			-Iplat/altera/soc/common/drivers/mailbox	\
 			-Iplat/altera/soc/common/lib/sha/		\
 			-Iplat/altera/soc/common/include/
 
@@ -17,12 +18,12 @@ PLAT_INCLUDES		:=	\
 GICV3_SUPPORT_GIC600	:=	1
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
-AGX5_GICv3_SOURCES	:=	\
+AGX3_GICv3_SOURCES	:=	\
 			${GICV3_SOURCES}				\
 			plat/common/plat_gicv3.c
 
 PLAT_BL_COMMON_SOURCES	:=	\
-			${AGX5_GICv3_SOURCES}				\
+			${AGX3_GICv3_SOURCES}				\
 			common/fdt_wrappers.c				\
 			drivers/cadence/combo_phy/cdns_combo_phy.c	\
 			drivers/cadence/emmc/cdns_sdmmc.c	\
@@ -34,8 +35,13 @@ PLAT_BL_COMMON_SOURCES	:=	\
 			plat/altera/soc/common/aarch64/plat_helpers.S	\
 			plat/altera/soc/common/drivers/ccu/ncore_ccu.c	\
 			plat/altera/soc/common/drivers/combophy/combophy.c			\
+			plat/altera/soc/common/drivers/config_dma/socfpga_config_dma.c \
 			plat/altera/soc/common/drivers/sdmmc/sdmmc.c			\
 			plat/altera/soc/common/drivers/ddr/ddr.c			\
+			plat/altera/soc/common/drivers/mailbox/socfpga_mailbox.c		\
+			plat/altera/soc/common/drivers/mailbox/socfpga_mailbox_client.c		\
+			plat/altera/soc/common/drivers/mailbox/socfpga_mailbox_core.c		\
+			plat/altera/soc/common/drivers/mailbox/scsr/socfpga_scsr_mailbox.c	\
 			plat/altera/soc/common/drivers/nand/nand.c			\
 			plat/altera/soc/common/lib/sha/sha.c				\
 			plat/altera/soc/common/lib/utils/alignment_utils.c \
@@ -70,15 +76,14 @@ BL2_SOURCES		+=	\
 		plat/altera/soc/common/bl2_plat_mem_params_desc.c	\
 		plat/altera/soc/common/socfpga_image_load.c		\
 		plat/altera/soc/common/socfpga_ros.c			\
-		plat/altera/soc/common/socfpga_storage.c			\
+		plat/altera/soc/common/socfpga_storage.c		\
 		plat/altera/soc/common/socfpga_vab.c			\
 		plat/altera/soc/common/soc/socfpga_emac.c		\
 		plat/altera/soc/common/soc/socfpga_firewall.c		\
 		plat/altera/soc/common/soc/socfpga_handoff.c		\
-		plat/altera/soc/common/soc/socfpga_mailbox.c		\
 		plat/altera/soc/common/soc/socfpga_reset_manager.c	\
 		plat/altera/soc/common/drivers/qspi/cadence_qspi.c	\
-		plat/altera/soc/agilex3/bl2_plat_setup.c			\
+		plat/altera/soc/agilex3/bl2_plat_setup.c		\
 		plat/altera/soc/common/drivers/wdt/watchdog.c
 
 include lib/zlib/zlib.mk
@@ -86,7 +91,7 @@ PLAT_INCLUDES	+=	-Ilib/zlib
 
 BL31_SOURCES	+=	\
 		drivers/arm/cci/cci.c					\
-		${XLAT_TABLES_LIB_SRCS}						\
+		${XLAT_TABLES_LIB_SRCS}					\
 		lib/cpus/aarch64/aem_generic.S				\
 		lib/cpus/aarch64/cortex_a55.S				\
 		lib/cpus/aarch64/cortex_a76.S				\
@@ -96,12 +101,11 @@ BL31_SOURCES	+=	\
 		plat/altera/soc/agilex3/soc/agilex3_clock_manager.c	\
 		plat/altera/soc/agilex3/soc/agilex3_power_manager.c	\
 		plat/altera/soc/common/socfpga_psci.c			\
-		plat/altera/soc/common/socfpga_sip_svc.c			\
-		plat/altera/soc/common/socfpga_sip_svc_v2.c			\
+		plat/altera/soc/common/socfpga_sip_svc.c		\
+		plat/altera/soc/common/socfpga_sip_svc_v2.c		\
 		plat/altera/soc/common/socfpga_topology.c		\
 		plat/altera/soc/common/sip/socfpga_sip_ecc.c		\
 		plat/altera/soc/common/sip/socfpga_sip_fcs.c		\
-		plat/altera/soc/common/soc/socfpga_mailbox.c		\
 		plat/altera/soc/common/soc/socfpga_system_manager.c	\
 		plat/altera/soc/common/soc/socfpga_reset_manager.c
 

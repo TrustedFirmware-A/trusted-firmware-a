@@ -35,6 +35,7 @@ PLAT_BL_COMMON_SOURCES	:=	\
 			plat/altera/soc/common/aarch64/plat_helpers.S	\
 			plat/altera/soc/common/drivers/ccu/ncore_ccu.c	\
 			plat/altera/soc/common/drivers/combophy/combophy.c			\
+			plat/altera/soc/common/drivers/config_dma/socfpga_config_dma.c \
 			plat/altera/soc/common/drivers/sdmmc/sdmmc.c			\
 			plat/altera/soc/common/drivers/ddr/ddr.c			\
 			plat/altera/soc/common/drivers/mailbox/socfpga_mailbox.c		\
@@ -44,6 +45,7 @@ PLAT_BL_COMMON_SOURCES	:=	\
 			plat/altera/soc/common/drivers/mailbox/mcsr/socfpga_mcsr_s2c.c		\
 			plat/altera/soc/common/drivers/mailbox/mcsr/socfpga_mcsr_c2s.c		\
 			plat/altera/soc/common/drivers/nand/nand.c			\
+			plat/altera/soc/common/drivers/xspi/cadence_xspi.c		\
 			plat/altera/soc/common/lib/sha/sha.c				\
 			plat/altera/soc/common/socfpga_delay_timer.c	\
 			plat/altera/soc/common/socfpga_dt.c

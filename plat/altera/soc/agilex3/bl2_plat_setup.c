@@ -31,13 +31,13 @@
 #include "agilex3_system_manager.h"
 #include "ccu/ncore_ccu.h"
 #include "combophy/combophy.h"
+#include "mailbox/socfpga_mailbox_core.h"
 #include "nand/nand.h"
 #include "qspi/cadence_qspi.h"
 #include "sdmmc/sdmmc.h"
 #include "socfpga_emac.h"
 #include "socfpga_f2sdram_manager.h"
 #include "socfpga_handoff.h"
-#include "socfpga_mailbox.h"
 #include "socfpga_private.h"
 #include "socfpga_reset_manager.h"
 #include "socfpga_ros.h"
@@ -125,7 +125,14 @@ void bl2_early_platform_setup2(u_register_t x0 __unused,
 	config_pwrmgr_handoff(&reverse_handoff_ptr);
 
 	/* Initialize the mailbox to enable communication between HPS and SDM */
-	mailbox_init();
+	int status;
+
+	status = mailbox_core_init(MAILBOX_BACKEND_SCSR);
+	if (status != 0) {
+		ERROR("SCSR mailbox init failed: %d\n", status);
+		panic();
+	}
+	NOTICE("BL2: SCSR mailbox selected.\n");
 
 	/* Perform a handshake with certain peripherals before issuing a reset */
 	config_hps_hs_before_warm_reset();
@@ -196,7 +203,7 @@ void bl2_plat_arch_setup(void)
 		break;
 
 	case BOOT_SOURCE_NAND:
-		NOTICE("SOCFPGA: SOCFPGA: NAND boot\n");
+		NOTICE("SOCFPGA: NAND boot\n");
 		nand_init();
 		socfpga_io_setup(boot_source, PLAT_NAND_DATA_BASE);
 		break;

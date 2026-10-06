@@ -23,8 +23,8 @@
 #include "agilex3_cache.h"
 #include "agilex3_power_manager.h"
 #include "ccu/ncore_ccu.h"
+#include "mailbox/socfpga_mailbox_core.h"
 #include "socfpga_dt.h"
-#include "socfpga_mailbox.h"
 #include "socfpga_private.h"
 #include "socfpga_reset_manager.h"
 
@@ -187,7 +187,14 @@ void bl31_platform_setup(void)
 	 * SPL has its own mailbox settings and this initialization will
 	 * override to those settings as required by the V3 framework.
 	 */
-	mailbox_init();
+	// Initialize SCSR backend
+	int status;
+
+	status = mailbox_core_init(MAILBOX_BACKEND_SCSR);
+	if (status != 0) {
+		ERROR("SCSR mailbox init failed: %d\n", status);
+	}
+	NOTICE("BL31: SCSR mailbox selected.\n");
 #endif
 
 	mailbox_hps_stage_notify(HPS_EXECUTION_STATE_SSBL);
