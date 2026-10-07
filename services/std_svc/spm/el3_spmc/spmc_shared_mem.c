@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <limits.h>
 
 #include <common/debug.h>
 #include <common/runtime_svc.h>
@@ -328,6 +329,11 @@ overlapping_memory_regions(struct ffa_comp_mrd *region1,
 	uint64_t region2_size;
 	uint64_t region2_end;
 
+	/* A 32-bit page count cannot overflow a 64-bit byte size. */
+	CASSERT(sizeof(region1->address_range_array[0].page_count) * CHAR_BIT
+		== 32,
+		assert_constituent_page_count_size);
+
 	assert(region1 != NULL);
 	assert(region2 != NULL);
 
@@ -343,15 +349,6 @@ overlapping_memory_regions(struct ffa_comp_mrd *region1,
 
 		region1_start = region1->address_range_array[i].address;
 
-		/*
-		 * Ensure page_count * PAGE_SIZE_4KB is computed without
-		 * overflowing before deriving the region end address.
-		 */
-		if (region1->address_range_array[i].page_count >
-		    (UINT64_MAX / PAGE_SIZE_4KB)) {
-			return true;
-		}
-
 		region1_size =
 			(uint64_t)region1->address_range_array[i].page_count *
 			PAGE_SIZE_4KB;
@@ -365,11 +362,6 @@ overlapping_memory_regions(struct ffa_comp_mrd *region1,
 		for (size_t j = 0; j < region2->address_range_count; j++) {
 
 			region2_start = region2->address_range_array[j].address;
-
-			if (region2->address_range_array[j].page_count >
-			    (UINT64_MAX / PAGE_SIZE_4KB)) {
-				return true;
-			}
 
 			region2_size =
 				(uint64_t)region2->address_range_array[j].page_count *
