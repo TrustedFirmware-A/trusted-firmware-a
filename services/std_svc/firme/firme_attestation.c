@@ -209,10 +209,10 @@ unmap:
 			if (mmap_rc != -ENOMEM) {
 				ERROR("%s(): mmap_remove_dynamic_region() failed unexpectedly rc=%d\n",
 				      __func__, mmap_rc);
+				rc = FIRME_INVALID_PARAMETERS;
+			} else {
 				rc = FIRME_NO_MEMORY;
 			}
-
-			rc = FIRME_INVALID_PARAMETERS;
 		}
 	}
 

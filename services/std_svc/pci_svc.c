@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2021-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -102,6 +102,9 @@ uint64_t pci_smc_handler(uint32_t smc_fid,
 		    SMC_RET3(handle, SMC_PCI_CALL_INVAL_PARAM, 0U, 0U);
 		}
 		ret = pci_get_bus_for_seg(x1, &start_end_bus, &nseg);
+		if (ret != SMC_PCI_CALL_SUCCESS) {
+			SMC_RET3(handle, ret, 0U, 0U);
+		}
 		SMC_RET3(handle, ret, start_end_bus, nseg);
 		break;
 	}
