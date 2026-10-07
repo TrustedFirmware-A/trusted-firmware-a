@@ -110,7 +110,12 @@ int socfpga_vab_authentication(void **p_image, size_t *p_size)
 
 	mbox_data_addr = img_addr + img_sz - sizeof(uint32_t);
 	/* Size in word (32bits) */
-	mbox_data_sz = (BYTE_ALIGN(*p_size - img_sz, sizeof(uint32_t))) >> 2;
+	if (*p_size < img_sz) {
+		ERROR("Invalid VAB payload size\n");
+		return -EINVAL;
+	}
+
+	mbox_data_sz = BYTE_ALIGN(*p_size - img_sz, sizeof(uint32_t)) >> 2;
 
 	VERBOSE("mbox_data_addr = %lx    mbox_data_sz = %d\n", mbox_data_addr, mbox_data_sz);
 
