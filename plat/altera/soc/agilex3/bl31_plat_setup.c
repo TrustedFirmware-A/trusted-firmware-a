@@ -162,6 +162,35 @@ gicv3_driver_data_t plat_gicv3_gic_data = {
 	.rdistif_base_addrs = rdistif_base_addrs,
 };
 
+static void agilex3_enable_ns_group1_sgi_for_bl33(void)
+{
+	unsigned int core_pos;
+
+	for (core_pos = 0U; core_pos < PLATFORM_CORE_COUNT; core_pos++) {
+		uintptr_t gicr = rdistif_base_addrs[core_pos];
+
+		if (gicr == 0U) {
+			continue;
+		}
+
+		/* SGI0-7 -> Group1 */
+		mmio_setbits_32(gicr + GICR_IGROUPR0, 0xFFU);
+		/* SGI0-7 -> G1NS */
+		mmio_clrbits_32(gicr + GICR_IGRPMODR0, 0xFFU);
+
+		while ((mmio_read_32(gicr + GICR_CTLR) & GICR_CTLR_RWP_BIT) != 0U) {
+		}
+	}
+
+	dsbishst();
+
+	mmio_setbits_32(PLAT_INTEL_SOCFPGA_GICD_BASE + GICD_CTLR,
+			CTLR_ENABLE_G1NS_BIT);
+	while ((mmio_read_32(PLAT_INTEL_SOCFPGA_GICD_BASE + GICD_CTLR) &
+		GICD_CTLR_RWP_BIT) != 0U) {
+	}
+}
+
 /*******************************************************************************
  * Perform any BL3-1 platform setup code
  ******************************************************************************/
@@ -179,6 +208,15 @@ void bl31_platform_setup(void)
 	gicv3_distif_init();
 	gicv3_rdistif_init(plat_my_core_pos());
 	gicv3_cpuif_enable(plat_my_core_pos());
+
+	/*
+	 * For bare-metal NS BL33 payloads without BL32, pre-configure SGI0-7 as
+	 * Non-secure Group1 and enable GICD EnableGrp1NS in EL3 before handoff.
+	 * Skip this when BL32 is present to avoid changing Secure-world SGI policy.
+	 */
+	if (bl32_image_ep_info.pc == 0U) {
+		agilex3_enable_ns_group1_sgi_for_bl33();
+	}
 
 #if SIP_SVC_V3
 	/*
