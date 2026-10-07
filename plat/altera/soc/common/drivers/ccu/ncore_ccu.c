@@ -22,8 +22,8 @@
 uint32_t poll_active_bit(uint32_t dir);
 
 #define SMMU_DMI					1
-#define CCU_DMI0_DMIUSMCMCR				SOCFPGA_CCU_NOC_REG_BASE + 0x7340
-#define CCU_DMI0_DMIUSMCMAR				SOCFPGA_CCU_NOC_REG_BASE + 0x7344
+#define CCU_DMI0_DMIUSMCMCR				(ALT_CCU_DMI0_BASE + 0x340)
+#define CCU_DMI0_DMIUSMCMAR				(ALT_CCU_DMI0_BASE + 0x344)
 #define CCU_DMI0_DMIUSMCMCR_MNTOP			GENMASK(3, 0)
 #define MAX_DISTRIBUTED_MEM_INTERFACE			2
 #define FLUSH_ALL_ENTRIES				0x4
@@ -46,15 +46,15 @@ uint32_t poll_active_bit(uint32_t dir);
 	})
 
 ncore_ccu_reg_t ncore_ccu_modules[] = {
-				{"caiu0",   SOCFPGA_CCU_NOC_REG_BASE + 0x0000, 0x00001000},
-				{"ncaiu0",  SOCFPGA_CCU_NOC_REG_BASE + 0x1000, 0x00001000},
-				{"ncaiu1",  SOCFPGA_CCU_NOC_REG_BASE + 0x2000, 0x00001000},
-				{"ncaiu2",  SOCFPGA_CCU_NOC_REG_BASE + 0x3000, 0x00001000},
-				{"ncaiu3",  SOCFPGA_CCU_NOC_REG_BASE + 0x4000, 0x00001000},
-				{"dce0",    SOCFPGA_CCU_NOC_REG_BASE + 0x5000, 0x00001000},
-				{"dce1",    SOCFPGA_CCU_NOC_REG_BASE + 0x6000, 0x00001000},
-				{"dmi0",    SOCFPGA_CCU_NOC_REG_BASE + 0x7000, 0x00001000},
-				{"dmi1",    SOCFPGA_CCU_NOC_REG_BASE + 0x8000, 0x00001000},
+				{"caiu0",   ALT_CCU_CAIU0_BASE, 0x00001000},
+				{"ncaiu0",  ALT_CCU_NCAIU0_BASE, 0x00001000},
+				{"ncaiu1",  ALT_CCU_NCAIU1_BASE, 0x00001000},
+				{"ncaiu2",  ALT_CCU_NCAIU2_BASE, 0x00001000},
+				{"ncaiu3",  ALT_CCU_NCAIU3_BASE, 0x00001000},
+				{"dce0",    ALT_CCU_DCE0_BASE, 0x00001000},
+				{"dce1",    ALT_CCU_DCE1_BASE, 0x00001000},
+				{"dmi0",    ALT_CCU_DMI0_BASE, 0x00001000},
+				{"dmi1",    ALT_CCU_DMI1_BASE, 0x00001000},
 				{"noc_fw_l4_per",     SOCFPGA_L4_PER_SCR_REG_BASE, 0x0000008C},
 				{"noc_fw_l4_sys",     SOCFPGA_L4_SYS_SCR_REG_BASE, 0x00000098},
 				{"noc_fw_lwsoc2fpga", SOCFPGA_LWSOC2FPGA_SCR_REG_BASE, 0x00000004},
@@ -674,9 +674,9 @@ int flush_l3_dcache(void)
 
 	/* Flushing all entries in CCU system memory cache */
 	for (i = 0; i < MAX_DISTRIBUTED_MEM_INTERFACE; i++) {
-		mmio_write_32(ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
-			   ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_TAG),
-			   (uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)));
+		mmio_write_32((uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)),
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_TAG));
 
 		/* Wait for cache maintenance operation done */
 		ret = poll_idle_status((CCU_DMI0_DMIUSMCMAR +
@@ -689,9 +689,9 @@ int flush_l3_dcache(void)
 			return ret;
 		}
 
-		mmio_write_32(ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
-			   ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_DATA),
-			   (uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)));
+		mmio_write_32((uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)),
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_DATA));
 
 		/* Wait for cache maintenance operation done */
 		ret = poll_idle_status((CCU_DMI0_DMIUSMCMAR +
