@@ -22,8 +22,8 @@
 uint32_t poll_active_bit(uint32_t dir);
 
 #define SMMU_DMI					1
-#define CCU_DMI0_DMIUSMCMCR				SOCFPGA_CCU_NOC_REG_BASE + 0x7340
-#define CCU_DMI0_DMIUSMCMAR				SOCFPGA_CCU_NOC_REG_BASE + 0x7344
+#define CCU_DMI0_DMIUSMCMCR				(ALT_CCU_DMI0_BASE + 0x340)
+#define CCU_DMI0_DMIUSMCMAR				(ALT_CCU_DMI0_BASE + 0x344)
 #define CCU_DMI0_DMIUSMCMCR_MNTOP			GENMASK(3, 0)
 #define MAX_DISTRIBUTED_MEM_INTERFACE			2
 #define FLUSH_ALL_ENTRIES				0x4
@@ -45,38 +45,22 @@ uint32_t poll_active_bit(uint32_t dir);
 		((typeof(_mask))(_val) << ALT_BF_SHF(_mask)) & (_mask);	\
 	})
 
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX3
 ncore_ccu_reg_t ncore_ccu_modules[] = {
-				{"caiu0@1c000000",             0x1C000000, 0x00001000},
-				{"ncaiu0@1c001000",            0x1C001000, 0x00001000},
-				{"ncaiu1@1c002000",            0x1C002000, 0x00001000},
-				{"ncaiu2@1c003000",            0x1C003000, 0x00001000},
-				{"ncaiu3@1c004000",            0x1C004000, 0x00001000},
-				{"dce0@1c005000",              0x1C005000, 0x00001000},
-				{"dce1@1c006000",              0x1C006000, 0x00001000},
-				{"dmi0@1c007000",              0x1C007000, 0x00001000},
-				{"dmi1@1c008000",              0x1C008000, 0x00001000},
-				{"noc_fw_l4_per@10d21000",     0x10D21000, 0x0000008C},
-				{"noc_fw_l4_sys@10d21100",     0x10D21100, 0x00000098},
-				{"noc_fw_lwsoc2fpga@10d21300", 0x10D21300, 0x00000004},
-				{"noc_fw_soc2fpga@10d21200",   0x10D21200, 0x00000004},
-				{"noc_fw_tcu@10d21400",        0x10D21400, 0x00000004}
+				{"caiu0",   ALT_CCU_CAIU0_BASE, 0x00001000},
+				{"ncaiu0",  ALT_CCU_NCAIU0_BASE, 0x00001000},
+				{"ncaiu1",  ALT_CCU_NCAIU1_BASE, 0x00001000},
+				{"ncaiu2",  ALT_CCU_NCAIU2_BASE, 0x00001000},
+				{"ncaiu3",  ALT_CCU_NCAIU3_BASE, 0x00001000},
+				{"dce0",    ALT_CCU_DCE0_BASE, 0x00001000},
+				{"dce1",    ALT_CCU_DCE1_BASE, 0x00001000},
+				{"dmi0",    ALT_CCU_DMI0_BASE, 0x00001000},
+				{"dmi1",    ALT_CCU_DMI1_BASE, 0x00001000},
+				{"noc_fw_l4_per",     SOCFPGA_L4_PER_SCR_REG_BASE, 0x0000008C},
+				{"noc_fw_l4_sys",     SOCFPGA_L4_SYS_SCR_REG_BASE, 0x00000098},
+				{"noc_fw_lwsoc2fpga", SOCFPGA_LWSOC2FPGA_SCR_REG_BASE, 0x00000004},
+				{"noc_fw_soc2fpga",   SOCFPGA_SOC2FPGA_SCR_REG_BASE, 0x00000004},
+				{"noc_fw_tcu",        SOCFPGA_TCU_SCR_REG_BASE, 0x00000004}
 				};
-#elif PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX72
-ncore_ccu_reg_t ncore_ccu_modules[] = {
-				{"caiu0@1c000000",             0x6000000, 0x00001000},
-				{"ncaiu0@1c001000",            0x6001000, 0x00001000},
-				{"ncaiu1@1c002000",            0x6002000, 0x00001000},
-				{"ncaiu2@1c003000",            0x6003000, 0x00001000},
-				{"ncaiu3@1c004000",            0x6004000, 0x00001000},
-				{"dce0@1c005000",              0x6005000, 0x00001000},
-				{"dce1@1c006000",              0x6006000, 0x00001000},
-				{"dmi0@1c007000",              0x6007000, 0x00001000},
-				{"dmi1@1c008000",              0x6008000, 0x00001000}
-				};
-#endif
-
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX3 || PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX72
 
 ncore_ccu_t ccu_caiu0[] = {
 				/* CAIUAMIGR */
@@ -540,7 +524,6 @@ uint32_t init_ncore_ccu(void)
 
 	return 0;
 }
-#endif
 
 static coh_ss_id_t subsystem_id;
 void get_subsystem_id(void)
@@ -637,19 +620,6 @@ void ncore_enable_ocram_firewall(void)
 			OCRAM_PRIVILEGED_MASK | OCRAM_SECURE_MASK);
 }
 
-#if PLATFORM_MODEL != PLAT_SOCFPGA_AGILEX3 && PLATFORM_MODEL != PLAT_SOCFPGA_AGILEX72
-uint32_t init_ncore_ccu(void)
-{
-	uint32_t status;
-
-	get_subsystem_id();
-	status = directory_init();
-	status = coherent_agent_intfc_init();
-	bypass_ocram_firewall();
-	return status;
-}
-#endif
-
 void setup_smmu_stream_id(void)
 {
 	/* Configure Stream ID for Agilex3 */
@@ -681,7 +651,6 @@ void setup_smmu_stream_id(void)
 	mmio_write_32(SOCFPGA_SYSMGR(TSN_TBU_STREAM_CTRL_REG_3_TSN2), ENABLE_STREAMID);
 }
 
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX3 || PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX72
 /* TODO: Temp added this here*/
 static int poll_idle_status(uint32_t addr, uint32_t mask, uint32_t match, uint32_t delay_ms)
 {
@@ -705,9 +674,9 @@ int flush_l3_dcache(void)
 
 	/* Flushing all entries in CCU system memory cache */
 	for (i = 0; i < MAX_DISTRIBUTED_MEM_INTERFACE; i++) {
-		mmio_write_32(ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
-			   ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_TAG),
-			   (uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)));
+		mmio_write_32((uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)),
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_TAG));
 
 		/* Wait for cache maintenance operation done */
 		ret = poll_idle_status((CCU_DMI0_DMIUSMCMAR +
@@ -720,9 +689,9 @@ int flush_l3_dcache(void)
 			return ret;
 		}
 
-		mmio_write_32(ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
-			   ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_DATA),
-			   (uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)));
+		mmio_write_32((uintptr_t)(CCU_DMI0_DMIUSMCMCR + (i * 0x1000)),
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_MNTOP, FLUSH_ALL_ENTRIES) |
+			      ALT_FIELD_PREP(CCU_DMI0_DMIUSMCMCR_ARRAY_ID, ARRAY_ID_DATA));
 
 		/* Wait for cache maintenance operation done */
 		ret = poll_idle_status((CCU_DMI0_DMIUSMCMAR +
@@ -737,4 +706,3 @@ int flush_l3_dcache(void)
 
 	return ret;
 }
-#endif

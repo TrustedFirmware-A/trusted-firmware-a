@@ -279,9 +279,7 @@ static void __dead2 socfpga_system_reset(void)
 		dcsw_op_all(DCCISW);
 		invalidate_l1_i_cache();
 		invalidate_all_tlbs();
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX3
 		flush_l3_dcache();
-#endif
 #endif
 		mailbox_reset_cold();
 	}
@@ -302,9 +300,7 @@ static int socfpga_system_reset2(int is_vendor, int reset_type,
 	dcsw_op_all(DCCISW);
 	invalidate_l1_i_cache();
 	invalidate_all_tlbs();
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX3
 	flush_l3_dcache();
-#endif
 #endif
 
 	/* Set warm reset request bit before issuing the command to SDM. */
