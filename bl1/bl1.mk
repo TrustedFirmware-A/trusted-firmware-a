@@ -9,7 +9,7 @@ BL1_SOURCES		+=	bl1/${ARCH}/bl1_arch_setup.c		\
 				bl1/${ARCH}/bl1_entrypoint.S		\
 				bl1/${ARCH}/bl1_exceptions.S		\
 				bl1/bl1_main.c				\
-				lib/cpus/${ARCH}/cpu_helpers.S		\
+				${CPU_HELPERS_DIR}/cpu_helpers.S		\
 				lib/cpus/errata_report.c		\
 				lib/el3_runtime/${ARCH}/context_mgmt.c	\
 				plat/common/plat_bl1_common.c		\
@@ -21,7 +21,7 @@ BL1_SOURCES		+=	lib/el3_runtime/aarch64/context.S	\
 				lib/cpus/errata_common.c
 
 ifeq (${WORKAROUND_CVE_2025_0647},1)
-BL1_SOURCES		+=	lib/cpus/aarch64/wa_cve_2025_0647_cpprctx.S
+BL1_SOURCES		+=	lib/cpus/helpers/aarch64/wa_cve_2025_0647_cpprctx.S
 endif
 endif
 

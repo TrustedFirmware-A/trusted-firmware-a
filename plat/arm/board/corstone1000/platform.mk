@@ -63,7 +63,7 @@ BL2_SOURCES		+=	plat/arm/board/corstone1000/common/corstone1000_security.c		\
 				plat/arm/board/corstone1000/common/corstone1000_err.c		\
 				plat/arm/board/corstone1000/common/corstone1000_trusted_boot.c	\
 				lib/utils/mem_region.c					\
-				lib/cpus/aarch64/cpu_helpers.S \
+				lib/cpus/helpers/aarch64/cpu_helpers.S \
 				plat/arm/board/corstone1000/common/corstone1000_helpers.S		\
 				plat/arm/board/corstone1000/common/corstone1000_plat.c		\
 				plat/arm/board/corstone1000/common/corstone1000_bl2_mem_params_desc.c \

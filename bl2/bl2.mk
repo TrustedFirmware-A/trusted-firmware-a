@@ -34,7 +34,7 @@ endif
 
 ifeq (${RESET_TO_BL2},1)
 # BL2 at EL3, no RME
-BL2_SOURCES		+=	lib/cpus/${ARCH}/cpu_helpers.S
+BL2_SOURCES		+=	${CPU_HELPERS_DIR}/cpu_helpers.S
 endif
 
 ifeq (${ENABLE_PMF},1)

@@ -461,7 +461,7 @@ DYNAMIC_WORKAROUND_CVE_2018_3639	:=	1
 
 ifneq (${ENABLE_FEAT_AMU},0)
 BL31_SOURCES		+=	lib/cpus/aarch64/cpuamu.c		\
-				lib/cpus/aarch64/cpuamu_helpers.S
+				lib/cpus/helpers/aarch64/cpuamu_helpers.S
 
 ifeq (${HW_ASSISTED_COHERENCY}, 1)
 BL31_SOURCES		+=	lib/cpus/aarch64/cortex_a75_pubsub.c	\

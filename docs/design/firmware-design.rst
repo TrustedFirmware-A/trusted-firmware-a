@@ -1430,7 +1430,7 @@ suitable handlers for that CPU. For example, ``lib/cpus/aarch64/cortex_a53.S``
 exports the ``cpu_ops`` for Cortex-A53 CPU. According to the platform
 configuration, these CPU specific files must be included in the build by
 the platform makefile. The generic CPU specific operations framework code exists
-in ``lib/cpus/aarch64/cpu_helpers.S``.
+in ``lib/cpus/helpers/aarch64/cpu_helpers.S``.
 
 CPU PCS
 ~~~~~~~

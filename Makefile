@@ -209,6 +209,9 @@ INCLUDES		+=	-Iinclude				\
 				${PLAT_INCLUDES}			\
 				${SPD_INCLUDES}
 
+CPU_HELPERS_DIR		:=	lib/cpus/helpers/${ARCH}
+INCLUDES		+=	-I${CPU_HELPERS_DIR}
+
 include common/backtrace/backtrace.mk
 
 ################################################################################
