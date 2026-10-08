@@ -899,6 +899,7 @@ Texas Instruments platform port
 
 UniPhier platform port
 ^^^^^^^^^^^^^^^^^^^^^^
+:|M|: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 :|F|: docs/plat/socionext-uniphier.rst
 :|F|: plat/socionext/uniphier/
 
