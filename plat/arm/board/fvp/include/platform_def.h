@@ -237,12 +237,7 @@
  * plat_arm_mmap array defined for each BL stage.
  */
 #if defined(IMAGE_BL31)
-# if SPM_MM
-#  define PLAT_ARM_MMAP_ENTRIES		10
-#  define MAX_XLAT_TABLES		9
-#  define PLAT_SP_IMAGE_MMAP_REGIONS	30
-#  define PLAT_SP_IMAGE_MAX_XLAT_TABLES	12
-# elif SPMC_AT_EL3
+# if SPMC_AT_EL3
 #  define PLAT_ARM_MMAP_ENTRIES		13
 #  define MAX_XLAT_TABLES		11
 #  define PLAT_SP_IMAGE_MMAP_REGIONS	31

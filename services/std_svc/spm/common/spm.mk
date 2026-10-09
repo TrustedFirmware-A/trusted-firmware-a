@@ -14,7 +14,7 @@ SPM_SOURCES	:=	$(addprefix services/std_svc/spm/common/,	\
 			${ARCH}/spm_helpers.S				\
 			${ARCH}/spm_shim_exceptions.S)
 
-ifeq (1, $(filter 1, ${SPM_MM} ${SPMC_AT_EL3_SEL0_SP}))
+ifeq (${SPMC_AT_EL3_SEL0_SP},1)
 SPM_SOURCES	+=	$(addprefix services/std_svc/spm/common/,       \
 			spm_xlat_common.c)
 endif

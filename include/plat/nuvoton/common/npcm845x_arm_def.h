@@ -507,12 +507,12 @@
 
 /*
  * BL32 is mandatory in AArch32. In AArch64, undefine BL32_BASE if there is
- * no SPD and no SPM-MM, as they are the only ones that can be used as BL32.
+ * no SPD, as it is the only one that can be used as BL32.
  */
-#if defined(SPD_none) && !SPM_MM
+#if defined(SPD_none)
 #error BL32_BASE is not defined
 #undef BL32_BASE
-#endif /* SPD_none && !SPM_MM */
+#endif /* SPD_none */
 
 /******************************************************************************
  * FWU Images: NS_BL1U, BL2U & NS_BL2U defines.

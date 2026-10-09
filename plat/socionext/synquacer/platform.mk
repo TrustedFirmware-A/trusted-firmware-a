@@ -117,12 +117,6 @@ BL31_SOURCES		+=	$(PLAT_PATH)/drivers/scp/sq_scmi.c		\
 				drivers/arm/css/mhu/css_mhu_doorbell.c
 endif
 
-ifeq (${SPM_MM},1)
-PLAT_EXTRA_LD_SCRIPT	:=	1
-
-BL31_SOURCES		+=	$(PLAT_PATH)/sq_spm.c
-endif
-
 ifeq (${SQ_USE_SCMI_DRIVER},1)
 $(eval $(call add_define,SQ_USE_SCMI_DRIVER))
 endif

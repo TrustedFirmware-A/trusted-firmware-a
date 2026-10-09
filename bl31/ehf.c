@@ -488,11 +488,6 @@ void __init ehf_init(void)
 	/* Route EL3 interrupts when in Non-secure. */
 	set_interrupt_rm_flag(flags, NON_SECURE);
 
-	/* Route EL3 interrupts only when SPM_MM present in secure. */
-#if SPM_MM
-	set_interrupt_rm_flag(flags, SECURE);
-#endif
-
 	/* Register handler for EL3 interrupts */
 	ret = register_interrupt_type_handler(INTR_TYPE_EL3,
 			ehf_el3_interrupt_handler, flags);

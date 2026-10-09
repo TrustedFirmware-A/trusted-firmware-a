@@ -131,14 +131,8 @@ ENABLE_FEAT_S1POE	:=	2
 # 9.3
 ENABLE_FEAT_GCS		:=	2
 
-# SPM_MM is not compatible with ENABLE_SVE_FOR_NS (build breaks)
-ifeq (${SPM_MM},1)
-	ENABLE_SVE_FOR_NS	:= 0
-	ENABLE_SME_FOR_NS	:= 0
-else
-	ENABLE_SVE_FOR_NS	:= 2
-	ENABLE_SME_FOR_NS	:= 2
-endif
+ENABLE_SVE_FOR_NS	:=	2
+ENABLE_SME_FOR_NS	:=	2
 
 ifeq (${ENABLE_RMM},1)
 BL31_SOURCES			+= plat/qemu/common/qemu_plat_attest_token.c \

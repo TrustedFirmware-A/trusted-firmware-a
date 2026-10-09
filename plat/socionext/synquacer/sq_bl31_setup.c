@@ -214,14 +214,6 @@ void bl31_plat_runtime_setup(void)
 void bl31_plat_arch_setup(void)
 {
 	static const mmap_region_t secure_partition_mmap[] = {
-#if SPM_MM
-		MAP_REGION_FLAT(PLAT_SPM_BUF_BASE,
-				PLAT_SPM_BUF_SIZE,
-				MT_RW_DATA | MT_SECURE),
-		MAP_REGION_FLAT(PLAT_SQ_SP_PRIV_BASE,
-				PLAT_SQ_SP_PRIV_SIZE,
-				MT_RW_DATA | MT_SECURE),
-#endif
 #if !RESET_TO_BL31
 		MAP_REGION_FLAT(BL2_MAILBOX_BASE,
 				BL2_MAILBOX_SIZE,
@@ -233,12 +225,6 @@ void bl31_plat_arch_setup(void)
 	sq_mmap_setup(BL31_BASE, BL31_SIZE, secure_partition_mmap);
 	enable_mmu_el3(XLAT_TABLE_NC);
 
-#if SPM_MM
-	memcpy((void *)SPM_SHIM_EXCEPTIONS_START,
-	       (void *)SPM_SHIM_EXCEPTIONS_LMA,
-	       (uintptr_t)SPM_SHIM_EXCEPTIONS_END -
-	       (uintptr_t)SPM_SHIM_EXCEPTIONS_START);
-#endif
 }
 
 void bl31_plat_enable_mmu(uint32_t flags)

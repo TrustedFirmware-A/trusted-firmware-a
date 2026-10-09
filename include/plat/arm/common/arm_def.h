@@ -760,7 +760,7 @@ MEASURED_BOOT
  * Trusted DRAM (if available) or the DRAM region secured by the TrustZone
  * controller.
  */
-# if SPM_MM || SPMC_AT_EL3
+# if SPMC_AT_EL3
 #  define TSP_SEC_MEM_BASE		(ARM_AP_TZC_DRAM1_BASE + ULL(0x200000))
 #  define TSP_SEC_MEM_SIZE		(ARM_AP_TZC_DRAM1_SIZE - ULL(0x200000))
 #  define BL32_BASE			(ARM_AP_TZC_DRAM1_BASE + ULL(0x200000))
@@ -806,13 +806,13 @@ MEASURED_BOOT
 
 /*
  * BL32 is mandatory in AArch32. In AArch64, undefine BL32_BASE if there is no
- * SPD and no SPM-MM and no SPMC-AT-EL3, as they are the only ones that can be
+ * SPD and no SPMC-AT-EL3, as they are the only ones that can be
  * used as BL32.
  */
 #if defined(__aarch64__) && !JUNO_AARCH32_EL3_RUNTIME
-# if defined(SPD_none) && !SPM_MM && !SPMC_AT_EL3
+# if defined(SPD_none) && !SPMC_AT_EL3
 #  undef BL32_BASE
-# endif /* defined(SPD_none) && !SPM_MM || !SPMC_AT_EL3 */
+# endif /* defined(SPD_none) && !SPMC_AT_EL3 */
 #endif /* defined(__aarch64__) && !JUNO_AARCH32_EL3_RUNTIME */
 
 #if RESET_TO_BL31 && defined(SPD_spmd) && defined(PLAT_ARM_SPMC_MANIFEST_BASE)
