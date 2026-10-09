@@ -11,6 +11,7 @@
 #include <arch_helpers.h>
 #include <common/fdt_fixup.h>
 #include <common/fdt_wrappers.h>
+#include <platform_def.h>
 
 #include <rpi_shared.h>
 
@@ -52,6 +53,42 @@ static void remove_spintable_memreserve(void *dtb)
 	}
 }
 
+#if !RESET_TO_BL31
+static void reserve_memory(void *dtb, const char *node_name,
+			   uintptr_t base, size_t size)
+{
+	int ret = fdt_add_reserved_memory(dtb, node_name, base, size);
+
+	if (ret != 0) {
+		WARN("Failed to reserve %s in DT: %d\n", node_name, ret);
+	}
+}
+#endif
+
+static void reserve_runtime_memory(void *dtb)
+{
+#if RESET_TO_BL31
+	/*
+	 * In the BL31-as-armstub path, the resident EL3 image occupies low
+	 * memory together with the Raspberry Pi armstub header.
+	 */
+	if (fdt_add_reserved_memory(dtb, "atf@0", 0, BL31_LIMIT)) {
+		WARN("Failed to add reserved memory nodes to DT.\n");
+	}
+#else
+	/*
+	 * In the multi-stage armstub/FIP path, the first page contains the
+	 * trusted mailbox used by BL31 to release secondary CPUs.
+	 */
+	reserve_memory(dtb, "atf-mailbox@0", PLAT_RPI_STUB_HEADER_BASE,
+		       PLAT_RPI_STUB_HEADER_SIZE);
+	reserve_memory(dtb, "tf-a@10000000", SEC_SRAM_BASE, SEC_SRAM_SIZE);
+#ifdef BL32_BASE
+	reserve_memory(dtb, "bl32@10100000", BL32_MEM_BASE, BL32_MEM_SIZE);
+#endif
+#endif
+}
+
 static void rpi4_prepare_dtb(void)
 {
 	void *dtb = (void *)rpi4_get_dtb_address();
@@ -62,7 +99,7 @@ static void rpi4_prepare_dtb(void)
 	if (fdt_check_header(dtb) != 0)
 		return;
 
-	ret = fdt_open_into(dtb, dtb, 0x100000);
+	ret = fdt_open_into(dtb, dtb, PLAT_RPI4_DTB_MAX_SIZE);
 	if (ret < 0) {
 		ERROR("Invalid Device Tree at %p: error %d\n", dtb, ret);
 		return;
@@ -80,11 +117,10 @@ static void rpi4_prepare_dtb(void)
 
 	/*
 	 * Remove the original reserved region (used for the spintable), and
-	 * replace it with a region describing the whole of Trusted Firmware.
+	 * replace it with regions describing the resident TF-A runtime layout.
 	 */
 	remove_spintable_memreserve(dtb);
-	if (fdt_add_reserved_memory(dtb, "atf@0", 0, 0x80000))
-		WARN("Failed to add reserved memory nodes to DT.\n");
+	reserve_runtime_memory(dtb);
 
 	offs = fdt_node_offset_by_compatible(dtb, 0, "arm,gic-400");
 	gic_int_prop[0] = cpu_to_fdt32(1);		// PPI

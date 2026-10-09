@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Arm Limited. All rights reserved.
+ * Copyright (c) 2025-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,17 +8,17 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include <plat/common/common_def.h>
-#include <plat/common/platform.h>
-#include <platform_def.h>
-
 #include <event_measure.h>
 #include <event_print.h>
-#include <rpi3_measured_boot.h>
-
 #if DISCRETE_TPM
 #include <tpm2.h>
 #endif
+
+#include <common/measured_boot.h>
+#include <plat/common/common_def.h>
+#include <plat/common/platform.h>
+
+#include <platform_def.h>
 
 /* RPI3 table with platform specific image IDs, names and PCRs */
 extern const event_log_metadata_t rpi3_event_log_metadata[];

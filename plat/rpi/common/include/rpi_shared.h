@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,6 +11,9 @@
 #include <stdint.h>
 
 #include <drivers/console.h>
+
+struct bl_mem_params_node;
+struct transfer_list_header;
 
 /*******************************************************************************
  * Function and variable prototypes
@@ -52,6 +55,26 @@ int plat_rpi_get_model(void);
 
 void plat_rpi_bl31_custom_setup(void);
 
+struct transfer_list_header *rpi_bl1_transfer_list_init(void);
+struct transfer_list_header *rpi_bl1_get_transfer_list(void);
+void rpi_bl1_set_bl2_transfer_list(void);
+struct transfer_list_header *rpi_bl2_transfer_list_init(u_register_t arg3);
+struct transfer_list_header *rpi_bl2_get_transfer_list(void);
+#if TRANSFER_LIST
 void rpi3_bl2_sync_transfer_list(void);
+#else
+static inline void rpi3_bl2_sync_transfer_list(void)
+{
+}
+#endif
+void rpi_bl2_prepare_spmd_manifest(size_t manifest_size);
+struct transfer_list_header *rpi_bl2_relocate_transfer_list(void);
+
+int rpi_bl2_parse_optee_header(struct bl_mem_params_node *bl_mem_params);
+
+void rpi_bl1_tpm_setup(void);
+void rpi_bl1_tpm_validate(uint32_t required_pcr_mask);
+void rpi_bl2_tpm_setup(void);
+void rpi_tpm_close(void);
 
 #endif /* RPI3_SHARED_H */

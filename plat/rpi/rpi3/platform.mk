@@ -26,9 +26,9 @@ ifeq (${DISCRETE_TPM},1)
 TPM2_MK := drivers/tpm/tpm2.mk
 $(info Including ${TPM2_MK})
 include ${TPM2_MK}
-ifeq (${RPI3_PROVISION_TPM},1)
-$(eval $(call add_define,RPI3_PROVISION_TPM))
-endif
+RPI3_PROVISION_TPM	?=	0
+$(eval $(call assert_boolean,RPI3_PROVISION_TPM))
+$(eval $(call add_define_val,RPI_TPM_PROVISION,$(RPI3_PROVISION_TPM)))
 endif
 
 ifeq (${TPM_INTERFACE},FIFO_SPI)
@@ -38,6 +38,8 @@ endif
 
 ifeq (${TRANSFER_LIST}, 1)
 include lib/transfer_list/transfer_list.mk
+BL1_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
+BL2_SOURCES		+=	plat/rpi/common/rpi_transfer_list.c
 endif
 
 ifeq (${MEASURED_BOOT},1)
@@ -61,13 +63,18 @@ BL32_LIBS += $(LIBEVLOG_LIBS)
 BL32_INCLUDE_DIRS += $(LIBEVLOG_INCLUDE_DIRS)
 
 BL1_SOURCES		+= 	plat/rpi/rpi3/rpi3_bl1_mboot.c \
-				plat/rpi/rpi3/rpi3_common_mboot.c
+				plat/rpi/common/rpi3_common_mboot.c
 
 BL2_SOURCES		+= 	plat/rpi/rpi3/rpi3_bl2_mboot.c		\
-				plat/rpi/rpi3/rpi3_common_mboot.c	\
+				plat/rpi/common/rpi3_common_mboot.c	\
 				plat/rpi/rpi3/rpi3_dyn_cfg_helpers.c	\
 				common/fdt_wrappers.c			\
 				common/fdt_fixup.c
+
+ifeq (${DISCRETE_TPM},1)
+BL1_SOURCES		+=	plat/rpi/common/rpi_tpm.c
+BL2_SOURCES		+=	plat/rpi/common/rpi_tpm.c
+endif
 
 CRYPTO_SOURCES		:=	drivers/auth/crypto_mod.c
 
@@ -225,7 +232,8 @@ endif
 
 ifeq (${SPD},opteed)
 BL2_SOURCES	+=							\
-		lib/optee/optee_utils.c
+		lib/optee/optee_utils.c				\
+		plat/rpi/common/rpi_optee.c
 endif
 
 ifeq (${SPD},spmd)
@@ -234,7 +242,8 @@ ifeq ($(ARM_SPMC_MANIFEST_DTS),)
 ARM_SPMC_MANIFEST_DTS	:=	plat/rpi/rpi3/fdts/spmc_el1_partitions_manifest.dts
 endif
 
-BL2_SOURCES		+=	lib/optee/optee_utils.c
+BL2_SOURCES		+=	lib/optee/optee_utils.c			\
+				plat/rpi/common/rpi_optee.c
 BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c      \
 					${FDT_WRAPPERS_SOURCES}
 
