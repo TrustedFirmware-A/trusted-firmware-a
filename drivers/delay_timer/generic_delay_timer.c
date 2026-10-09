@@ -18,9 +18,10 @@
 
 static timer_ops_t ops;
 
+/* Uses the configured frequency, so it is valid before CNTFRQ_EL0 is set. */
 static uint64_t timeout_cnt_us2cnt(uint32_t us)
 {
-	return ((uint64_t)us * (uint64_t)read_cntfrq_el0()) / 1000000ULL;
+	return div_round_up((uint64_t)us * ops.clk_div, ops.clk_mult);
 }
 
 static uint64_t generic_delay_timeout_init_us(uint32_t us)
