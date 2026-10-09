@@ -578,6 +578,12 @@ subsections:
           - title: Lemans EVK
             scope: lemans_evk
 
+          - title: Monaco
+            scope: monaco
+
+          - title: Arduino VENTUNO Q
+            scope: monza
+
       - title: Raspberry Pi
         scope: rpi
 

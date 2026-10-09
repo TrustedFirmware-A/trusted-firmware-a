@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 2026, Qualcomm Technologies, Inc. and/or its subsidiaries.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+#ifndef MONACO_DEF_H
+#define MONACO_DEF_H
+
+#include <hoya_def.h>
+
+/*----------------------------------------------------------------------------*/
+/* SMMU base addresses */
+/*----------------------------------------------------------------------------*/
+#define APPS_SMMU_BASE			0x15000000
+#define GPU_SMMU_BASE			0x03DA0000
+#define PCIE_SMMU_BASE			0x15200000
+
+/*----------------------------------------------------------------------------*/
+/* IP protected memory (TA execution area)                                    */
+/*----------------------------------------------------------------------------*/
+#define QTI_PIMEM_BASE			0x1c000000
+#define QTI_PIMEM_LIMIT			0x20000000
+
+/*----------------------------------------------------------------------------*/
+/* Peripherals base addresses */
+/*----------------------------------------------------------------------------*/
+#define QTI_SEC_PRNG_BASE			0x10D0000
+
+/*----------------------------------------------------------------------------*/
+/* Device address space for mapping. Excluding starting 4K */
+/*----------------------------------------------------------------------------*/
+#define QTI_DEVICE_BASE				0x1000
+#define QTI_DEVICE_SIZE				(0x1C000000 - QTI_DEVICE_BASE)
+
+/*----------------------------------------------------------------------------*/
+/* AOP CMD DB address space for mapping */
+/*----------------------------------------------------------------------------*/
+#define QTI_AOP_CMD_DB_BASE			0x90860000
+#define QTI_AOP_CMD_DB_SIZE			0x00020000
+
+/*----------------------------------------------------------------------------*/
+/* LC PON register offsets */
+/*----------------------------------------------------------------------------*/
+#define PON_PS_HOLD_RESET_CTL			0x852
+#define PON_PS_HOLD_RESET_CTL2			0x853
+
+/*----------------------------------------------------------------------------*/
+/* APSS HM, AOSS and CORE_TOP_CSR registers */
+/*----------------------------------------------------------------------------*/
+#define QTI_APSS_HM_BASE			0x17800000
+#define QTI_AOSS_BASE				0x0b000000
+#define QTI_CORE_TOP_CSR_BASE			0x01f00000
+
+/*----------------------------------------------------------------------------*/
+/* QTIMER registers                                                           */
+/*----------------------------------------------------------------------------*/
+#define QTI_QTIMER_BASE				0x17C20000
+
+/*----------------------------------------------------------------------------*/
+/* SMEM base address                                                          */
+/*----------------------------------------------------------------------------*/
+#define QTI_SMEM_BASE				0x90900000
+#define QTI_SMEM_SIZE				0x00200000
+
+/*----------------------------------------------------------------------------*/
+/* Chipset specific NOC error interrupt IDs.                                  */
+/*----------------------------------------------------------------------------*/
+#define PLAT_INT_ID_A1_NOC_ERROR		(0xC9)
+#define PLAT_INT_ID_A2_NOC_ERROR		(0xEA)
+#define PLAT_INT_ID_SYSTEM_NOC_ERROR		(0xC8)
+#define PLAT_INT_ID_LPASS_AGNOC_ERROR		(0x143)
+#define PLAT_INT_ID_NSP_NOC_ERROR		(0x1CE)
+
+#endif /* MONACO_DEF_H */

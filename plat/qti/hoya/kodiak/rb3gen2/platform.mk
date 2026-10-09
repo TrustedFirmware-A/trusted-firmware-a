@@ -109,8 +109,8 @@ include drivers/qti/accesscontrol/access_control.mk
 include drivers/qti/smmu/smmu.mk
 
 PLAT_INCLUDES	+=	-Iinclude/drivers/qti/sec_core/${CHIPSET} \
-			-Iinclude/drivers/qti/qtimer/${CHIPSET} \
-			-Iinclude/drivers/qti/watchdog/${CHIPSET}
+			-Iinclude/drivers/qti/qtimer/hoya \
+			-Iinclude/drivers/qti/watchdog/hoya
 
 BL31_SOURCES	+=	plat/qti/hoya/qtiseclib/src/qtiseclib_interface_stub.c	\
 			drivers/qti/sec_core/sec_core.c				\
