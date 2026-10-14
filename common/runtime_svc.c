@@ -247,13 +247,23 @@ void handler_sync_exception(cpu_context_t *ctx)
 
 	if (exc_class == EC_IMP_DEF_EL3) {
 		struct cpu_ops *cpu_ops = get_cpu_data(cpu_ops_ptr);
+		uint32_t iss = EXTRACT(ESR_ISS, esr_el3);
 
 		/*
 		 * A CPU driver configured an IMP DEF trap it should have also
 		 * declared a handler.
 		 */
 		assert(cpu_ops != NULL);
-		ret = cpu_ops->e_handler_func(exc_class);
+		assert(cpu_ops->e_handler_funcs != NULL);
+
+		/*
+		 * Dispatch an instruction patch trap to the right handler.
+		 * Cores that report the instruction patch slot in ISS can route
+		 * to the right handler. Cores that do not will have the field
+		 * RES0 so will always route to the first handler.
+		 * Bits other than ISS[0:2] are ignored.
+		 */
+		ret = cpu_ops->e_handler_funcs[iss & 0x7](iss);
 
 		if (ret == TRAP_RET_CONTINUE) {
 			/* advance the PC to continue after the instruction */
