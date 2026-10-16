@@ -234,3 +234,4 @@ endif
 include plat/arm/common/arm_common.mk
 include plat/arm/css/common/css_common.mk
 include plat/arm/board/common/board_common.mk
+include plat/arm/board/basev2/flashimage.mk
