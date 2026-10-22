@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025, Arm Ltd. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Ltd. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -31,7 +31,9 @@
  */
 #if TF_MBEDTLS_USE_RSA
   #undef TF_MBEDTLS_HEAP_SIZE
-  #if TF_MBEDTLS_KEY_SIZE > 2048
+  #if TF_MBEDTLS_KEY_SIZE > 3072
+    #define TF_MBEDTLS_HEAP_SIZE    U(16 * 1024)
+  #elif TF_MBEDTLS_KEY_SIZE > 2048
     #define TF_MBEDTLS_HEAP_SIZE    U(12 * 1024)
   #elif TF_MBEDTLS_KEY_SIZE <= 2048
     #define TF_MBEDTLS_HEAP_SIZE    U(9 * 1024)
