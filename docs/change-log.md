@@ -3,6 +3,120 @@
 This document contains a summary of the new features, changes, fixes and known
 issues in each release of Trusted Firmware-A.
 
+## [lts-2.14.12](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.14.11..refs/tags/lts-v2.14.12) (2026-10-31)
+
+### Performance Improvements
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - reduce the footprint of errata reporting ([fcc3346](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fcc3346d52273b0a44eb450e104088c1c115fcca))
+
+### Tests
+
+- **Platforms**
+
+  - **Arm**
+
+    - **FVP**
+
+      - update Cactus manifest to FF-A v1.2 ([b1fd64d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/b1fd64db0e2a21822217c1d24cd0525600780d08))
+
+### Documentation
+
+- **Services**
+
+  - **SPM**
+
+    - **EL3 SPMC**
+
+      - update FFA_VERSION description ([ca1ea92](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/ca1ea92a803113782de2439bcff7807dc80c7628))
+
+### Miscellaneous
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - update developer.arm.com links to support.arm.com ([7f89873](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7f89873bf4a3958947dbe8897813765b5e46c0bb))
+
+### Resolved Issues
+
+- **Services**
+
+  - **SPM**
+
+    - **EL3 SPMC**
+
+      - lock FF-A version after first non-version call ([5a99672](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/5a996723b316f33df8edb71a957891075206f0fe))
+      - reject SPs with non compatible version in manifest ([fd8932a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fd8932a7043a6f1cfbe09d16e7fd748fc278e263))
+      - validate compatibility of FFA_VERSION requests ([60062d3](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/60062d397af465f9e4ee1fbaf8ddf3200b3a636f))
+      - validate v1.0 descriptor fragment offset ([7cd2080](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/7cd20808f6d13f43b5dc8adfc24acfcdd3ae6d8f))
+
+    - **SPMD**
+
+      - serialise concurrent accesses to FF-A version globals ([6a28cef](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/6a28cef30dd90243d960fe48a2aff1865cb2f5dc))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - add Neoverse V3AE errata workarounds ([2734545](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/27345457b9d439174026411d14e0060f2b93f278))
+    - remove cpu crash reporting ([68826c5](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/68826c5ab6d18b79947e69b72964be0c315ccf75))
+    - repair broken SDEN links ([c631338](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c631338a339b6696294bf1f6115836222c6f732d))
+
+  - **EL3 Runtime**
+
+    - remove lower_el_panic() ([2c04d38](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/2c04d38e5c9983d8a6f51bc8d54b05813de15572))
+
+  - **PSCI**
+
+    - do not pass unused parameters ([f28a411](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/f28a411013bbb1b6fa7f1f12908371b9b2e7432c))
+    - serialize cpu_on entry publication ([79b8f4c](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/79b8f4c174e3cd2153dd750e8827ffac318edcf2))
+
+- **Documentation**
+
+  - do not use topics for security advisories ([12519fa](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/12519fafb4396632503c36b8e4ca69570be08849))
+
+### Code Refactoring
+
+- **Services**
+
+  - **SPM**
+
+    - **SPMD**
+
+      - extract FFA_VERSION handler ([96ff056](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/96ff056a5ac1bbe27f764e772399a4c4f213f57b))
+
+- **Libraries**
+
+  - **CPU Support**
+
+    - introduce new header for Neoverse V3AE ([fe49d3e](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/fe49d3eb56ab673da8113929c7ac7598220279ec))
+    - make errata reporting more generic ([490b540](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/490b5409a84be4b3c9b6ffb4bef3aa4f20299aea))
+
+  - **PSCI**
+
+    - split CPU_ON by core position ([a0b0f6d](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/a0b0f6d091a7e157401b00eeeab1cf085fd16e17))
+
+- **Miscellaneous**
+
+  - **AArch64**
+
+    - remove crash reporting's dependency on cpu_data ([c3c6156](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c3c61565c64beea2dc66bd52e1a7b6fda051755f))
+
+### New Features
+
+- **Services**
+
+  - **SPM**
+
+    - **SPMD**
+
+      - forward FFA_VERSION query flags ([04fa83a](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/04fa83abb62d90b488ae5035feff63f00bf85f15))
+      - update FFA_VERSION handling for FF-A v1.3 ([39c1cce](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/39c1cceddc4d2c99eb83c70c8c529badccf1fa65))
+
 ## [lts-2.14.11](https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/lts-v2.14.10..refs/tags/lts-v2.14.11) (2026-10-16)
 
 ### Code Refactoring
