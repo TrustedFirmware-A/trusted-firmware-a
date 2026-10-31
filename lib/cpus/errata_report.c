@@ -64,9 +64,8 @@ void print_errata_status(void) {}
 /*
  * New errata status message printer
  */
-void generic_errata_report(void)
+static void generic_errata_report(struct cpu_ops *cpu_ops)
 {
-	struct cpu_ops *cpu_ops = get_cpu_ops_ptr();
 	struct erratum_entry *entry = cpu_ops->errata_list_start;
 	struct erratum_entry *end = cpu_ops->errata_list_end;
 	long rev_var = cpu_get_rev_var();
@@ -90,31 +89,6 @@ void generic_errata_report(void)
 }
 
 /*
- * Returns whether errata needs to be reported. Passed arguments are private to
- * a CPU type.
- */
-static __unused int errata_needs_reporting(spinlock_t *lock, uint32_t *reported)
-{
-	bool report_now;
-
-	/* If already reported, return false. */
-	if (*reported != 0U)
-		return 0;
-
-	/*
-	 * Acquire lock. Determine whether status needs reporting, and then mark
-	 * report status to true.
-	 */
-	spin_lock(lock);
-	report_now = (*reported == 0U);
-	if (report_now)
-		*reported = 1;
-	spin_unlock(lock);
-
-	return report_now;
-}
-
-/*
  * Function to print errata status for the calling CPU (and others of the same
  * type). Must be called only:
  *   - when MMU and data caches are enabled;
@@ -122,16 +96,25 @@ static __unused int errata_needs_reporting(spinlock_t *lock, uint32_t *reported)
  */
 void print_errata_status(void)
 {
-#ifdef IMAGE_BL1
-	generic_errata_report();
-#else /* IMAGE_BL1 */
-	struct cpu_ops *cpu_ops = (void *) get_cpu_data(cpu_ops_ptr);
+#if IMAGE_BL1
+	struct cpu_ops *cpu_ops = get_cpu_ops_ptr();
+#else
+	struct cpu_ops *cpu_ops = get_cpu_data(cpu_ops_ptr);
+#endif
 
 	assert(cpu_ops != NULL);
 
-	if (errata_needs_reporting(cpu_ops->errata_lock, cpu_ops->errata_reported)) {
-		generic_errata_report();
+#if !IMAGE_BL1
+	/*
+	 * Try to acquire the lock. The first CPU of each type to do so will
+	 * report errata. The others need not do anything. Never release the
+	 * lock as there are no other users.
+	 */
+	if (!spin_trylock(cpu_ops->errata_reported)) {
+		return;
 	}
-#endif /* IMAGE_BL1 */
+#endif
+
+	generic_errata_report(cpu_ops);
 }
 #endif /* !REPORT_ERRATA */

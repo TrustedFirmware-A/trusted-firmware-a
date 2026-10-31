@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * TRM: https://developer.arm.com/documentation/107753/latest
- * SDEN: https://developer.arm.com/documentation/SDEN-3273788/latest
+ * TRM: https://support.arm.com/documentation/107753/latest
+ * SDEN: https://support.arm.com/documentation/SDEN-3273788/latest
  */
 
 #include <arch.h>
@@ -201,15 +201,6 @@ c1_nano_skip_pwr_dwn:
 	ret
 endfunc c1_nano_core_pwr_dwn
 
-.section .rodata.c1_nano_regs, "aS"
-c1_nano_regs: /* The ASCII list of register names to be reported */
-	.asciz	"cpuectlr_el1", ""
-
-func c1_nano_cpu_reg_dump
-	adr 	x6, c1_nano_regs
-	mrs	x8, C1_NANO_CPUECTLR_EL1
-	ret
-endfunc c1_nano_cpu_reg_dump
 
 declare_cpu_ops c1_nano, C1_NANO_MIDR, \
 	c1_nano_reset_func, \

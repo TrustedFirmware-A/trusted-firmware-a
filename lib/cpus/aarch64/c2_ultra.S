@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * TRM: https://support.arm.com/documentation/109736/latest
- * SDEN: https://support.arm.com/documentation/112420/latest
+ * SDEN: https://support.arm.com/documentation/111287/latest
  */
 
 #include <arch.h>
@@ -57,16 +57,6 @@ c2_ultra_skip_pwr_dwn:
 	signal_pabandon_handled
 	ret
 endfunc c2_ultra_core_pwr_dwn
-
-.section .rodata.c2_ultra_regs, "aS"
-c2_ultra_regs: /* The ASCII list of register names to be reported */
-	.asciz	"cpuectlr_el1", ""
-
-func c2_ultra_cpu_reg_dump
-	adr 	x6, c2_ultra_regs
-	mrs	x8, C2_ULTRA_CPUECTLR_EL1
-	ret
-endfunc c2_ultra_cpu_reg_dump
 
 declare_cpu_ops c2_ultra, C2_ULTRA_MIDR, \
 	c2_ultra_reset_func, \

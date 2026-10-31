@@ -61,6 +61,9 @@ int handle_sysreg_trap(uint64_t esr_el3, cpu_context_t *ctx,
 /* Handler for injecting UNDEF exception to lower EL */
 void inject_undef64(cpu_context_t *ctx);
 
+/* Report an unsupported AArch32 system register trap and panic. */
+void __dead2 bl31_aarch32_sysreg_panic(void);
+
 u_register_t create_spsr(u_register_t old_spsr, unsigned int target_el);
 
 /* Prototypes for system register emulation handlers provided by platforms. */

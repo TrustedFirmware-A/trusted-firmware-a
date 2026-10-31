@@ -11,8 +11,17 @@
 #include <arch_helpers.h>
 #include <bl31/sync_handle.h>
 #include <context.h>
+#include <common/debug.h>
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/extensions/idte3.h>
+
+void __dead2 bl31_aarch32_sysreg_panic(void)
+{
+	ERROR("Trapped an instruction from AArch32 %s mode\n",
+	      get_mode_str((unsigned int)GET_M32(read_spsr_el3())));
+	ERROR("at address 0x%lx, reason 0x%lx\n", read_elr_el3(), read_esr_el3());
+	panic();
+}
 
 int handle_sysreg_trap(uint64_t esr_el3, cpu_context_t *ctx,
 			u_register_t flags __unused)

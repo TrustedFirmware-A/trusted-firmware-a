@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * TRM: https://developer.arm.com/documentation/109416/latest
- * SDEN: https://developer.arm.com/documentation/111078/latest
+ * TRM: https://support.arm.com/documentation/109416/latest
+ * SDEN: https://support.arm.com/documentation/111078/latest
  */
 
 #include <arch.h>
@@ -185,15 +185,6 @@ c1_premium_skip_pwr_dwn:
 	ret
 endfunc c1_premium_core_pwr_dwn
 
-.section .rodata.c1_premium_regs, "aS"
-c1_premium_regs: /* The ASCII list of register names to be reported */
-	.asciz	"cpuectlr_el1", ""
-
-func c1_premium_cpu_reg_dump
-	adr 	x6, c1_premium_regs
-	mrs	x8, C1_PREMIUM_CPUECTLR_EL1
-	ret
-endfunc c1_premium_cpu_reg_dump
 
 #if WORKAROUND_CVE_2025_0647 && defined(IMAGE_BL31)
 declare_cpu_ops_eh c1_premium, C1_PREMIUM_MIDR, \

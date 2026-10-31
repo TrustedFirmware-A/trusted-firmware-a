@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * TRM: https://developer.arm.com/documentation/101427/latest
- * SDEN: https://developer.arm.com/documentation/SDEN-1401781/latest
+ * TRM: https://support.arm.com/documentation/101427/latest
+ * SDEN: https://support.arm.com/documentation/SDEN-1401781/latest
  */
 
 #include <arch.h>
@@ -311,24 +311,6 @@ cpu_reset_func_start neoverse_v1
 	msr	SSBS, xzr
 cpu_reset_func_end neoverse_v1
 
-	/* ---------------------------------------------
-	 * This function provides Neoverse-V1 specific
-	 * register information for crash reporting.
-	 * It needs to return with x6 pointing to
-	 * a list of register names in ascii and
-	 * x8 - x15 having values of registers to be
-	 * reported.
-	 * ---------------------------------------------
-	 */
-.section .rodata.neoverse_v1_regs, "aS"
-neoverse_v1_regs:  /* The ascii list of register names to be reported */
-	.asciz	"cpuectlr_el1", ""
-
-func neoverse_v1_cpu_reg_dump
-	adr	x6, neoverse_v1_regs
-	mrs	x8, NEOVERSE_V1_CPUECTLR_EL1
-	ret
-endfunc neoverse_v1_cpu_reg_dump
 
 declare_cpu_ops neoverse_v1, NEOVERSE_V1_MIDR, \
 	neoverse_v1_reset_func, \

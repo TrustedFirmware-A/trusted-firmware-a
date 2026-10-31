@@ -104,9 +104,7 @@
 	   * it in the data section.
 	   */
 	  .pushsection .data
-	  define_asm_spinlock \_name\()_errata_lock
-	  \_name\()_errata_reported:
-	  .word	0
+	  define_asm_spinlock \_name\()_errata_reported
 	  .popsection
 
 	  /* Place CPU string in rodata */
@@ -120,14 +118,10 @@
 
 #ifdef IMAGE_BL31
 	/* Pointers to errata lock and reported flag */
-	.quad \_name\()_errata_lock
 	.quad \_name\()_errata_reported
 #endif /* IMAGE_BL31 */
 #endif /* REPORT_ERRATA */
 
-#if defined(IMAGE_BL31) && CRASH_REPORTING
-	.quad \_name\()_cpu_reg_dump
-#endif
 	.endm
 
 	.macro declare_cpu_ops _name:req, _midr:req, _resetfunc:req, \

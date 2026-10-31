@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -64,6 +64,7 @@ int plat_sdei_validate_entry_point(uintptr_t ep, unsigned int client_mode)
 }
 #endif
 
+/* AArch64 Exception level (as found in SPSR_EL3.M[3:0]) */
 const char *get_el_str(unsigned int el)
 {
 	const char *mode = NULL;
@@ -89,6 +90,46 @@ const char *get_el_str(unsigned int el)
 	return mode;
 }
 
+/* AArc32 Mode (as found in SPSR_EL3.M[3:0]) */
+const char *get_mode_str(unsigned int spsr_mode)
+{
+	const char *mode = NULL;
+
+	switch (spsr_mode) {
+	case MODE32_usr:
+		mode = "User";
+		break;
+	case MODE32_fiq:
+		mode = "FIQ";
+		break;
+	case MODE32_irq:
+		mode = "IRQ";
+		break;
+	case MODE32_svc:
+		mode = "Supervisor";
+		break;
+	case MODE32_mon:
+		mode = "Monitor";
+		break;
+	case MODE32_abt:
+		mode = "Abort";
+		break;
+	case MODE32_hyp:
+		mode = "Hyp";
+		break;
+	case MODE32_und:
+		mode = "Undefined";
+		break;
+	case MODE32_sys:
+		mode = "System";
+		break;
+	default:
+		assert(false);
+		break;
+	}
+	return mode;
+}
+
 #if FFH_SUPPORT
 /* Handler for External Aborts from lower EL including RAS errors */
 void plat_default_ea_handler(unsigned int ea_reason, uint64_t syndrome, void *cookie,
@@ -107,9 +148,6 @@ void plat_default_ea_handler(unsigned int ea_reason, uint64_t syndrome, void *co
 		read_mpidr_el1(), get_el_str(level));
 	ERROR("exception reason=%u syndrome=0x%" PRIx64 "\n", ea_reason, syndrome);
 
-	/* We reached here due to a panic from a lower EL and assuming this is the default
-	 * platform registered handler that we could call on a lower EL panic.
-	 */
-	lower_el_panic();
+	panic();
 }
 #endif

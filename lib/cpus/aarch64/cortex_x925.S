@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * TRM: https://developer.arm.com/documentation/102807/latest
- * SDEN: https://developer.arm.com/documentation/109180/latest/
+ * TRM: https://support.arm.com/documentation/102807/latest
+ * SDEN: https://support.arm.com/documentation/109180/latest/
  */
 
 #include <arch.h>
@@ -170,24 +170,6 @@ func cortex_x925_core_pwr_dwn
 	ret
 endfunc cortex_x925_core_pwr_dwn
 
-	/* ---------------------------------------------
-	 * This function provides Cortex-X925 specific
-	 * register information for crash reporting.
-	 * It needs to return with x6 pointing to
-	 * a list of register names in ascii and
-	 * x8 - x15 having values of registers to be
-	 * reported.
-	 * ---------------------------------------------
-	 */
-.section .rodata.cortex_x925_regs, "aS"
-cortex_x925_regs:  /* The ascii list of register names to be reported */
-	.asciz	"cpuectlr_el1", ""
-
-func cortex_x925_cpu_reg_dump
-	adr	x6, cortex_x925_regs
-	mrs	x8, CORTEX_X925_CPUECTLR_EL1
-	ret
-endfunc cortex_x925_cpu_reg_dump
 
 #if WORKAROUND_CVE_2025_0647 && defined(IMAGE_BL31)
 declare_cpu_ops_eh cortex_x925, CORTEX_X925_MIDR, \
