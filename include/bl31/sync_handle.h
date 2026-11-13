@@ -15,6 +15,8 @@
 #define TRAP_RET_REPEAT			0
 #define TRAP_RET_CONTINUE		1
 
+
+#ifndef __ASSEMBLER__
 /**
  * handle_sysreg_trap() - Handle AArch64 system register traps from lower ELs
  * @esr_el3: The content of ESR_EL3, containing the trap syndrome information
@@ -55,5 +57,7 @@ static inline int plat_handle_rng_trap(u_register_t *data, bool rndrrs)
 	return TRAP_RET_UNHANDLED;
 }
 #endif
+
+#endif /* __ASSEMBLER__ */
 
 #endif

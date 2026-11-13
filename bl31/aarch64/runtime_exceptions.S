@@ -94,12 +94,6 @@
 	ldr	x29, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X29]
 #endif
 
-	mrs	x30, esr_el3
-
-	/* fast paths that have a minimal environment */
-	cmp	x30, #EC_IMP_DEF_EL3
-	b.eq	imp_def_el3_handler
-
 	/* setup the full environment */
 	bl	prepare_el3_entry
 
@@ -397,36 +391,6 @@ brk_location:
 brk_message:
 	.asciz "Unexpected BRK instruction with value 0x"
 #endif /* MONITOR_TRAPS */
-
-func imp_def_el3_handler
-	/* Save GP registers */
-	stp	x0, x1, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X0]
-	stp	x2, x3, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X2]
-	stp	x4, x5, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X4]
-
-	/* Get the cpu_ops pointer */
-	bl	get_cpu_ops_ptr
-
-	/* Get the cpu_ops exception handler */
-	ldr	x0, [x0, #CPU_E_HANDLER_FUNC]
-
-	/*
-	 * If the reserved function pointer is NULL, this CPU does not have an
-	 * implementation defined exception handler function
-	 */
-	cbz	x0, el3_handler_exit
-	mrs	x1, esr_el3
-	ubfx	x1, x1, #ESR_EC_SHIFT, #ESR_EC_LENGTH
-	blr	x0
-el3_handler_exit:
-	ldp	x0, x1, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X0]
-	ldp	x2, x3, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X2]
-	ldp	x4, x5, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X4]
-	restore_x30
-	msr	TPIDRRO_EL0, x0
-	mov	x0, #IMPL_DEF
-	no_ret	plat_report_unhandled_exception
-endfunc imp_def_el3_handler
 
 /*
  * Handler for async EA from lower EL synchronized at EL3 entry in KFH mode.
