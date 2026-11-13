@@ -29,16 +29,10 @@
 /* IDE KM only has feature register 0. */
 #define FIRME_IDE_KM_FEATURE_REG_COUNT			U(1)
 
-#if (PLAT_IDE_KM_PENDING_OPS_MAX == 0)
-#define FIRME_IDE_KM_FR0_DEFAULT	(FIRME_IDE_KM_FR0_KEYSET_PROG	| \
-					 FIRME_IDE_KM_FR0_KEYSET_GO	| \
-					 FIRME_IDE_KM_FR0_KEYSET_STOP)
-#else
 #define FIRME_IDE_KM_FR0_DEFAULT	(FIRME_IDE_KM_FR0_KEYSET_PROG	| \
 					 FIRME_IDE_KM_FR0_KEYSET_GO	| \
 					 FIRME_IDE_KM_FR0_KEYSET_STOP	| \
 					 FIRME_IDE_KM_FR0_KEYSET_POLL)
-#endif
 
 /* Max count of root complex count limited by firme */
 #define FIRME_IDE_KM_UNITS_MAX				U(8)
@@ -339,7 +333,29 @@ unlock_err_out:
 	return firme_rc;
 }
 
-#if (PLAT_IDE_KM_PENDING_OPS_MAX != 0)
+#if (PLAT_IDE_KM_PENDING_OPS_MAX == 0)
+static u_register_t firme_ide_km_keyset_poll(uint64_t ecam_address,
+					     uint64_t flags, uint64_t keyset_id,
+					     void *smc_handle)
+{
+	int idx;
+
+	idx = plat_get_root_complex_index(ecam_address);
+	if ((idx < 0) || (idx >= PLAT_PCIE_ROOT_COMPLEX_MAX)) {
+		SMC_RET1(smc_handle, FIRME_INVALID_PARAMETERS);
+	}
+
+	/*
+	 * For spec compliance, IDE POLL ABI is enabled in feature register
+	 * even when non-blocking mode is disabled, so POLL do not return
+	 * NOT_SUPPORTED.
+	 *
+	 * Returning FIRME_DENIED denotes there is no asynchronous long-running
+	 * operation is in progress for the specified keyset ID.
+	 */
+	SMC_RET1(smc_handle, FIRME_DENIED);
+}
+#else /* PLAT_IDE_KM_PENDING_OPS_MAX == 0 */
 static u_register_t firme_ide_km_keyset_poll(uint64_t ecam_address,
 					     uint64_t flags, uint64_t keyset_id,
 					     void *smc_handle)
@@ -505,11 +521,9 @@ static u_register_t firme_ide_km_service_handler(firme_instance_e instance,
 		ret = firme_ide_km_keyset_action(x1, x2, x3, x4, smc_fid);
 		SMC_RET1(handle, ret);
 		break;
-#if (PLAT_IDE_KM_PENDING_OPS_MAX != 0)
 	case FIRME_IDE_KEYSET_POLL_FID:
 		return firme_ide_km_keyset_poll(x1, x2, x3, handle);
 		break;
-#endif
 	default:
 		VERBOSE("FIRME IDE KM FID 0x%X not implemented\n", smc_fid);
 		SMC_RET1(handle, FIRME_NOT_SUPPORTED);
