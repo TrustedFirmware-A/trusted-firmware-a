@@ -31,3 +31,7 @@
 	path = contrib/zlib
 	url = https://github.com/madler/zlib.git
 	shallow = true
+[submodule "contrib/mcuboot"]
+	path = contrib/mcuboot
+	url = https://github.com/mcu-tools/mcuboot.git
+	shallow = true

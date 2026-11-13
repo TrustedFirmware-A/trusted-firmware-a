@@ -13,6 +13,15 @@ errata = {path = "tools/errata_automation", develop = true}
 memory = {path = "tools/memory", develop = true}
 tlc = {path = "contrib/libtl/tlc", develop = true}
 
+[tool.poetry.group.basev2]
+optional = true
+
+[tool.poetry.group.basev2.dependencies]
+cbor2 = "^5.6.0"
+cryptography = ">=40.0.0"
+intelhex = "^2.2.1"
+pyyaml = "^6.0"
+
 [tool.poetry.group.docs]
 optional = true
 
