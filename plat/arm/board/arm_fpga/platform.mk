@@ -1,10 +1,12 @@
 #
 # Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+# Copyright (c) 2026, BayLibre SAS
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
 include common/fdt_wrappers.mk
+include lib/xlat_tables_v2/xlat_tables.mk
 include lib/libfdt/libfdt.mk
 
 RESET_TO_BL31 := 1
@@ -12,9 +14,7 @@ ifeq (${RESET_TO_BL31}, 0)
 $(error "This is a BL31-only port; RESET_TO_BL31 must be enabled")
 endif
 
-ifeq (${ENABLE_PIE}, 1)
 override SEPARATE_CODE_AND_RODATA := 1
-endif
 
 CTX_INCLUDE_AARCH32_REGS := 0
 ifeq (${CTX_INCLUDE_AARCH32_REGS}, 1)
@@ -33,21 +33,7 @@ $(eval $(call add_define,FPGA_PRELOADED_DTB_BASE))
 FPGA_PRELOADED_CMD_LINE := 0x1000
 $(eval $(call add_define,FPGA_PRELOADED_CMD_LINE))
 
-ENABLE_BRBE_FOR_NS		:= 2
-ENABLE_TRBE_FOR_NS		:= 2
-ENABLE_FEAT_AMU			:= 2
-ENABLE_FEAT_AMUv1p1		:= 2
-ENABLE_FEAT_CSV2_2		:= 2
-ENABLE_FEAT_ECV			:= 2
-ENABLE_FEAT_FGT			:= 2
-ENABLE_FEAT_HCX			:= 2
-ENABLE_FEAT_MTE2		:= 2
-ENABLE_FEAT_TCR2		:= 2
-ENABLE_SYS_REG_TRACE_FOR_NS	:= 2
-ENABLE_TRF_FOR_NS		:= 2
-ENABLE_SME_FOR_NS		:= 2
-ENABLE_SME2_FOR_NS		:= 2
-ENABLE_FEAT_LS64_ACCDATA	:= 2
+include make_helpers/all_features.mk
 
 # Treating this as a memory-constrained port for now
 USE_COHERENT_MEM	:=	0
@@ -111,13 +97,16 @@ FDT_SOURCES		:=	fdts/arm_fpga.dts
 
 PLAT_INCLUDES		:=	-Iplat/arm/board/arm_fpga/include
 
-PLAT_BL_COMMON_SOURCES	:=	plat/arm/board/arm_fpga/${ARCH}/fpga_helpers.S
+PLAT_BL_COMMON_SOURCES	:=	plat/arm/board/arm_fpga/${ARCH}/fpga_helpers.S	\
+				${XLAT_TABLES_LIB_SRCS}
 
 BL31_SOURCES		+=	common/fdt_fixup.c				\
 				drivers/delay_timer/delay_timer.c		\
 				drivers/delay_timer/generic_delay_timer.c	\
 				drivers/arm/pl011/${ARCH}/pl011_console.S	\
 				plat/common/plat_psci_common.c			\
+				plat/common/plat_hold_pen.c			\
+				plat/arm/common/aarch64/arm_pauth.c		\
 				plat/arm/board/arm_fpga/fpga_pm.c			\
 				plat/arm/board/arm_fpga/fpga_topology.c		\
 				plat/arm/board/arm_fpga/fpga_console.c		\

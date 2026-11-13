@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -35,6 +36,11 @@
 #define BL31_BASE			UL(0x0)
 #define BL31_LIMIT			UL(0x01000000)
 #endif
+
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
+#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 32)
+#define MAX_MMAP_REGIONS		8
+#define MAX_XLAT_TABLES			8
 
 #define PLAT_SDEI_NORMAL_PRI		0x70
 
@@ -80,9 +86,5 @@
 #define PLAT_MAX_OFF_STATE 		2
 
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
-
-#define PLAT_FPGA_HOLD_ENTRY_SHIFT	3
-#define PLAT_FPGA_HOLD_STATE_WAIT	0
-#define PLAT_FPGA_HOLD_STATE_GO		1
 
 #endif
