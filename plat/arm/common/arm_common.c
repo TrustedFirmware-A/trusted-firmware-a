@@ -193,12 +193,16 @@ int plat_sdei_validate_entry_point(uintptr_t ep, unsigned int client_mode)
 {
 	uint64_t pa;
 	sysreg_t par;
+	sysreg_t saved_par;
 	u_register_t scr_el3;
 
 	/* Doing Non-secure address translation requires SCR_EL3.NS set */
 	scr_el3 = read_scr_el3();
 	write_scr_el3(scr_el3 | SCR_NS_BIT);
 	isb();
+
+	/* AT updates the Non-secure PAR_EL1, so preserve the caller's value */
+	saved_par = read_par_el1();
 
 	assert((client_mode == MODE_EL2) || (client_mode == MODE_EL1));
 	if (client_mode == MODE_EL2) {
@@ -216,6 +220,7 @@ int plat_sdei_validate_entry_point(uintptr_t ep, unsigned int client_mode)
 	}
 	isb();
 	par = read_par_el1();
+	write_par_el1(saved_par);
 
 	/* Restore original SCRL_EL3 */
 	write_scr_el3(scr_el3);
